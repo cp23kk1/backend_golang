@@ -1,9 +1,9 @@
 package routes
 
 import (
+	"cp23kk1/modules/gameplays"
 	"cp23kk1/modules/ping"
 	"cp23kk1/modules/users"
-	"cp23kk1/modules/gameplays"
 
 	"github.com/gin-gonic/gin"
 )

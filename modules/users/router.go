@@ -29,7 +29,7 @@ func UserRetrieve(c *gin.Context) {
 	err = mapstructure.Decode(user, &userResponse)
 	if err != nil {
 		fmt.Println("Error mapping data:", err)
-	} 
+	}
 	c.JSON(http.StatusOK, gin.H{"user": userResponse})
 
 	// serializer := UserSerializer{c, user}

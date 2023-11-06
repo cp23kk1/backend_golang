@@ -12,9 +12,9 @@ import (
 type Database struct {
 	USERNAME string
 	PASSWORD string
-	NAME string
-	HOST string
-	PORT string
+	NAME     string
+	HOST     string
+	PORT     string
 }
 
 var DB *gorm.DB
@@ -28,7 +28,7 @@ func Init() *gorm.DB {
 func ConnectDB() (*gorm.DB, error) {
 	config := LoadDatabaseConfig()
 	var err error
-	dsn := config.USERNAME +":"+ config.PASSWORD +"@tcp"+ "(" + config.HOST + ":" + config.PORT +")/" + config.NAME + "?" + "charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := config.USERNAME + ":" + config.PASSWORD + "@tcp" + "(" + config.HOST + ":" + config.PORT + ")/" + config.NAME + "?" + "charset=utf8mb4&parseTime=True&loc=Local"
 	println(dsn)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
@@ -37,7 +37,7 @@ func ConnectDB() (*gorm.DB, error) {
 		return nil, err
 	}
 	fmt.Println("Succesfully connect the database!")
-    return db, nil
+	return db, nil
 }
 
 // Using this function to get a connection, you can create your connection pool here.
@@ -47,16 +47,19 @@ func GetDB() *gorm.DB {
 
 // LoadDatabaseConfig loads the database configuration from environment variables.
 func LoadDatabaseConfig() *Database {
-    err := godotenv.Load()
-    if err != nil {
-        panic("Error loading .env file")
-    }
+	err := godotenv.Load(".env.local")
+	if err != nil {
+		err := godotenv.Load(".env")
+		if err != nil {
+			panic("Error loading .env file")
+		}
+	}
 
-    return &Database{
-        USERNAME: os.Getenv("DB_USERNAME"),
-        PASSWORD: os.Getenv("DB_PASSWORD"),
-        NAME: os.Getenv("DB_NAME"),
-        HOST: os.Getenv("DB_HOST"),
-        PORT: os.Getenv("DB_PORT"),
-    }
+	return &Database{
+		USERNAME: os.Getenv("DB_USERNAME"),
+		PASSWORD: os.Getenv("DB_PASSWORD"),
+		NAME:     os.Getenv("DB_NAME"),
+		HOST:     os.Getenv("DB_HOST"),
+		PORT:     os.Getenv("DB_PORT"),
+	}
 }
