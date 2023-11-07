@@ -2,6 +2,7 @@ package routes
 
 import (
 	"cp23kk1/modules/gameplays"
+	"cp23kk1/modules/history"
 	"cp23kk1/modules/ping"
 	"cp23kk1/modules/users"
 
@@ -22,4 +23,5 @@ func getRoutes(router *gin.Engine) {
 	ping.AddPingRoutes(api)
 	users.AddUserRoutes(api)
 	gameplays.AddGameplayRoutes(api)
+	history.AddHistoryRoutes(api)
 }

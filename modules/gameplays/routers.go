@@ -13,7 +13,7 @@ import (
 func AddGameplayRoutes(rg *gin.RouterGroup) {
 	gameplay := rg.Group("/gameplay")
 
-	gameplay.GET("/vocabulary", VocabulariesRetrieve)
+	gameplay.GET("/vocabulary", RandomVocabularyForGamePlay)
 }
 
 func VocabulariesRetrieve(c *gin.Context) {
@@ -32,7 +32,6 @@ func VocabulariesRetrieve(c *gin.Context) {
 }
 func RandomVocabularyForGamePlay(c *gin.Context) {
 	vocabs, err := randomFromGamePlay()
-	fmt.Println(vocabs)
 	if err != nil {
 		c.JSON(http.StatusNotFound, common.NewError("eiei", err)) // need to change later
 		return
@@ -42,5 +41,5 @@ func RandomVocabularyForGamePlay(c *gin.Context) {
 	// if err != nil {
 	// 	fmt.Println("Error mapping data:", err)
 	// }
-	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "success"}, vocabs))
+	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "success"}, map[string]interface{}{"vocabs": vocabs}))
 }

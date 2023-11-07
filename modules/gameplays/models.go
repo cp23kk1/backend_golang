@@ -29,7 +29,7 @@ func selectAll() ([]VocabularyModel, error) {
 	return vocabularies, err
 }
 
-func randomFromGamePlay() ([]VocabularyModel, error) {
+func randomVacabulary() ([]VocabularyModel, error) {
 
 	db := databases.GetDB()
 	var vocabularies []VocabularyModel
