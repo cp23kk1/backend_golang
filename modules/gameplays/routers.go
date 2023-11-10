@@ -1,8 +1,6 @@
 package gameplays
 
 import (
-	"errors"
-	"fmt"
 	"net/http"
 
 	"cp23kk1/common"
@@ -17,29 +15,17 @@ func AddGameplayRoutes(rg *gin.RouterGroup) {
 }
 
 func VocabulariesRetrieve(c *gin.Context) {
-	vocabs, err := getVocabularies()
-	fmt.Println(vocabs)
-	if err != nil {
-		c.JSON(http.StatusNotFound, common.NewError("id", errors.New("Invalid ID"))) // need to change later
-		return
-	}
-	// var vocabularies []VocabularyResponse
-	// err = mapstructure.Decode(vocabs, &vocabularies)
-	// if err != nil {
-	// 	fmt.Println("Error mapping data:", err)
-	// }
+	vocabs := getVocabularies()
+
 	c.JSON(http.StatusOK, gin.H{"vocabs": vocabs})
 }
+
 func RandomVocabularyForGamePlay(c *gin.Context) {
 	vocabs, err := randomFromGamePlay()
 	if err != nil {
 		c.JSON(http.StatusNotFound, common.NewError("eiei", err)) // need to change later
 		return
 	}
-	// var vocabularies []VocabularyResponse
-	// err = mapstructure.Decode(vocabs, &vocabularies)
-	// if err != nil {
-	// 	fmt.Println("Error mapping data:", err)
-	// }
-	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "success"}, map[string]interface{}{"vocabs": vocabs}))
+	serializer := VocabsSerealizer{c, vocabs}
+	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "success"}, map[string]interface{}{"vocabs": serializer.Response()}))
 }

@@ -3,6 +3,7 @@ package users
 import (
 	"cp23kk1/common"
 	"cp23kk1/common/databases"
+	userRepo "cp23kk1/modules/repository/user"
 	"net/http"
 	"strings"
 
@@ -24,7 +25,7 @@ func stripBearerPrefixFromTokenString(tok string) (string, error) {
 // Uses PostExtractionFilter to strip "TOKEN " prefix from header
 var AuthorizationHeaderExtractor = &request.PostExtractionFilter{
 	Extractor: request.HeaderExtractor{"Authorization"},
-	Filter: stripBearerPrefixFromTokenString,
+	Filter:    stripBearerPrefixFromTokenString,
 }
 
 // Extractor for OAuth2 access tokens.  Looks in 'Authorization'
@@ -36,7 +37,7 @@ var MyAuth2Extractor = &request.MultiExtractor{
 
 // A helper to write user_id and user_model to the context
 func UpdateContextUserModel(c *gin.Context, my_user_id uint) {
-	var myUserModel UserModel
+	var myUserModel userRepo.UserModel
 	if my_user_id != 0 {
 		db := databases.GetDB()
 		db.First(&myUserModel, my_user_id)
@@ -46,7 +47,8 @@ func UpdateContextUserModel(c *gin.Context, my_user_id uint) {
 }
 
 // You can custom middlewares yourself as the doc: https://github.com/gin-gonic/gin#custom-middleware
-//  r.Use(AuthMiddleware(true))
+//
+//	r.Use(AuthMiddleware(true))
 func AuthMiddleware(auto401 bool) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		UpdateContextUserModel(c, 0)
