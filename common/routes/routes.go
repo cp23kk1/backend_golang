@@ -2,6 +2,7 @@ package routes
 
 import (
 	"cp23kk1/modules/cms/passage"
+	"cp23kk1/modules/cms/vocabulary"
 	"cp23kk1/modules/gameplays"
 	"cp23kk1/modules/history"
 	"cp23kk1/modules/ping"
@@ -28,5 +29,6 @@ func getRoutes(router *gin.Engine) {
 
 	v1 := router.Group("/api/cms")
 	passage.SetupPassageRoutes(v1)
+	vocabulary.SetupVocabularyRoutes(v1)
 
 }

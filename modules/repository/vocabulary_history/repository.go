@@ -1,36 +1,33 @@
 package vocabulary_history
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
-func CreateVocabularyHistory(db *gorm.DB, vh *VocabularyHistory) error {
-	result := db.Create(vh)
-	if result.Error != nil {
-		return result.Error
-	}
-	return nil
+type VocabularyHistoryRepository struct {
+	db *gorm.DB
 }
 
-func GetVocabularyHistoryByID(db *gorm.DB, id uint) (*VocabularyHistory, error) {
-	var vh VocabularyHistory
-	result := db.First(&vh, id)
-	if result.Error != nil {
-		return nil, result.Error
-	}
-	return &vh, nil
+func NewVocabularyHistoryRepository(db *gorm.DB) *VocabularyHistoryRepository {
+	return &VocabularyHistoryRepository{db}
 }
 
-func UpdateVocabularyHistory(db *gorm.DB, vh *VocabularyHistory) error {
-	result := db.Save(vh)
-	if result.Error != nil {
-		return result.Error
-	}
-	return nil
+func (r *VocabularyHistoryRepository) CreateVocabularyHistory(history *VocabularyHistory) error {
+	return r.db.Create(history).Error
 }
 
-func DeleteVocabularyHistory(db *gorm.DB, vh *VocabularyHistory) error {
-	result := db.Delete(vh)
-	if result.Error != nil {
-		return result.Error
+func (r *VocabularyHistoryRepository) GetVocabularyHistoryByID(id uint) (*VocabularyHistory, error) {
+	var history VocabularyHistory
+	if err := r.db.Where("id = ?", id).Preload("User").Preload("Vocabulary").First(&history).Error; err != nil {
+		return nil, err
 	}
-	return nil
+	return &history, nil
+}
+
+func (r *VocabularyHistoryRepository) UpdateVocabularyHistory(history *VocabularyHistory) error {
+	return r.db.Save(history).Error
+}
+
+func (r *VocabularyHistoryRepository) DeleteVocabularyHistory(history *VocabularyHistory) error {
+	return r.db.Delete(history).Error
 }

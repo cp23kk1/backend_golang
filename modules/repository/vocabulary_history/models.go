@@ -7,8 +7,8 @@ type VocabularyHistory struct {
 	GameID       string
 	Correctness  int8
 
-	User       userModel       `gorm:"foreignKey:UserID"`
-	Vocabulary VocabularyModel `gorm:"foreignKey:VocabularyID"`
+	User       userModel
+	Vocabulary VocabularyModel
 }
 
 func (VocabularyHistory) TableName() string {

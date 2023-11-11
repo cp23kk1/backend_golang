@@ -10,7 +10,7 @@ import (
 type UserModel struct {
 	gorm.Model
 	ID               int               `gorm:"primary_key"`
-	Email            *string           `gorm:"null;column:email;size:320;"`
+	Email            *string           `gorm:"null;column:email;size:255;"`
 	Role             enum.Role         `gorm:"not null;column:role;type:enum('admin','user');"`
 	DisplayName      *string           `gorm:"null;column:display_name;size:255"`
 	IsActive         bool              `gorm:"not null;column:is_active"`
