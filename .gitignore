@@ -11,6 +11,7 @@
 *.launch
 .settings/
 
+.env.local
 
 #System Files
 .DS_Store
