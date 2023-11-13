@@ -1,6 +1,6 @@
 package vocabulary_history
 
-type VocabularyHistory struct {
+type VocabularyHistoryModel struct {
 	ID           uint `gorm:"primaryKey"`
 	UserID       uint
 	VocabularyID uint
@@ -11,7 +11,7 @@ type VocabularyHistory struct {
 	Vocabulary VocabularyModel
 }
 
-func (VocabularyHistory) TableName() string {
+func (VocabularyHistoryModel) TableName() string {
 	return "vocabulary_history"
 }
 

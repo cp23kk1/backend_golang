@@ -15,10 +15,10 @@ type ScoreBoardModel struct {
 	EndDate   time.Time `gorm:"not null"`
 }
 type userModel struct {
-	ID               int
-	Email            *string `gorm:"null;column:email;size:255;"`
+	ID               int `gorm:"primary_key"`
+	Email            *string
 	Role             enum.Role
-	DisplayName      *string `gorm:"null;column:display_name;size:255;"`
+	DisplayName      *string
 	IsActive         bool
 	Image            *string
 	IsPrivateProfile bool

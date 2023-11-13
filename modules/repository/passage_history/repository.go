@@ -11,10 +11,6 @@ func AutoMigrate(db *gorm.DB) {
 	db.AutoMigrate(&PassageHistoryModel{})
 }
 
-func (PassageHistoryModel) TableName() string {
-	return "passage_history"
-}
-
 func CreatePassageHistory(userID, passageID int, gameID string, correctness bool) error {
 	db := databases.GetDB()
 
@@ -28,10 +24,10 @@ func CreatePassageHistory(userID, passageID int, gameID string, correctness bool
 	return err
 }
 
-func FindAllPassages() []PassageHistoryModel {
+func FindAllPassagesHistory() []PassageHistoryModel {
 	db := databases.GetDB()
 	var passages []PassageHistoryModel
-	db.Find(&passages)
+	db.Preload("User").Preload("Passage").Find(&passages)
 	return passages
 }
 func FindPassageHistoryByID(id int) (*PassageHistoryModel, error) {
@@ -54,11 +50,7 @@ func FindPassageHistoriesByUserID(userID int) ([]PassageHistoryModel, error) {
 	return passageHistories, nil
 }
 
-func DeletePassageHistory(id int) {
+func DeletePassageHistory(history *PassageHistoryModel) error {
 	db := databases.GetDB()
-
-	passageHistory, _ := FindPassageHistoryByID(id)
-	if passageHistory != nil {
-		db.Delete(passageHistory)
-	}
+	return db.Delete(history).Error
 }

@@ -8,12 +8,12 @@ import (
 
 func AutoMigrate(db *gorm.DB) {
 
-	db.AutoMigrate(&VocabularyHistory{})
+	db.AutoMigrate(&VocabularyHistoryModel{})
 }
 
 func CreateVocabularyHistory(userID uint, vocabularyID uint, gameID string, correctness bool) error {
 	db := databases.GetDB()
-	history := &VocabularyHistory{
+	history := &VocabularyHistoryModel{
 		UserID:       userID,
 		VocabularyID: vocabularyID,
 		GameID:       gameID,
@@ -23,18 +23,18 @@ func CreateVocabularyHistory(userID uint, vocabularyID uint, gameID string, corr
 	return db.Create(history).Error
 }
 
-func GetVocabularyHistoryByID(id uint) (*VocabularyHistory, error) {
+func GetVocabularyHistoryByID(id uint) (*VocabularyHistoryModel, error) {
 	db := databases.GetDB()
-	var history VocabularyHistory
+	var history VocabularyHistoryModel
 	if err := db.Where("id = ?", id).Preload("User").Preload("Vocabulary").First(&history).Error; err != nil {
 		return nil, err
 	}
 	return &history, nil
 }
 
-func GetVocabularyHistoryAll() (*[]VocabularyHistory, error) {
+func GetVocabularyHistoryAll() (*[]VocabularyHistoryModel, error) {
 	db := databases.GetDB()
-	var history []VocabularyHistory
+	var history []VocabularyHistoryModel
 	if err := db.Preload("User").Preload("Vocabulary").Find(&history).Error; err != nil {
 		return nil, err
 	}
@@ -47,7 +47,7 @@ func UpdateVocabularyHistory(id uint, userID uint, vocabularyID uint, gameID str
 		return err
 	}
 	if vocabularyHistory != nil {
-		history := &VocabularyHistory{
+		history := &VocabularyHistoryModel{
 			ID:           id,
 			UserID:       userID,
 			VocabularyID: vocabularyID,
@@ -59,7 +59,7 @@ func UpdateVocabularyHistory(id uint, userID uint, vocabularyID uint, gameID str
 	return nil
 }
 
-func DeleteVocabularyHistory(history *VocabularyHistory) error {
+func DeleteVocabularyHistory(history *VocabularyHistoryModel) error {
 	db := databases.GetDB()
 	return db.Delete(history).Error
 }

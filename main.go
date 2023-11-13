@@ -17,12 +17,18 @@ import (
 
 func Migrate(db *gorm.DB) {
 
-	userRepo.AutoMigrate(db)
-	scoreBoardRepo.AutoMigrate(db)
-	vocabularyRepo.AutoMigrate(db)
-	passage.AutoMigrate(db)
-	passageHistoryRepo.AutoMigrate(db)
-	vocabulary_history.AutoMigrate(db)
+	db.AutoMigrate(&userRepo.UserModel{}, &scoreBoardRepo.ScoreBoardModel{},
+		&vocabularyRepo.VocabularyModel{},
+		&passage.PassageModel{},
+		&passageHistoryRepo.PassageHistoryModel{},
+		&vocabulary_history.VocabularyHistoryModel{},
+	)
+	// userRepo.AutoMigrate(db)
+	// scoreBoardRepo.AutoMigrate(db)
+	// vocabularyRepo.AutoMigrate(db)
+	// passage.AutoMigrate(db)
+	// passageHistoryRepo.AutoMigrate(db)
+	// vocabulary_history.AutoMigrate(db)
 }
 
 func main() {

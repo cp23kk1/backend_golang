@@ -10,7 +10,7 @@ func createPassageHistory(userID int, passageId int, gameId string, correctness 
 	return err
 }
 func getPassageHistory() []passageHistoryRepo.PassageHistoryModel {
-	return passageHistoryRepo.FindAllPassages()
+	return passageHistoryRepo.FindAllPassagesHistory()
 }
 
 // TODO:yerm

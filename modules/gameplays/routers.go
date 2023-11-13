@@ -9,7 +9,7 @@ import (
 )
 
 func AddGameplayRoutes(rg *gin.RouterGroup) {
-	gameplay := rg.Group("/gameplay")
+	gameplay := rg.Group("/gameplays")
 
 	gameplay.GET("/vocabulary", RandomVocabularyForGamePlay)
 }
