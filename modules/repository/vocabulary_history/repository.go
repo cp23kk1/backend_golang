@@ -1,33 +1,65 @@
 package vocabulary_history
 
 import (
+	"cp23kk1/common/databases"
+
 	"gorm.io/gorm"
 )
 
-type VocabularyHistoryRepository struct {
-	db *gorm.DB
+func AutoMigrate(db *gorm.DB) {
+
+	db.AutoMigrate(&VocabularyHistory{})
 }
 
-func NewVocabularyHistoryRepository(db *gorm.DB) *VocabularyHistoryRepository {
-	return &VocabularyHistoryRepository{db}
+func CreateVocabularyHistory(userID uint, vocabularyID uint, gameID string, correctness bool) error {
+	db := databases.GetDB()
+	history := &VocabularyHistory{
+		UserID:       userID,
+		VocabularyID: vocabularyID,
+		GameID:       gameID,
+		Correctness:  correctness,
+	}
+
+	return db.Create(history).Error
 }
 
-func (r *VocabularyHistoryRepository) CreateVocabularyHistory(history *VocabularyHistory) error {
-	return r.db.Create(history).Error
-}
-
-func (r *VocabularyHistoryRepository) GetVocabularyHistoryByID(id uint) (*VocabularyHistory, error) {
+func GetVocabularyHistoryByID(id uint) (*VocabularyHistory, error) {
+	db := databases.GetDB()
 	var history VocabularyHistory
-	if err := r.db.Where("id = ?", id).Preload("User").Preload("Vocabulary").First(&history).Error; err != nil {
+	if err := db.Where("id = ?", id).Preload("User").Preload("Vocabulary").First(&history).Error; err != nil {
 		return nil, err
 	}
 	return &history, nil
 }
 
-func (r *VocabularyHistoryRepository) UpdateVocabularyHistory(history *VocabularyHistory) error {
-	return r.db.Save(history).Error
+func GetVocabularyHistoryAll() (*[]VocabularyHistory, error) {
+	db := databases.GetDB()
+	var history []VocabularyHistory
+	if err := db.Preload("User").Preload("Vocabulary").Find(&history).Error; err != nil {
+		return nil, err
+	}
+	return &history, nil
+}
+func UpdateVocabularyHistory(id uint, userID uint, vocabularyID uint, gameID string, correctness bool) error {
+	db := databases.GetDB()
+	vocabularyHistory, err := GetVocabularyHistoryByID(id)
+	if err != nil {
+		return err
+	}
+	if vocabularyHistory != nil {
+		history := &VocabularyHistory{
+			ID:           id,
+			UserID:       userID,
+			VocabularyID: vocabularyID,
+			GameID:       gameID,
+			Correctness:  correctness,
+		}
+		return db.Save(history).Error
+	}
+	return nil
 }
 
-func (r *VocabularyHistoryRepository) DeleteVocabularyHistory(history *VocabularyHistory) error {
-	return r.db.Delete(history).Error
+func DeleteVocabularyHistory(history *VocabularyHistory) error {
+	db := databases.GetDB()
+	return db.Delete(history).Error
 }

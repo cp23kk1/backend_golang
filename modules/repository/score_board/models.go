@@ -16,9 +16,9 @@ type ScoreBoardModel struct {
 }
 type userModel struct {
 	ID               int
-	Email            *string
+	Email            *string `gorm:"null;column:email;size:255;"`
 	Role             enum.Role
-	DisplayName      *string
+	DisplayName      *string `gorm:"null;column:display_name;size:255;"`
 	IsActive         bool
 	Image            *string
 	IsPrivateProfile bool

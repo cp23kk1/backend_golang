@@ -5,7 +5,7 @@ type VocabularyHistory struct {
 	UserID       uint
 	VocabularyID uint
 	GameID       string
-	Correctness  int8
+	Correctness  bool
 
 	User       userModel
 	Vocabulary VocabularyModel

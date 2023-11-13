@@ -10,16 +10,19 @@ import (
 	scoreBoardRepo "cp23kk1/modules/repository/score_board"
 	userRepo "cp23kk1/modules/repository/user"
 	vocabularyRepo "cp23kk1/modules/repository/vocabulary"
+	"cp23kk1/modules/repository/vocabulary_history"
 
 	"gorm.io/gorm"
 )
 
 func Migrate(db *gorm.DB) {
-	scoreBoardRepo.AutoMigrate(db)
+
 	userRepo.AutoMigrate(db)
+	scoreBoardRepo.AutoMigrate(db)
 	vocabularyRepo.AutoMigrate(db)
 	passage.AutoMigrate(db)
 	passageHistoryRepo.AutoMigrate(db)
+	vocabulary_history.AutoMigrate(db)
 }
 
 func main() {
