@@ -16,7 +16,7 @@ type UserModel struct {
 	IsActive         bool              `gorm:"not null;column:is_active"`
 	Image            *string           `gorm:"null;column:image;size:255"`
 	IsPrivateProfile bool              `gorm:"not null;column:is_private_profile"`
-	ScoreBoards      []ScoreBoardModel `gorm:"foreignKey:user_id"`
+	ScoreBoards      []ScoreBoardModel `gorm:"foreignKey:UserID"`
 }
 type ScoreBoardModel struct {
 	UserID    int
