@@ -8,6 +8,7 @@ import (
 	"cp23kk1/modules/repository/passage"
 	passageHistoryRepo "cp23kk1/modules/repository/passage_history"
 	scoreBoardRepo "cp23kk1/modules/repository/score_board"
+	"cp23kk1/modules/repository/sentence"
 	userRepo "cp23kk1/modules/repository/user"
 	vocabularyRepo "cp23kk1/modules/repository/vocabulary"
 	"cp23kk1/modules/repository/vocabulary_history"
@@ -17,9 +18,11 @@ import (
 
 func Migrate(db *gorm.DB) {
 
-	db.AutoMigrate(&userRepo.UserModel{}, &scoreBoardRepo.ScoreBoardModel{},
+	db.AutoMigrate(&userRepo.UserModel{},
+		&scoreBoardRepo.ScoreBoardModel{},
 		&vocabularyRepo.VocabularyModel{},
 		&passage.PassageModel{},
+		&sentence.SentenceModel{},
 		&passageHistoryRepo.PassageHistoryModel{},
 		&vocabulary_history.VocabularyHistoryModel{},
 	)

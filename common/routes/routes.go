@@ -4,6 +4,7 @@ import (
 	"cp23kk1/modules/cms/passage"
 	"cp23kk1/modules/cms/passage_history"
 	"cp23kk1/modules/cms/score_board"
+	"cp23kk1/modules/cms/sentence"
 	"cp23kk1/modules/cms/vocabulary"
 	"cp23kk1/modules/cms/vocabulary_history"
 	"cp23kk1/modules/gameplays"
@@ -36,5 +37,6 @@ func getRoutes(router *gin.Engine) {
 	vocabulary.SetupVocabularyRoutes(v1)
 	vocabulary_history.SetupVocabularyHistoryRoutes(v1)
 	score_board.SetupScoreBoardRoutes(v1)
+	sentence.SetupSentenceRoutes(v1)
 
 }
