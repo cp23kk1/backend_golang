@@ -16,18 +16,18 @@ func (UserModel) TableName() string {
 	return "user"
 }
 
-func CreateUser(email string, role enum.Role, displayName string, isActive bool, image string, isPrivateProfile bool) {
+func CreateUser(email string, role enum.Role, displayName string, image string, isPrivateProfile bool) error {
 	db := databases.GetDB()
 
 	user := UserModel{
 		Email:            &email,
 		Role:             role,
 		DisplayName:      &displayName,
-		IsActive:         isActive,
+		IsActive:         true,
 		Image:            &image,
 		IsPrivateProfile: isPrivateProfile,
 	}
-	db.Create(&user)
+	return db.Create(&user).Error
 }
 
 func FindUserByID(id int) (*UserModel, error) {
@@ -36,8 +36,14 @@ func FindUserByID(id int) (*UserModel, error) {
 	err := db.Where("id = ?", id).Preload("ScoreBoards").First(&user).Error
 	return &user, err
 }
+func FindAllUsers() (*[]UserModel, error) {
+	db := databases.GetDB()
+	var user []UserModel
+	err := db.Preload("ScoreBoards").Find(&user).Error
+	return &user, err
+}
 
-func UpdateUser(id int, email string, role enum.Role, displayName string, isActive bool, image string, isPrivateProfile bool) error {
+func UpdateUser(id int, email string, role enum.Role, displayName string, image string, isPrivateProfile bool) error {
 	db := databases.GetDB()
 
 	user, err := FindUserByID(id)
@@ -48,7 +54,6 @@ func UpdateUser(id int, email string, role enum.Role, displayName string, isActi
 	user.Email = &email
 	user.Role = role
 	user.DisplayName = &displayName
-	user.IsActive = isActive
 	user.Image = &image
 	user.IsPrivateProfile = isPrivateProfile
 

@@ -10,7 +10,7 @@ import (
 )
 
 func SetupScoreBoardRoutes(router *gin.RouterGroup) {
-	scoreBoardGroup := router.Group("/score_board")
+	scoreBoardGroup := router.Group("/score-board")
 	{
 		scoreBoardGroup.POST("/", CreateScoreBoardHandler)
 		scoreBoardGroup.GET("/:id", GetScoreBoardByIDHandler)

@@ -7,7 +7,7 @@ import (
 
 type ScoreBoardModel struct {
 	ID        int `gorm:"primary_key"`
-	UserID    int `gorm:"not null"`
+	UserID    int
 	User      userModel
 	Score     int       `gorm:"not null"`
 	Week      int       `gorm:"not null"`
