@@ -12,6 +12,7 @@
 .settings/
 
 .env.local
+*.exe
 
 #System Files
 .DS_Store
