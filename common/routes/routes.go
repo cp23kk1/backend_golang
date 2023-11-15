@@ -9,6 +9,7 @@ import (
 	"cp23kk1/modules/cms/user"
 	"cp23kk1/modules/cms/vocabulary"
 	"cp23kk1/modules/cms/vocabulary_history"
+	"cp23kk1/modules/cms/vocabulary_related"
 	"cp23kk1/modules/gameplays"
 	"cp23kk1/modules/history"
 	"cp23kk1/modules/ping"
@@ -42,5 +43,6 @@ func getRoutes(router *gin.Engine) {
 	sentence.SetupSentenceRoutes(v1)
 	sentence_history.SetupSentenceHistoryRoutes(v1)
 	user.SetupUserRoutes(v1)
+	vocabulary_related.SetupVocabularyRelatedRoutes(v1)
 
 }

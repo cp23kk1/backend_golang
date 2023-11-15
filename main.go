@@ -13,6 +13,7 @@ import (
 	userRepo "cp23kk1/modules/repository/user"
 	vocabularyRepo "cp23kk1/modules/repository/vocabulary"
 	"cp23kk1/modules/repository/vocabulary_history"
+	"cp23kk1/modules/repository/vocabulary_related"
 
 	"gorm.io/gorm"
 )
@@ -27,6 +28,7 @@ func Migrate(db *gorm.DB) {
 		&passageHistoryRepo.PassageHistoryModel{},
 		&vocabulary_history.VocabularyHistoryModel{},
 		&sentence_history.SentenceHistoryModel{},
+		&vocabulary_related.VocabularyRelatedModel{},
 	)
 	// userRepo.AutoMigrate(db)
 	// scoreBoardRepo.AutoMigrate(db)
