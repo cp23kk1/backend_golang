@@ -11,7 +11,7 @@ import (
 
 type UserResponse struct {
 	ID             int
-	Email          *string `gorm:"null;column:email;size:255;"`
+	Email          *string
 	Role           *enum.Role
 	DisplayName    *string
 	Active         bool
