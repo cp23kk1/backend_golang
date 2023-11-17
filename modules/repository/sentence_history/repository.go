@@ -4,12 +4,7 @@ import (
 	"cp23kk1/common/databases"
 )
 
-// func AutoMigrate(db *gorm.DB) {
-
-// 	db.AutoMigrate(&SentenceHistoryModel{})
-// }
-
-func CreateSentenceHistory(userID uint, sentenceID uint, gameID string, correctness bool) error {
+func CreateSentenceHistory(userID int, sentenceID int, gameID string, correctness bool) error {
 	db := databases.GetDB()
 	history := &SentenceHistoryModel{
 		UserID:      userID,
@@ -21,7 +16,7 @@ func CreateSentenceHistory(userID uint, sentenceID uint, gameID string, correctn
 	return db.Create(history).Error
 }
 
-func GetSentenceHistoryByID(id uint) (*SentenceHistoryModel, error) {
+func FindSentenceHistoryByID(id int) (*SentenceHistoryModel, error) {
 	db := databases.GetDB()
 	var history SentenceHistoryModel
 	if err := db.Where("id = ?", id).Preload("User").Preload("Sentence").First(&history).Error; err != nil {
@@ -30,7 +25,7 @@ func GetSentenceHistoryByID(id uint) (*SentenceHistoryModel, error) {
 	return &history, nil
 }
 
-func GetSentenceHistoryAll() (*[]SentenceHistoryModel, error) {
+func FindSentenceHistoryAll() (*[]SentenceHistoryModel, error) {
 	db := databases.GetDB()
 	var history []SentenceHistoryModel
 	if err := db.Preload("User").Preload("Sentence").Find(&history).Error; err != nil {
@@ -38,9 +33,9 @@ func GetSentenceHistoryAll() (*[]SentenceHistoryModel, error) {
 	}
 	return &history, nil
 }
-func UpdateSentenceHistory(id uint, userID uint, sentenceID uint, gameID string, correctness bool) error {
+func UpdateSentenceHistory(id, userID int, sentenceID int, gameID string, correctness bool) error {
 	db := databases.GetDB()
-	sentenceHistory, err := GetSentenceHistoryByID(id)
+	sentenceHistory, err := FindSentenceHistoryByID(id)
 	if err != nil {
 		return err
 	}

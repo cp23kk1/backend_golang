@@ -7,8 +7,8 @@ import (
 )
 
 type SentenceHistoryModelValidator struct {
-	UserID      uint   `form:"userId" json:"userId" binding:"required"`
-	SentenceID  uint   `form:"sentenceId" json:"sentenceId" binding:"required"`
+	UserID      int    `form:"userId" json:"userId" binding:"required"`
+	SentenceID  int    `form:"sentenceId" json:"sentenceId" binding:"required"`
 	GameID      string `form:"gameId" json:"gameId" binding:"required,max=255"`
 	Correctness bool   `form:"correctness" json:"correctness"`
 }

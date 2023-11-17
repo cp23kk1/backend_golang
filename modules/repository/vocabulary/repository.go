@@ -2,18 +2,9 @@ package vocabulary
 
 import (
 	"cp23kk1/common/databases"
-
-	"gorm.io/gorm"
 )
 
-func AutoMigrate(db *gorm.DB) {
 
-	db.AutoMigrate(&VocabularyModel{})
-}
-
-func (VocabularyModel) TableName() string {
-	return "vocabulary"
-}
 
 func CreateVocabulary(word, pos, difficultyCefr string, meaning string) {
 	db := databases.GetDB()
@@ -36,11 +27,11 @@ func FindOneVocabulary(id int) *VocabularyModel {
 	return &vocabulary
 }
 
-func FindManyVocabulary() []VocabularyModel {
+func FindManyVocabulary() ([]VocabularyModel, error) {
 	db := databases.GetDB()
 	var vocabularies []VocabularyModel
-	db.Find(&vocabularies)
-	return vocabularies
+	err := db.Find(&vocabularies).Error
+	return vocabularies, err
 }
 
 func UpdateVocabulary(id int, word, pos, difficultyCefr string, meaning string) {

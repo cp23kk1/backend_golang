@@ -36,8 +36,8 @@ func GetPassageHandler(c *gin.Context) {
 		return
 	}
 
-	passage := passageRepo.FindOnePassage(id)
-	if passage == nil {
+	passage, err := passageRepo.FindOnePassage(id)
+	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Passage not found"})
 		return
 	}
@@ -46,7 +46,11 @@ func GetPassageHandler(c *gin.Context) {
 }
 
 func GetAllPassagesHandler(c *gin.Context) {
-	passages := passageRepo.FindAllPassages()
+	passages, err := passageRepo.FindAllPassages()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Passage Get All Error"})
+		return
+	}
 	c.JSON(http.StatusOK, passages)
 }
 

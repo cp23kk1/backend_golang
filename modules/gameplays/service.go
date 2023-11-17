@@ -6,7 +6,7 @@ import (
 
 type VocabularyService struct{}
 
-func getVocabularies() []vocabularyRepo.VocabularyModel {
+func getVocabularies() ([]vocabularyRepo.VocabularyModel, error) {
 	return vocabularyRepo.FindManyVocabulary()
 }
 func randomFromGamePlay() ([]vocabularyRepo.VocabularyModel, error) {

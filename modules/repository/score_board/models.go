@@ -14,6 +14,11 @@ type ScoreBoardModel struct {
 	StartDate time.Time `gorm:"not null"`
 	EndDate   time.Time `gorm:"not null"`
 }
+
+func (ScoreBoardModel) TableName() string {
+	return "score_board"
+}
+
 type userModel struct {
 	ID               int `gorm:"primary_key"`
 	Email            *string

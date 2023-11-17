@@ -7,8 +7,8 @@ import (
 )
 
 type VocabularyHistoryModelValidator struct {
-	UserID       uint   `form:"userId" json:"userId" binding:"required"`
-	VocabularyID uint   `form:"vocabularyId" json:"vocabularyId" binding:"required"`
+	UserID       int    `form:"userId" json:"userId" binding:"required"`
+	VocabularyID int    `form:"vocabularyId" json:"vocabularyId" binding:"required"`
 	GameID       string `form:"gameId" json:"gameId" binding:"required,max=255"`
 	Correctness  bool   `form:"correctness" json:"correctness"`
 }

@@ -1,9 +1,9 @@
 package sentence_history
 
 type SentenceHistoryModel struct {
-	ID          uint `gorm:"primaryKey"`
-	UserID      uint
-	SentenceID  uint
+	ID          int `gorm:"primaryKey"`
+	UserID      int
+	SentenceID  int
 	GameID      string
 	Correctness bool
 

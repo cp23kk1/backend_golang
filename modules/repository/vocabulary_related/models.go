@@ -4,9 +4,6 @@ type VocabularyRelatedModel struct {
 	VocabularyID int `gorm:"primaryKey"`
 	SentenceID   int `gorm:"primaryKey"`
 
-	// Add other fields if necessary
-
-	// Relationships
 	Vocabulary VocabularyModel `gorm:"foreignkey:ID;references:VocabularyID"`
 	Sentence   SentenceModel   `gorm:"foreignkey:ID;references:SentenceID"`
 }

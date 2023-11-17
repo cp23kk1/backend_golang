@@ -7,3 +7,7 @@ type VocabularyModel struct {
 	Pos            string `gorm:"not null;column:pos;size:45"`
 	DifficultyCefr string `gorm:"not null;column:difficulty_cefr;size:45"`
 }
+
+func (VocabularyModel) TableName() string {
+	return "vocabulary"
+}

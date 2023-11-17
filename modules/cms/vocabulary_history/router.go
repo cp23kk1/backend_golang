@@ -44,7 +44,7 @@ func GetVocabularyHistoryHandler(c *gin.Context) {
 		return
 	}
 
-	history, err := vocabularyHistoryRepo.GetVocabularyHistoryByID(uint(id))
+	history, err := vocabularyHistoryRepo.FindVocabularyHistoryByID(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "VocabularyHistory not found"})
 		return
@@ -55,7 +55,11 @@ func GetVocabularyHistoryHandler(c *gin.Context) {
 
 // GetAllVocabularyHistoryHandler retrieves all VocabularyHistory records.
 func GetAllVocabularyHistoryHandler(c *gin.Context) {
-	histories, _ := vocabularyHistoryRepo.GetVocabularyHistoryAll()
+	histories, err := vocabularyHistoryRepo.FindVocabularyHistoryAll()
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Vocabulary History Find All error"})
+		return
+	}
 
 	c.JSON(http.StatusOK, histories)
 }
@@ -74,7 +78,7 @@ func UpdateVocabularyHistoryHandler(c *gin.Context) {
 		return
 	}
 
-	if err := vocabularyHistoryRepo.UpdateVocabularyHistory(uint(id), vocabularyHistoryModelValidator.UserID, vocabularyHistoryModelValidator.VocabularyID, vocabularyHistoryModelValidator.GameID, vocabularyHistoryModelValidator.Correctness); err != nil {
+	if err := vocabularyHistoryRepo.UpdateVocabularyHistory(id, vocabularyHistoryModelValidator.UserID, vocabularyHistoryModelValidator.VocabularyID, vocabularyHistoryModelValidator.GameID, vocabularyHistoryModelValidator.Correctness); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update VocabularyHistory"})
 		return
 	}
@@ -90,7 +94,7 @@ func DeleteVocabularyHistoryHandler(c *gin.Context) {
 		return
 	}
 
-	history, err := vocabularyHistoryRepo.GetVocabularyHistoryByID(uint(id))
+	history, err := vocabularyHistoryRepo.FindVocabularyHistoryByID(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "VocabularyHistory not found"})
 		return

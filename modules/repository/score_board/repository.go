@@ -3,20 +3,9 @@ package score_board
 import (
 	"cp23kk1/common/databases"
 	"time"
-
-	"gorm.io/gorm"
 )
 
-func AutoMigrate(db *gorm.DB) {
-
-	db.AutoMigrate(&ScoreBoardModel{})
-}
-
-func (ScoreBoardModel) TableName() string {
-	return "score_board"
-}
-
-func CreateScoreBoard(userID, score, week int, startDate, endDate time.Time) {
+func CreateScoreBoard(userID, score, week int, startDate, endDate time.Time) error {
 	db := databases.GetDB()
 
 	scoreBoard := ScoreBoardModel{
@@ -26,7 +15,7 @@ func CreateScoreBoard(userID, score, week int, startDate, endDate time.Time) {
 		StartDate: startDate,
 		EndDate:   endDate,
 	}
-	db.Create(&scoreBoard)
+	return db.Create(&scoreBoard).Error
 }
 func FindScoreBoardByID(id int) (*ScoreBoardModel, error) {
 	db := databases.GetDB()
@@ -53,11 +42,14 @@ func FindAllScoreBoards() ([]ScoreBoardModel, error) {
 
 	return scoreBoards, err
 }
-func DeleteScoreBoard(id int) {
+func DeleteScoreBoard(id int) error {
 	db := databases.GetDB()
 
-	scoreBoard, _ := FindScoreBoardByID(id)
-	if scoreBoard != nil {
-		db.Delete(scoreBoard)
+	scoreBoard, err := FindScoreBoardByID(id)
+	if err != nil {
+		return err
 	}
+
+	return db.Delete(scoreBoard).Error
+
 }

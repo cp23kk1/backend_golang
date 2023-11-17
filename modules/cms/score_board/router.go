@@ -46,7 +46,11 @@ func CreateScoreBoardHandler(c *gin.Context) {
 }
 
 func GetScoreBoardByIDHandler(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+		return
+	}
 
 	scoreBoard, err := ScoreBoardRepo.FindScoreBoardByID(id)
 	if err != nil {
@@ -58,8 +62,11 @@ func GetScoreBoardByIDHandler(c *gin.Context) {
 }
 
 func GetScoreBoardsByUserIDHandler(c *gin.Context) {
-	userID, _ := strconv.Atoi(c.Param("userID"))
-
+	userID, err := strconv.Atoi(c.Param("userID"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+		return
+	}
 	scoreBoards, err := ScoreBoardRepo.FindScoreBoardsByUserID(userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})

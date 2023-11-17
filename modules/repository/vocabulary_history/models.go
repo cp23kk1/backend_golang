@@ -1,9 +1,9 @@
 package vocabulary_history
 
 type VocabularyHistoryModel struct {
-	ID           uint `gorm:"primaryKey"`
-	UserID       uint
-	VocabularyID uint
+	ID           int `gorm:"primaryKey"`
+	UserID       int
+	VocabularyID int
 	GameID       string
 	Correctness  bool
 

@@ -8,8 +8,8 @@ import (
 func CreateSentence(passageId, sequence int, text, meaning string) error {
 	db := databases.GetDB()
 	sentence := &SentenceModel{
-		PassageID: passageId,
-		Sequence:  sequence,
+		PassageID: &passageId,
+		Sequence:  &sequence,
 		Text:      text,
 		Meaning:   meaning,
 	}
@@ -17,13 +17,13 @@ func CreateSentence(passageId, sequence int, text, meaning string) error {
 }
 
 // GetSentenceByID retrieves a sentence record from the database by its ID.
-func GetSentenceByID(id int) (*SentenceModel, error) {
+func FindSentenceByID(id int) (*SentenceModel, error) {
 	db := databases.GetDB()
 	var sentence SentenceModel
 	err := db.Preload("Passage").First(&sentence, id).Error
 	return &sentence, err
 }
-func GetAllSentence() (*[]SentenceModel, error) {
+func FindAllSentence() (*[]SentenceModel, error) {
 	db := databases.GetDB()
 	var sentence []SentenceModel
 	err := db.Preload("Passage").Find(&sentence).Error
@@ -33,13 +33,13 @@ func GetAllSentence() (*[]SentenceModel, error) {
 // UpdateSentence updates an existing sentence record in the database.
 func UpdateSentence(id, passageId, sequence int, text, meaning string) error {
 	db := databases.GetDB()
-	sentence, err := GetSentenceByID(id)
+	sentence, err := FindSentenceByID(id)
 	if err != nil {
 		return err
 	}
 
-	sentence.PassageID = passageId
-	sentence.Sequence = sequence
+	sentence.PassageID = &passageId
+	sentence.Sequence = &sequence
 	sentence.Text = text
 	sentence.Meaning = meaning
 

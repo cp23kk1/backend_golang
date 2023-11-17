@@ -18,6 +18,11 @@ type UserModel struct {
 	IsPrivateProfile bool              `gorm:"not null;column:is_private_profile"`
 	ScoreBoards      []ScoreBoardModel `gorm:"foreignKey:UserID;references:id"`
 }
+
+func (UserModel) TableName() string {
+	return "user"
+}
+
 type ScoreBoardModel struct {
 	ID        int
 	UserID    int `gorm:"not null"`

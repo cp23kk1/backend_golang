@@ -5,15 +5,14 @@ import (
 	scoreBoardRepo "cp23kk1/modules/repository/score_board"
 )
 
-func createPassageHistory(userID int, passageId int, gameId string, correctness bool) error {
+func createPassageHistory(passageId, userID int, gameId string, correctness bool) error {
 	err := passageHistoryRepo.CreatePassageHistory(userID, passageId, gameId, correctness)
 	return err
 }
-func getPassageHistory() []passageHistoryRepo.PassageHistoryModel {
+func getPassageHistory() ([]passageHistoryRepo.PassageHistoryModel, error) {
 	return passageHistoryRepo.FindAllPassagesHistory()
 }
 
-// TODO:yerm
 func getScoreBoard() ([]scoreBoardRepo.ScoreBoardModel, error) {
 	return scoreBoardRepo.FindAllScoreBoards()
 }

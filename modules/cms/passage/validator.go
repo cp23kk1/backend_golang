@@ -7,7 +7,7 @@ import (
 )
 
 type PassageModelValidator struct {
-	Title string `form:"title" json:"title" binding:"required,max=2048"`
+	Title string `form:"title" json:"title" binding:"required,max=255"`
 }
 
 func NewPassageModelValidator() PassageModelValidator {

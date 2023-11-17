@@ -18,11 +18,11 @@ type VocabsSerealizer struct {
 }
 
 type VocabResponse struct {
-	ID             int     `json:"id"`
-	Word           string  `json:"word"`
-	Meaning        *string `json:"meaning"`
-	Pos            string  `json:"pos"`
-	DifficultyCefr string  `json:"difficulty"`
+	ID             int    `json:"id"`
+	Word           string `json:"word"`
+	Meaning        string `json:"meaning"`
+	Pos            string `json:"pos"`
+	DifficultyCefr string `json:"difficulty"`
 }
 
 func (self *VocabSerealizer) Response() VocabResponse {

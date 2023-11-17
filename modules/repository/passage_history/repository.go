@@ -2,14 +2,7 @@ package passage_history
 
 import (
 	"cp23kk1/common/databases"
-
-	"gorm.io/gorm"
 )
-
-func AutoMigrate(db *gorm.DB) {
-
-	db.AutoMigrate(&PassageHistoryModel{})
-}
 
 func CreatePassageHistory(userID, passageID int, gameID string, correctness bool) error {
 	db := databases.GetDB()
@@ -24,11 +17,11 @@ func CreatePassageHistory(userID, passageID int, gameID string, correctness bool
 	return err
 }
 
-func FindAllPassagesHistory() []PassageHistoryModel {
+func FindAllPassagesHistory() ([]PassageHistoryModel, error) {
 	db := databases.GetDB()
 	var passages []PassageHistoryModel
-	db.Preload("User").Preload("Passage").Find(&passages)
-	return passages
+	err := db.Preload("User").Preload("Passage").Find(&passages).Error
+	return passages, err
 }
 func FindPassageHistoryByID(id int) (*PassageHistoryModel, error) {
 	db := databases.GetDB()

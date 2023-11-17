@@ -47,7 +47,7 @@ func GetVocabularyRelatedHandler(c *gin.Context) {
 		return
 	}
 
-	vocabularyRelated, err := vocabularyRelatedRepo.GetVocabularyRelatedByID(vocabularyID, sentenceID)
+	vocabularyRelated, err := vocabularyRelatedRepo.FindVocabularyRelatedByID(vocabularyID, sentenceID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "VocabularyRelated not found"})
 		return
@@ -57,7 +57,7 @@ func GetVocabularyRelatedHandler(c *gin.Context) {
 }
 func GetAllVocabularyRelatedHandler(c *gin.Context) {
 
-	vocabularyRelated, err := vocabularyRelatedRepo.GetAllVocabularyRelated()
+	vocabularyRelated, err := vocabularyRelatedRepo.FindAllVocabularyRelated()
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "VocabularyRelated not found"})
 		return

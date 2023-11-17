@@ -2,55 +2,48 @@ package passage
 
 import (
 	"cp23kk1/common/databases"
-
-	"gorm.io/gorm"
 )
 
-func AutoMigrate(db *gorm.DB) {
-	db.AutoMigrate(&PassageModel{})
-}
-
-func (PassageModel) TableName() string {
-	return "passage"
-}
-
-func CreatePassage(title string) {
+func CreatePassage(title string) error {
 	db := databases.GetDB()
 	passage := &PassageModel{
 		Title: title}
-	db.Create(passage)
+	err := db.Create(passage).Error
+	return err
 }
 
-func FindOnePassage(id int) *PassageModel {
+func FindOnePassage(id int) (*PassageModel, error) {
 	db := databases.GetDB()
 	var passage PassageModel
-	db.First(&passage, id)
-	if passage.ID == 0 {
-		return nil // Record not found
-	}
-	return &passage
+	err := db.First(&passage, id).Error
+	return &passage, err
 }
 
-func FindAllPassages() []PassageModel {
+func FindAllPassages() ([]PassageModel, error) {
 	db := databases.GetDB()
 	var passages []PassageModel
-	db.Find(&passages)
-	return passages
+	err := db.Find(&passages).Error
+	return passages, err
 }
 
-func UpdatePassage(id int, title string) {
+func UpdatePassage(id int, title string) error {
 	db := databases.GetDB()
-	passage := FindOnePassage(id)
-	if passage != nil {
-		passage.Title = title
-		db.Save(passage)
+	passage, err := FindOnePassage(id)
+	if err != nil {
+		return err
 	}
+	passage.Title = title
+	err = db.Save(passage).Error
+	return err
 }
 
-func DeletePassage(id int) {
+func DeletePassage(id int) error {
 	db := databases.GetDB()
-	passage := FindOnePassage(id)
-	if passage != nil {
-		db.Delete(passage)
+	passage, err := FindOnePassage(id)
+	if err != nil {
+		return err
 	}
+
+	return db.Delete(passage).Error
+
 }

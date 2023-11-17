@@ -55,7 +55,11 @@ func GetVocabularyHandler(c *gin.Context) {
 }
 
 func GetAllVocabulariesHandler(c *gin.Context) {
-	vocabularies := vocabularyRepo.FindManyVocabulary()
+	vocabularies, err := vocabularyRepo.FindManyVocabulary()
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Vocabulary Get All Error"})
+		return
+	}
 	c.JSON(http.StatusOK, vocabularies)
 }
 

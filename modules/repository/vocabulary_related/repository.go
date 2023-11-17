@@ -2,26 +2,20 @@ package vocabulary_related
 
 import (
 	"cp23kk1/common/databases"
-
-	"gorm.io/gorm"
 )
 
-type VocabularyRelatedRepository struct {
-	DB *gorm.DB
-}
-
 // CreateVocabularyRelated creates a new vocabulary related record in the database
-func CreateVocabularyRelated(vocabularyId, sentenceId int) error {
+func CreateVocabularyRelated(vocabularyID, sentenceID int) error {
 	db := databases.GetDB()
 	vocabularyRelated := &VocabularyRelatedModel{
-		VocabularyID: vocabularyId,
-		SentenceID:   sentenceId,
+		VocabularyID: vocabularyID,
+		SentenceID:   sentenceID,
 	}
 	return db.Create(vocabularyRelated).Error
 }
 
 // GetVocabularyRelatedByID retrieves a vocabulary related record by ID from the database
-func GetVocabularyRelatedByID(vocabularyID, sentenceID int) (*VocabularyRelatedModel, error) {
+func FindVocabularyRelatedByID(vocabularyID, sentenceID int) (*VocabularyRelatedModel, error) {
 	db := databases.GetDB()
 	var vocabularyRelated VocabularyRelatedModel
 	err := db.Where("vocabulary_id = ? AND sentence_id = ?", vocabularyID, sentenceID).Preload("Vocabulary").Preload("Sentence").First(&vocabularyRelated).Error
@@ -44,7 +38,7 @@ func DeleteVocabularyRelated(vocabularyID, sentenceID int) error {
 }
 
 // GetAllVocabularyRelated retrieves all VocabularyRelated records from the database
-func GetAllVocabularyRelated() ([]VocabularyRelatedModel, error) {
+func FindAllVocabularyRelated() ([]VocabularyRelatedModel, error) {
 	db := databases.GetDB()
 
 	var vocabularyRelatedList []VocabularyRelatedModel

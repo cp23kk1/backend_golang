@@ -42,7 +42,7 @@ func GetSentenceHistoryHandler(c *gin.Context) {
 		return
 	}
 
-	history, err := sentenceHistoryRepo.GetSentenceHistoryByID(uint(id))
+	history, err := sentenceHistoryRepo.FindSentenceHistoryByID(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "SentenceHistory not found"})
 		return
@@ -53,7 +53,7 @@ func GetSentenceHistoryHandler(c *gin.Context) {
 
 // GetAllSentenceHistoryHandler retrieves all SentenceHistory records.
 func GetAllSentenceHistoryHandler(c *gin.Context) {
-	histories, _ := sentenceHistoryRepo.GetSentenceHistoryAll()
+	histories, _ := sentenceHistoryRepo.FindSentenceHistoryAll()
 
 	c.JSON(http.StatusOK, histories)
 }
@@ -72,7 +72,7 @@ func UpdateSentenceHistoryHandler(c *gin.Context) {
 		return
 	}
 
-	if err := sentenceHistoryRepo.UpdateSentenceHistory(uint(id), sentenceHistoryModelValidator.UserID, sentenceHistoryModelValidator.SentenceID, sentenceHistoryModelValidator.GameID, sentenceHistoryModelValidator.Correctness); err != nil {
+	if err := sentenceHistoryRepo.UpdateSentenceHistory(id, sentenceHistoryModelValidator.UserID, sentenceHistoryModelValidator.SentenceID, sentenceHistoryModelValidator.GameID, sentenceHistoryModelValidator.Correctness); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update SentenceHistory"})
 		return
 	}
@@ -88,7 +88,7 @@ func DeleteSentenceHistoryHandler(c *gin.Context) {
 		return
 	}
 
-	history, err := sentenceHistoryRepo.GetSentenceHistoryByID(uint(id))
+	history, err := sentenceHistoryRepo.FindSentenceHistoryByID(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "SentenceHistory not found"})
 		return

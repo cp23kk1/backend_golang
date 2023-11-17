@@ -3,18 +3,7 @@ package user
 import (
 	"cp23kk1/common/databases"
 	"cp23kk1/modules/repository/enum"
-
-	"gorm.io/gorm"
 )
-
-func AutoMigrate(db *gorm.DB) {
-
-	db.AutoMigrate(&UserModel{})
-}
-
-func (UserModel) TableName() string {
-	return "user"
-}
 
 func CreateUser(email string, role enum.Role, displayName string, image string, isPrivateProfile bool) error {
 	db := databases.GetDB()

@@ -73,7 +73,7 @@ func UpdateSentenceByIDHandler(c *gin.Context) {
 func GetSentenceByIDHandler(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 
-	sentence, err := SentenceRepo.GetSentenceByID(id)
+	sentence, err := SentenceRepo.FindSentenceByID(id)
 	if err != nil {
 		handleError(c, http.StatusNotFound, "Sentence not found", err)
 		return
@@ -95,7 +95,7 @@ func GetSentenceByIDHandler(c *gin.Context) {
 // }
 
 func GetAllSentencesHandler(c *gin.Context) {
-	sentences, err := SentenceRepo.GetAllSentence()
+	sentences, err := SentenceRepo.FindAllSentence()
 	if err != nil {
 		handleError(c, http.StatusInternalServerError, "Internal server error", err)
 		return
@@ -108,7 +108,7 @@ func DeleteSentenceHandler(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 
 	// Check if the sentence exists
-	_, err := SentenceRepo.GetSentenceByID(id)
+	_, err := SentenceRepo.FindSentenceByID(id)
 	if err != nil {
 		handleError(c, http.StatusNotFound, "Sentence not found", err)
 		return

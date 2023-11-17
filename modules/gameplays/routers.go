@@ -15,8 +15,11 @@ func AddGameplayRoutes(rg *gin.RouterGroup) {
 }
 
 func VocabulariesRetrieve(c *gin.Context) {
-	vocabs := getVocabularies()
-
+	vocabs, err := getVocabularies()
+	if err != nil {
+		c.JSON(http.StatusNotFound, common.NewError("eiei", err)) // need to change later
+		return
+	}
 	c.JSON(http.StatusOK, gin.H{"vocabs": vocabs})
 }
 

@@ -14,8 +14,8 @@ func SetupPassageHistoryRoutes(router *gin.RouterGroup) {
 	passageHistoryGroup := router.Group("/passage-history")
 
 	passageHistoryGroup.POST("/", CreatePassageHistoryHandler)
-	passageHistoryGroup.GET("/:id", FindPassageHistoryByIDHandler)
-	passageHistoryGroup.GET("/", FindAllPassagesHistoryHandler)
+	passageHistoryGroup.GET("/:id", GetPassageHistoryByIDHandler)
+	passageHistoryGroup.GET("/", GetAllPassagesHistoryHandler)
 	passageHistoryGroup.DELETE("/:id", DeletePassageHistoryHandler)
 }
 func CreatePassageHistoryHandler(c *gin.Context) {
@@ -35,13 +35,18 @@ func CreatePassageHistoryHandler(c *gin.Context) {
 }
 
 // FindAllPassagesHistoryHandler handles the Find All Passage Histories route
-func FindAllPassagesHistoryHandler(c *gin.Context) {
-	passages := passageHistoryRepo.FindAllPassagesHistory()
+func GetAllPassagesHistoryHandler(c *gin.Context) {
+	passages, err := passageHistoryRepo.FindAllPassagesHistory()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Passage Get All Error"})
+		return
+	}
+	// P
 	c.JSON(200, passages)
 }
 
 // FindPassageHistoryByIDHandler handles the Find Passage History by ID route
-func FindPassageHistoryByIDHandler(c *gin.Context) {
+func GetPassageHistoryByIDHandler(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
