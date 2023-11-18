@@ -21,7 +21,7 @@ pipeline {
                      --build-arg DB_HOST=${env.DB_HOST}${params.deployEnvironment} \
                      --build-arg DB_USER=${env.DB_USER} \
                      --build-arg DB_PASSWORD=${env.DB_PASSWORD}\
-                     --build-arg DB_PORT=${env.DB_PORT} ."
+                     --build-arg DB_PORT=${env.DB_PORT} ./docker/."
                 }
             }
         }
