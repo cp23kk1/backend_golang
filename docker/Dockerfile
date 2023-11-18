@@ -14,6 +14,8 @@ ENV DB_PORT=${DB_PORT}
 
 COPY ../. .
 
+RUN go mod download
+RUN go mod tidy
 RUN go build -o main main.go
 
 CMD ["./main"]
