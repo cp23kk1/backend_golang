@@ -2,8 +2,22 @@ FROM golang:1.18
 
 WORKDIR /go/src/app
 
+# ARG DB_USER
+# ARG DB_PASSWORD
+# ARG DB_HOST
+# ARG DB_PASS
+# ARG DB_PORT
+
+ENV DB_USER=${env.DB_USER}
+ENV DB_PASSWORD=${env.DB_PASSWORD}
+ENV DB_HOST=${env.DB_HOST}
+ENV DB_PASS=${env.DB_PASS}
+ENV DB_PORT=${env.DB_PORT}
+
 COPY . .
 
 RUN go build -o main main.go
 
 CMD ["./main"]
+
+EXPOSE 8080
