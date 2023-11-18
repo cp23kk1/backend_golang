@@ -5,8 +5,8 @@ import (
 	scoreBoardRepo "cp23kk1/modules/repository/score_board"
 )
 
-func createPassageHistory(userID, passageId int, gameId string, correctness bool) error {
-	err := passageHistoryRepo.CreatePassageHistory(userID, passageId, gameId, correctness)
+func createPassageHistory(userID, passageID int, gameID string, correctness bool) error {
+	err := passageHistoryRepo.CreatePassageHistory(userID, passageID, gameID, correctness)
 	return err
 }
 func getPassageHistory() ([]passageHistoryRepo.PassageHistoryModel, error) {
