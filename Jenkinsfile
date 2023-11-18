@@ -52,16 +52,6 @@ pipeline {
             }
         }
 
-        stage('Link Networks') {
-            steps {
-                script {
-
-                  sh "docker network connect ${params.deployEnvironment}-network ${CONTAINER_NAME}-${params.deployEnvironment}"
-                }
-            }
-        
-        }
-
         stage('Clear Storage') {
             steps {
                 script {
