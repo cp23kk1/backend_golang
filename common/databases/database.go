@@ -56,7 +56,7 @@ func LoadDatabaseConfig() *Database {
 	}
 
 	return &Database{
-		USERNAME: os.Getenv("DB_USERNAME"),
+		USERNAME: os.Getenv("DB_USER"),
 		PASSWORD: os.Getenv("DB_PASSWORD"),
 		NAME:     os.Getenv("DB_NAME"),
 		HOST:     os.Getenv("DB_HOST"),
