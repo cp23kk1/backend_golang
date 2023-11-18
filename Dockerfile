@@ -12,7 +12,7 @@ ENV DB_PASSWORD=${DB_PASSWORD}
 ENV DB_HOST=${DB_HOST}
 ENV DB_PORT=${DB_PORT}
 
-COPY ../. .
+COPY . .
 
 RUN go mod tidy
 RUN go mod download
