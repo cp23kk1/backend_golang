@@ -17,10 +17,11 @@ pipeline {
             steps {
                 script {
                     sh "echo ${params.deployEnvironment}"
-                    sh "docker build -t --build-arg DB_HOST=${env.DB_HOST}${params.deployEnvironment} \
-                    --build-arg DB_USER=${env.DB_USER} --build-arg DB_PASSWORD=${env.DB_PASSWORD}\
-                     --build-arg DB_HOST=${env.DB_HOST} --build-arg DB_PASS=${env.DB_PASS}\
-                      --build-arg DB_PORT=${env.DB_PORT} ${GOLANG_IMAGE_NAME}:${IMAGE_TAG} ."
+                    sh "docker build -t  ${GOLANG_IMAGE_NAME}:${IMAGE_TAG} \
+                     --build-arg DB_HOST=${env.DB_HOST}${params.deployEnvironment} \
+                     --build-arg DB_USER=${env.DB_USER} \
+                     --build-arg DB_PASSWORD=${env.DB_PASSWORD}\
+                     --build-arg DB_PORT=${env.DB_PORT} ."
                 }
             }
         }
