@@ -43,7 +43,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                  sh "docker run -d --name ${CONTAINER_NAME}-${params.deployEnvironment} --network ${env.DB_HOST}${params.deployEnvironment} ${GOLANG_IMAGE_NAME}:${IMAGE_TAG}"
+                  sh "docker run -d --name ${CONTAINER_NAME}-${params.deployEnvironment} --network ${params.deployEnvironment}-network ${GOLANG_IMAGE_NAME}:${IMAGE_TAG}"
                 }
             }
         }
