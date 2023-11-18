@@ -14,6 +14,7 @@ import (
 	"cp23kk1/modules/history"
 	"cp23kk1/modules/ping"
 	"cp23kk1/modules/users"
+	"os"
 
 	"github.com/gin-gonic/gin"
 )
@@ -28,13 +29,19 @@ func Run(router *gin.Engine) {
 // this way every group of routes can be defined in their own file
 // so this one won't be so messy
 func getRoutes(router *gin.Engine) {
-	api := router.Group("/api")
+	api := router.Group("")
+	if env := os.Getenv("ENV"); env == "prod" {
+		api = router.Group("/api")
+	} else {
+		api = router.Group("/" + env + "/api")
+	}
+
 	ping.AddPingRoutes(api)
 	users.AddUserRoutes(api)
 	gameplays.AddGameplayRoutes(api)
 	history.AddHistoryRoutes(api)
 
-	v1 := router.Group("/api/cms")
+	v1 := api.Group("/cms")
 	passage.SetupPassageRoutes(v1)
 	passage_history.SetupPassageHistoryRoutes(v1)
 	vocabulary.SetupVocabularyRoutes(v1)

@@ -22,7 +22,8 @@ pipeline {
                      --build-arg DB_USERNAME=${env.DB_USERNAME} \
                      --build-arg DB_NAME=${env.DB_NAME} \
                      --build-arg DB_PASSWORD=${env.DB_PASSWORD}\
-                     --build-arg DB_PORT=${env.DB_PORT} ."
+                     --build-arg DB_PORT=${env.DB_PORT} \
+                     --build-arg ENV=${params.deployEnvironment} ."
                 }
             }
         }
