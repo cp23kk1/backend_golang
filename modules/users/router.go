@@ -1,15 +1,12 @@
 package users
 
 import (
-	"errors"
-	"fmt"
 	"net/http"
 	"strconv"
 
 	"cp23kk1/common"
 
 	"github.com/gin-gonic/gin"
-	"github.com/mitchellh/mapstructure"
 )
 
 func AddUserRoutes(rg *gin.RouterGroup) {
@@ -22,15 +19,11 @@ func UserRetrieve(c *gin.Context) {
 	userId, _ := strconv.Atoi(c.Param("id"))
 	user, err := getUser(userId)
 	if err != nil {
-		c.JSON(http.StatusNotFound, common.NewError("id", errors.New("Invalid ID")))
+		c.JSON(http.StatusNotFound, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: err.Error()}, map[string]interface{}{}))
 		return
 	}
-	var userResponse UserResponse
-	err = mapstructure.Decode(user, &userResponse)
-	if err != nil {
-		fmt.Println("Error mapping data:", err)
-	}
-	c.JSON(http.StatusOK, gin.H{"user": userResponse})
+	serealizer := UserSerializer{c, *user}
+	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "success"}, map[string]interface{}{"users": serealizer.Response()}))
 
 	// serializer := UserSerializer{c, user}
 	// c.JSON(http.StatusOK, gin.H{"user": serializer.Response()})

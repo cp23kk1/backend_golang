@@ -1,7 +1,17 @@
 package routes
 
 import (
+	"cp23kk1/modules/cms/passage"
+	"cp23kk1/modules/cms/passage_history"
+	"cp23kk1/modules/cms/score_board"
+	"cp23kk1/modules/cms/sentence"
+	"cp23kk1/modules/cms/sentence_history"
+	"cp23kk1/modules/cms/user"
+	"cp23kk1/modules/cms/vocabulary"
+	"cp23kk1/modules/cms/vocabulary_history"
+	"cp23kk1/modules/cms/vocabulary_related"
 	"cp23kk1/modules/gameplays"
+	"cp23kk1/modules/history"
 	"cp23kk1/modules/ping"
 	"cp23kk1/modules/users"
 
@@ -22,4 +32,17 @@ func getRoutes(router *gin.Engine) {
 	ping.AddPingRoutes(api)
 	users.AddUserRoutes(api)
 	gameplays.AddGameplayRoutes(api)
+	history.AddHistoryRoutes(api)
+
+	v1 := router.Group("/api/cms")
+	passage.SetupPassageRoutes(v1)
+	passage_history.SetupPassageHistoryRoutes(v1)
+	vocabulary.SetupVocabularyRoutes(v1)
+	vocabulary_history.SetupVocabularyHistoryRoutes(v1)
+	score_board.SetupScoreBoardRoutes(v1)
+	sentence.SetupSentenceRoutes(v1)
+	sentence_history.SetupSentenceHistoryRoutes(v1)
+	user.SetupUserRoutes(v1)
+	vocabulary_related.SetupVocabularyRelatedRoutes(v1)
+
 }
