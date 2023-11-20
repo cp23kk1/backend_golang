@@ -1,0 +1,27 @@
+FROM golang:1.18
+
+WORKDIR /go/src/app
+
+ARG DB_USERNAME
+ARG DB_PASSWORD
+ARG DB_HOST
+ARG DB_PORT
+ARG DB_NAME
+ARG ENV
+
+ENV DB_USERNAME=${DB_USERNAME}
+ENV DB_PASSWORD=${DB_PASSWORD}
+ENV DB_NAME=${DB_NAME}
+ENV DB_HOST=${DB_HOST}
+ENV DB_PORT=${DB_PORT}
+ENV ENV=${ENV}
+
+COPY . .
+
+RUN go mod tidy
+RUN go mod download
+RUN go build -o main main.go
+
+CMD ["./main"]
+
+EXPOSE 8080
