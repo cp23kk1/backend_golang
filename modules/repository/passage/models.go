@@ -1,8 +1,8 @@
 package passage
 
 type PassageModel struct {
-	ID    int `gorm:"primary_key"`
-	Title string
+	ID    uint   `gorm:"primaryKey"`
+	Title string `gorm:"type:varchar(255);not null"`
 }
 
 func (PassageModel) TableName() string {

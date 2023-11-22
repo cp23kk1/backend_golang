@@ -9,11 +9,11 @@ type VocabularyRelatedModel struct {
 }
 
 type VocabularyModel struct {
-	ID             int
-	Word           string
-	Meaning        string
-	Pos            string
-	DifficultyCefr string
+	ID             uint   `gorm:"primaryKey"`
+	Word           string `gorm:"type:varchar(255);not null"`
+	Meaning        string `gorm:"type:varchar(255);not null"`
+	POS            string `gorm:"type:varchar(45);not null"`
+	DifficultyCEFR string `gorm:"type:varchar(45);not null"`
 }
 
 func (VocabularyModel) TableName() string {
@@ -21,11 +21,11 @@ func (VocabularyModel) TableName() string {
 }
 
 type SentenceModel struct {
-	ID        int
-	PassageID int
-	Sequence  int
-	Text      string
-	Meaning   string
+	ID        uint   `gorm:"primaryKey"`
+	PassageID *uint  `gorm:"index;foreignKey:PassageID"`
+	Sequence  *int   `gorm:"index"`
+	Text      string `gorm:"type:varchar(255);not null"`
+	Meaning   string `gorm:"type:varchar(255);not null"`
 }
 
 func (SentenceModel) TableName() string {

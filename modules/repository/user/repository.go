@@ -1,12 +1,20 @@
 package user
 
 import (
-	"cp23kk1/common/databases"
 	"cp23kk1/modules/repository/enum"
+
+	"gorm.io/gorm"
 )
 
-func CreateUser(email string, role enum.Role, displayName string, image string, isPrivateProfile bool) error {
-	db := databases.GetDB()
+type UserRepository struct {
+	db *gorm.DB
+}
+
+func NewUserRepository(db *gorm.DB) UserRepository {
+	return UserRepository{db: db}
+}
+
+func (u UserRepository) CreateUser(email string, role enum.Role, displayName string, image string, isPrivateProfile bool) error {
 
 	user := UserModel{
 		Email:            &email,
@@ -16,26 +24,23 @@ func CreateUser(email string, role enum.Role, displayName string, image string, 
 		Image:            &image,
 		IsPrivateProfile: isPrivateProfile,
 	}
-	return db.Create(&user).Error
+	return u.db.Create(&user).Error
 }
 
-func FindUserByID(id int) (*UserModel, error) {
-	db := databases.GetDB()
+func (u UserRepository) FindUserByID(id int) (*UserModel, error) {
 	var user UserModel
-	err := db.Where("id = ?", id).Preload("ScoreBoards").First(&user).Error
+	err := u.db.Where("id = ?", id).Preload("ScoreBoards").First(&user).Error
 	return &user, err
 }
-func FindAllUsers() (*[]UserModel, error) {
-	db := databases.GetDB()
+func (u UserRepository) FindAllUsers() (*[]UserModel, error) {
 	var user []UserModel
-	err := db.Preload("ScoreBoards").Find(&user).Error
+	err := u.db.Preload("ScoreBoards").Find(&user).Error
 	return &user, err
 }
 
-func UpdateUser(id int, email string, role enum.Role, displayName string, image string, isPrivateProfile bool) error {
-	db := databases.GetDB()
+func (u UserRepository) UpdateUser(id int, email string, role enum.Role, displayName string, image string, isPrivateProfile bool) error {
 
-	user, err := FindUserByID(id)
+	user, err := u.FindUserByID(id)
 	if err != nil {
 		return err
 	}
@@ -46,21 +51,20 @@ func UpdateUser(id int, email string, role enum.Role, displayName string, image 
 	user.Image = &image
 	user.IsPrivateProfile = isPrivateProfile
 
-	if result := db.Save(&user); result.Error != nil {
+	if result := u.db.Save(&user); result.Error != nil {
 		return result.Error
 	}
 	return nil
 }
 
-func DeleteUser(id int) error {
-	db := databases.GetDB()
+func (u UserRepository) DeleteUser(id int) error {
 
-	user, err := FindUserByID(id)
+	user, err := u.FindUserByID(id)
 	if err != nil {
 		return err
 	}
 
-	if result := db.Delete(&user); result.Error != nil {
+	if result := u.db.Delete(&user); result.Error != nil {
 		return result.Error
 	}
 	return nil

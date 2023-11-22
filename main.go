@@ -20,16 +20,26 @@ import (
 
 func Migrate(db *gorm.DB) {
 
-	db.AutoMigrate(&userRepo.UserModel{},
-		&scoreBoardRepo.ScoreBoardModel{},
-		&vocabularyRepo.VocabularyModel{},
-		&passage.PassageModel{},
-		&sentence.SentenceModel{},
-		&passageHistoryRepo.PassageHistoryModel{},
-		&vocabulary_history.VocabularyHistoryModel{},
-		&sentence_history.SentenceHistoryModel{},
-		&vocabulary_related.VocabularyRelatedModel{},
-	)
+	db.AutoMigrate(&userRepo.UserModel{})
+	db.AutoMigrate(&scoreBoardRepo.ScoreBoardModel{})
+	db.AutoMigrate(&vocabularyRepo.VocabularyModel{})
+	db.AutoMigrate(&passage.PassageModel{})
+	db.AutoMigrate(&sentence.SentenceModel{})
+	db.AutoMigrate(&passageHistoryRepo.PassageHistoryModel{})
+	db.AutoMigrate(&vocabulary_history.VocabularyHistoryModel{})
+	db.AutoMigrate(&sentence_history.SentenceHistoryModel{})
+	db.AutoMigrate(&vocabulary_related.VocabularyRelatedModel{})
+
+	// db.AutoMigrate(&userRepo.UserModel{},
+	// 	&scoreBoardRepo.ScoreBoardModel{},
+	// 	&vocabularyRepo.VocabularyModel{},
+	// 	&passage.PassageModel{},
+	// 	&sentence.SentenceModel{},
+	// 	&passageHistoryRepo.PassageHistoryModel{},
+	// 	&vocabulary_history.VocabularyHistoryModel{},
+	// 	&sentence_history.SentenceHistoryModel{},
+	// 	&vocabulary_related.VocabularyRelatedModel{},
+	// )
 	// userRepo.AutoMigrate(db)
 	// scoreBoardRepo.AutoMigrate(db)
 	// vocabularyRepo.AutoMigrate(db)

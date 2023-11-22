@@ -1,6 +1,7 @@
 package score_board
 
 import (
+	"cp23kk1/common/databases"
 	ScoreBoardRepo "cp23kk1/modules/repository/score_board"
 	"net/http"
 	"strconv"
@@ -36,8 +37,9 @@ func CreateScoreBoardHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	scoreBoardRepository := ScoreBoardRepo.NewScoreBoardRepository(databases.GetDB())
 	// Create the score board record
-	ScoreBoardRepo.CreateScoreBoard(scoreBoardModelValidator.UserID,
+	scoreBoardRepository.CreateScoreBoard(uint(scoreBoardModelValidator.UserID),
 		scoreBoardModelValidator.Score,
 		scoreBoardModelValidator.Week,
 		startDate,
@@ -51,8 +53,9 @@ func GetScoreBoardByIDHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
 		return
 	}
+	scoreBoardRepository := ScoreBoardRepo.NewScoreBoardRepository(databases.GetDB())
 
-	scoreBoard, err := ScoreBoardRepo.FindScoreBoardByID(id)
+	scoreBoard, err := scoreBoardRepository.FindScoreBoardByID(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Score board not found"})
 		return
@@ -67,7 +70,9 @@ func GetScoreBoardsByUserIDHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
 		return
 	}
-	scoreBoards, err := ScoreBoardRepo.FindScoreBoardsByUserID(userID)
+	scoreBoardRepository := ScoreBoardRepo.NewScoreBoardRepository(databases.GetDB())
+
+	scoreBoards, err := scoreBoardRepository.FindScoreBoardsByUserID(userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
 		return
@@ -77,7 +82,9 @@ func GetScoreBoardsByUserIDHandler(c *gin.Context) {
 }
 
 func GetAllScoreBoardsHandler(c *gin.Context) {
-	scoreBoards, err := ScoreBoardRepo.FindAllScoreBoards()
+	scoreBoardRepository := ScoreBoardRepo.NewScoreBoardRepository(databases.GetDB())
+
+	scoreBoards, err := scoreBoardRepository.FindAllScoreBoards()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
 		return
@@ -88,15 +95,16 @@ func GetAllScoreBoardsHandler(c *gin.Context) {
 
 func DeleteScoreBoardHandler(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
+	scoreBoardRepository := ScoreBoardRepo.NewScoreBoardRepository(databases.GetDB())
 
 	// Check if the score board exists
-	_, err := ScoreBoardRepo.FindScoreBoardByID(id)
+	_, err := scoreBoardRepository.FindScoreBoardByID(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Score board not found"})
 		return
 	}
 
 	// Delete the score board
-	ScoreBoardRepo.DeleteScoreBoard(id)
+	scoreBoardRepository.DeleteScoreBoard(id)
 	c.JSON(http.StatusOK, gin.H{"message": "Score board deleted successfully"})
 }

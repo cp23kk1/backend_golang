@@ -2,6 +2,7 @@ package passage_history
 
 import (
 	// Import common utilities or middleware if needed
+	"cp23kk1/common/databases"
 	passageHistoryRepo "cp23kk1/modules/repository/passage_history"
 	"net/http"
 	"strconv"
@@ -25,7 +26,9 @@ func CreatePassageHistoryHandler(c *gin.Context) {
 		return
 	}
 
-	err := passageHistoryRepo.CreatePassageHistory(vocabularyHistoryModelValidator.UserID, vocabularyHistoryModelValidator.PassageID, vocabularyHistoryModelValidator.GameID, vocabularyHistoryModelValidator.Correctness)
+	phRepository := passageHistoryRepo.NewPassageHistoryRepository(databases.GetDB())
+
+	err := phRepository.CreatePassageHistory(uint(vocabularyHistoryModelValidator.UserID), uint(vocabularyHistoryModelValidator.PassageID), vocabularyHistoryModelValidator.GameID, vocabularyHistoryModelValidator.Correctness)
 	if err != nil {
 		c.JSON(500, gin.H{"error": err.Error()})
 		return
@@ -36,7 +39,9 @@ func CreatePassageHistoryHandler(c *gin.Context) {
 
 // FindAllPassagesHistoryHandler handles the Find All Passage Histories route
 func GetAllPassagesHistoryHandler(c *gin.Context) {
-	passages, err := passageHistoryRepo.FindAllPassagesHistory()
+	phRepository := passageHistoryRepo.NewPassageHistoryRepository(databases.GetDB())
+
+	passages, err := phRepository.FindAllPassagesHistory()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Passage Get All Error"})
 		return
@@ -53,8 +58,9 @@ func GetPassageHistoryByIDHandler(c *gin.Context) {
 		return
 	}
 	// Parse id as an integer here
+	phRepository := passageHistoryRepo.NewPassageHistoryRepository(databases.GetDB())
 
-	passage, err := passageHistoryRepo.FindPassageHistoryByID(id)
+	passage, err := phRepository.FindPassageHistoryByID(id)
 	if err != nil {
 		c.JSON(404, gin.H{"error": "Passage History not found"})
 		return
@@ -70,13 +76,15 @@ func DeletePassageHistoryHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
 		return
 	}
-	history, err := passageHistoryRepo.FindPassageHistoryByID(id)
+	phRepository := passageHistoryRepo.NewPassageHistoryRepository(databases.GetDB())
+
+	history, err := phRepository.FindPassageHistoryByID(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "PassageHistory not found"})
 		return
 	}
 	// Parse id as an integer here
-	if err := passageHistoryRepo.DeletePassageHistory(history); err != nil {
+	if err := phRepository.DeletePassageHistory(history); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete PassageHistory"})
 		return
 	}

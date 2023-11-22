@@ -1,11 +1,18 @@
 package passage_history
 
 import (
-	"cp23kk1/common/databases"
+	"gorm.io/gorm"
 )
 
-func CreatePassageHistory(userID, passageID int, gameID string, correctness bool) error {
-	db := databases.GetDB()
+type PassageHistoryRepository struct {
+	db *gorm.DB
+}
+
+func NewPassageHistoryRepository(db *gorm.DB) PassageHistoryRepository {
+	return PassageHistoryRepository{db: db}
+}
+
+func (ph PassageHistoryRepository) CreatePassageHistory(userID, passageID uint, gameID string, correctness bool) error {
 
 	passageHistory := PassageHistoryModel{
 		UserID:      userID,
@@ -13,37 +20,46 @@ func CreatePassageHistory(userID, passageID int, gameID string, correctness bool
 		GameID:      gameID,
 		Correctness: correctness,
 	}
-	err := db.Create(&passageHistory).Error
+	err := ph.db.Create(&passageHistory).Error
 	return err
 }
+func (ph PassageHistoryRepository) CreatePassageHistoryWithArray(userID uint, passages []PassageFromGameResultModel, gameID string) error {
+	if len(passages) == 0 {
+		return nil
+	}
+	history := []*PassageHistoryModel{}
 
-func FindAllPassagesHistory() ([]PassageHistoryModel, error) {
-	db := databases.GetDB()
+	for _, p := range passages {
+		history = append(history, &PassageHistoryModel{UserID: userID, PassageID: uint(p.PassageID), Correctness: p.Correctness, GameID: gameID})
+	}
+	return ph.db.Create(history).Error
+}
+
+func (ph PassageHistoryRepository) FindAllPassagesHistory() ([]PassageHistoryModel, error) {
+
 	var passages []PassageHistoryModel
-	err := db.Preload("User").Preload("Passage").Find(&passages).Error
+	err := ph.db.Preload("User").Preload("Passage").Find(&passages).Error
 	return passages, err
 }
-func FindPassageHistoryByID(id int) (*PassageHistoryModel, error) {
-	db := databases.GetDB()
+func (ph PassageHistoryRepository) FindPassageHistoryByID(id int) (*PassageHistoryModel, error) {
 
 	var passageHistory PassageHistoryModel
-	if result := db.Preload("User").Preload("Passage").First(&passageHistory, id); result.Error != nil {
+	if result := ph.db.Preload("User").Preload("Passage").First(&passageHistory, id); result.Error != nil {
 		return nil, result.Error
 	}
 	return &passageHistory, nil
 }
 
-func FindPassageHistoriesByUserID(userID int) ([]PassageHistoryModel, error) {
-	db := databases.GetDB()
+func (ph PassageHistoryRepository) FindPassageHistoriesByUserID(userID int) ([]PassageHistoryModel, error) {
 
 	var passageHistories []PassageHistoryModel
-	if result := db.Where("user_id = ?", userID).Preload("User").Preload("Passage").Find(&passageHistories); result.Error != nil {
+	if result := ph.db.Where("user_id = ?", userID).Preload("User").Preload("Passage").Find(&passageHistories); result.Error != nil {
 		return nil, result.Error
 	}
 	return passageHistories, nil
 }
 
-func DeletePassageHistory(history *PassageHistoryModel) error {
-	db := databases.GetDB()
-	return db.Delete(history).Error
+func (ph PassageHistoryRepository) DeletePassageHistory(history *PassageHistoryModel) error {
+
+	return ph.db.Delete(history).Error
 }

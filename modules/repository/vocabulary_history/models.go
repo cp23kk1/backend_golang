@@ -1,14 +1,15 @@
 package vocabulary_history
 
 type VocabularyHistoryModel struct {
-	ID           int `gorm:"primaryKey"`
-	UserID       int
-	VocabularyID int
-	GameID       string
-	Correctness  bool
+	ID           uint   `gorm:"primaryKey"`
+	UserID       uint   `gorm:"not null"`
+	VocabularyID uint   `gorm:"not null"`
+	GameID       string `gorm:"type:varchar(45);not null"`
+	Correctness  bool   `gorm:"not null"`
 
-	User       userModel
-	Vocabulary VocabularyModel
+	// Foreign key references
+	User       userModel       `gorm:"foreignKey:UserID"`
+	Vocabulary VocabularyModel `gorm:"foreignKey:VocabularyID"`
 }
 
 func (VocabularyHistoryModel) TableName() string {
@@ -16,12 +17,12 @@ func (VocabularyHistoryModel) TableName() string {
 }
 
 type userModel struct {
-	ID             int
-	Email          *string
-	DisplayName    *string
-	Active         bool
-	Image          *string
-	PrivateProfile bool
+	ID               uint    `gorm:"primaryKey"`
+	Email            *string `gorm:"type:varchar(320);unique;index"`
+	DisplayName      *string `gorm:"type:varchar(255)"`
+	IsActive         bool    `gorm:"not null;default:true"`
+	Image            *string `gorm:"type:varchar(255)"`
+	IsPrivateProfile bool    `gorm:"not null;default:false"`
 }
 
 func (userModel) TableName() string {
@@ -29,13 +30,18 @@ func (userModel) TableName() string {
 }
 
 type VocabularyModel struct {
-	ID             int
-	Word           string
-	Meaning        *string
-	Pos            string
-	DifficultyCefr string
+	ID             uint   `gorm:"primaryKey"`
+	Word           string `gorm:"type:varchar(255);not null"`
+	Meaning        string `gorm:"type:varchar(255);not null"`
+	POS            string `gorm:"type:varchar(45);not null"`
+	DifficultyCEFR string `gorm:"type:varchar(45);not null"`
 }
 
 func (VocabularyModel) TableName() string {
 	return "vocabulary"
+}
+
+type VocabularyFromGameResultModel struct {
+	VocabularyID int  `form:"vocabularyId" json:"vocabularyId" binding:"required"`
+	Correctness  bool `form:"correctness" json:"correctness" binding:"required"`
 }

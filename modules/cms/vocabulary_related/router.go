@@ -1,6 +1,7 @@
 package vocabulary_related
 
 import (
+	"cp23kk1/common/databases"
 	vocabularyRelatedRepo "cp23kk1/modules/repository/vocabulary_related"
 	"net/http"
 	"strconv"
@@ -24,8 +25,8 @@ func CreateVocabularyRelatedHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	err := vocabularyRelatedRepo.CreateVocabularyRelated(vocabularyRelatedModelValidator.VocabularyID, vocabularyRelatedModelValidator.SentenceID)
+	vocabularyRelatedRepository := vocabularyRelatedRepo.NewVocaubularyRelated(databases.GetDB())
+	err := vocabularyRelatedRepository.CreateVocabularyRelated(vocabularyRelatedModelValidator.VocabularyID, vocabularyRelatedModelValidator.SentenceID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create Model"})
 		return
@@ -46,8 +47,9 @@ func GetVocabularyRelatedHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid sentenceID"})
 		return
 	}
+	vocabularyRelatedRepository := vocabularyRelatedRepo.NewVocaubularyRelated(databases.GetDB())
 
-	vocabularyRelated, err := vocabularyRelatedRepo.FindVocabularyRelatedByID(vocabularyID, sentenceID)
+	vocabularyRelated, err := vocabularyRelatedRepository.FindVocabularyRelatedByID(vocabularyID, sentenceID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "VocabularyRelated not found"})
 		return
@@ -56,8 +58,9 @@ func GetVocabularyRelatedHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, vocabularyRelated)
 }
 func GetAllVocabularyRelatedHandler(c *gin.Context) {
+	vocabularyRelatedRepository := vocabularyRelatedRepo.NewVocaubularyRelated(databases.GetDB())
 
-	vocabularyRelated, err := vocabularyRelatedRepo.FindAllVocabularyRelated()
+	vocabularyRelated, err := vocabularyRelatedRepository.FindAllVocabularyRelated()
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "VocabularyRelated not found"})
 		return
@@ -71,8 +74,9 @@ func UpdateVocabularyRelatedHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	vocabularyRelatedRepository := vocabularyRelatedRepo.NewVocaubularyRelated(databases.GetDB())
 
-	err := vocabularyRelatedRepo.UpdateVocabularyRelated(&vocabularyRelated)
+	err := vocabularyRelatedRepository.UpdateVocabularyRelated(&vocabularyRelated)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update VocabularyRelated"})
 		return
@@ -93,8 +97,9 @@ func DeleteVocabularyRelatedHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid sentenceID"})
 		return
 	}
+	vocabularyRelatedRepository := vocabularyRelatedRepo.NewVocaubularyRelated(databases.GetDB())
 
-	err = vocabularyRelatedRepo.DeleteVocabularyRelated(vocabularyID, sentenceID)
+	err = vocabularyRelatedRepository.DeleteVocabularyRelated(vocabularyID, sentenceID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete VocabularyRelated"})
 		return

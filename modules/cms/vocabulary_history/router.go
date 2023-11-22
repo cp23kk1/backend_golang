@@ -4,6 +4,7 @@ package vocabulary_history
 
 import (
 	// Import common utilities or middleware if needed
+	"cp23kk1/common/databases"
 	vocabularyHistoryRepo "cp23kk1/modules/repository/vocabulary_history"
 	"net/http"
 	"strconv"
@@ -27,8 +28,8 @@ func CreateVocabularyHistoryHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	if err := vocabularyHistoryRepo.CreateVocabularyHistory(vocabularyHistoryModelValidator.UserID, vocabularyHistoryModelValidator.VocabularyID, vocabularyHistoryModelValidator.GameID, vocabularyHistoryModelValidator.Correctness); err != nil {
+	vhRepository := vocabularyHistoryRepo.NewVocabularyHistoryRepository(databases.GetDB())
+	if err := vhRepository.CreateVocabularyHistory(uint(vocabularyHistoryModelValidator.UserID), uint(vocabularyHistoryModelValidator.VocabularyID), vocabularyHistoryModelValidator.GameID, vocabularyHistoryModelValidator.Correctness); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create VocabularyHistory"})
 		return
 	}
@@ -43,8 +44,9 @@ func GetVocabularyHistoryHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
 		return
 	}
+	vhRepository := vocabularyHistoryRepo.NewVocabularyHistoryRepository(databases.GetDB())
 
-	history, err := vocabularyHistoryRepo.FindVocabularyHistoryByID(id)
+	history, err := vhRepository.FindVocabularyHistoryByID(uint(id))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "VocabularyHistory not found"})
 		return
@@ -55,7 +57,9 @@ func GetVocabularyHistoryHandler(c *gin.Context) {
 
 // GetAllVocabularyHistoryHandler retrieves all VocabularyHistory records.
 func GetAllVocabularyHistoryHandler(c *gin.Context) {
-	histories, err := vocabularyHistoryRepo.FindVocabularyHistoryAll()
+	vhRepository := vocabularyHistoryRepo.NewVocabularyHistoryRepository(databases.GetDB())
+
+	histories, err := vhRepository.FindVocabularyHistoryAll()
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Vocabulary History Find All error"})
 		return
@@ -77,8 +81,9 @@ func UpdateVocabularyHistoryHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	vhRepository := vocabularyHistoryRepo.NewVocabularyHistoryRepository(databases.GetDB())
 
-	if err := vocabularyHistoryRepo.UpdateVocabularyHistory(id, vocabularyHistoryModelValidator.UserID, vocabularyHistoryModelValidator.VocabularyID, vocabularyHistoryModelValidator.GameID, vocabularyHistoryModelValidator.Correctness); err != nil {
+	if err := vhRepository.UpdateVocabularyHistory(uint(id), uint(vocabularyHistoryModelValidator.UserID), uint(vocabularyHistoryModelValidator.VocabularyID), vocabularyHistoryModelValidator.GameID, vocabularyHistoryModelValidator.Correctness); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update VocabularyHistory"})
 		return
 	}
@@ -93,14 +98,15 @@ func DeleteVocabularyHistoryHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
 		return
 	}
+	vhRepository := vocabularyHistoryRepo.NewVocabularyHistoryRepository(databases.GetDB())
 
-	history, err := vocabularyHistoryRepo.FindVocabularyHistoryByID(id)
+	history, err := vhRepository.FindVocabularyHistoryByID(uint(id))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "VocabularyHistory not found"})
 		return
 	}
 
-	if err := vocabularyHistoryRepo.DeleteVocabularyHistory(history); err != nil {
+	if err := vhRepository.DeleteVocabularyHistory(history); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete VocabularyHistory"})
 		return
 	}
