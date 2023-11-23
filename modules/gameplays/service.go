@@ -23,7 +23,11 @@ func randomFromGamePlay() ([]vocabularyRepo.VocabularyModel, error) {
 }
 func gameResult(gameResultValidator GameResultModelValidator) error {
 	tx := databases.GetDB().Begin()
+
 	userId := 2
+	if gameResultValidator.UserID != nil {
+		userId = *gameResultValidator.UserID
+	}
 	scoreBoardRepository := score_board.NewScoreBoardRepository(tx)
 	vhRepository := vocabulary_history.NewVocabularyHistoryRepository(tx)
 	shRepository := sentence_history.NewSentenceHistoryRepository(tx)

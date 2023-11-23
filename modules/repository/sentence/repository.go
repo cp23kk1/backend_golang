@@ -13,10 +13,10 @@ func NewSentenceRepository(db *gorm.DB) SentenceRepository {
 }
 
 // CreateSentence creates a new sentence record in the database.
-func (s SentenceRepository) CreateSentence(passageId uint, sequence int, text, meaning string) error {
+func (s SentenceRepository) CreateSentence(passageId *uint, sequence *int, text, meaning string) error {
 	sentence := &SentenceModel{
-		PassageID: &passageId,
-		Sequence:  &sequence,
+		PassageID: passageId,
+		Sequence:  sequence,
 		Text:      text,
 		Meaning:   meaning,
 	}
@@ -36,14 +36,14 @@ func (s SentenceRepository) FindAllSentence() (*[]SentenceModel, error) {
 }
 
 // UpdateSentence updates an existing sentence record in the database.
-func (s SentenceRepository) UpdateSentence(id int, passageId uint, sequence int, text, meaning string) error {
+func (s SentenceRepository) UpdateSentence(id int, passageId *uint, sequence *int, text, meaning string) error {
 	sentence, err := s.FindSentenceByID(id)
 	if err != nil {
 		return err
 	}
 
-	sentence.PassageID = &passageId
-	sentence.Sequence = &sequence
+	sentence.PassageID = passageId
+	sentence.Sequence = sequence
 	sentence.Text = text
 	sentence.Meaning = meaning
 

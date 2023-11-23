@@ -31,7 +31,7 @@ func CreateSentenceHandler(c *gin.Context) {
 	sentenceRepository := SentenceRepo.NewSentenceRepository(databases.GetDB())
 	// Create the sentence record
 	err := sentenceRepository.CreateSentence(
-		uint(sentenceModelValidator.PassageID),
+		sentenceModelValidator.PassageID,
 		sentenceModelValidator.Sequence,
 		sentenceModelValidator.Text,
 		sentenceModelValidator.Meaning,
@@ -59,7 +59,7 @@ func UpdateSentenceByIDHandler(c *gin.Context) {
 	// Create the sentence record
 	err := sentenceRepository.UpdateSentence(
 		id,
-		uint(sentenceModelValidator.PassageID),
+		sentenceModelValidator.PassageID,
 		sentenceModelValidator.Sequence,
 		sentenceModelValidator.Text,
 		sentenceModelValidator.Meaning,
