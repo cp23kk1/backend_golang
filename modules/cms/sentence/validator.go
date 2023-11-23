@@ -8,7 +8,7 @@ import (
 
 type SentenceModelValidator struct {
 	PassageID *uint  `form:"passageId" json:"passageId"`
-	Sequence  *int   `form:"sequence" json:"sequence" binding:"required"`
+	Sequence  *int   `form:"sequence" json:"sequence"`
 	Text      string `form:"text" json:"text" binding:"required"`
 	Meaning   string `form:"meaning" json:"meaning" binding:"required"`
 }
