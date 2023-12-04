@@ -54,6 +54,7 @@ func main() {
 	Migrate(db)
 
 	router := gin.Default()
+
 	routes.Run(router)
 
 }
