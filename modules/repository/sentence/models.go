@@ -1,11 +1,11 @@
 package sentence
 
 type SentenceModel struct {
-	ID        int `gorm:"primaryKey"`
-	PassageID *int
-	Sequence  *int
-	Text      string
-	Meaning   string
+	ID        uint   `gorm:"primaryKey"`
+	PassageID *uint  `gorm:"index;foreignKey:PassageID"`
+	Sequence  *int   `gorm:"index"`
+	Text      string `gorm:"type:varchar(255);not null"`
+	Meaning   string `gorm:"type:varchar(255);not null"`
 
 	Passage PassageModel
 }

@@ -3,6 +3,7 @@
 package vocabulary
 
 import (
+	"cp23kk1/common/databases"
 	vocabularyRepo "cp23kk1/modules/repository/vocabulary"
 	"net/http"
 	"strconv"
@@ -27,8 +28,8 @@ func CreateVocabularyHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	vocabularyRepo.CreateVocabulary(
+	vocabularyRepository := vocabularyRepo.NewVocabularyRepository(databases.GetDB())
+	vocabularyRepository.CreateVocabulary(
 		vocabularyModelValidator.Word,
 		vocabularyModelValidator.Meaning,
 		vocabularyModelValidator.Pos,
@@ -44,8 +45,9 @@ func GetVocabularyHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
 		return
 	}
+	vocabularyRepository := vocabularyRepo.NewVocabularyRepository(databases.GetDB())
 
-	vocabulary := vocabularyRepo.FindOneVocabulary(id)
+	vocabulary := vocabularyRepository.FindOneVocabulary(id)
 	if vocabulary == nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Vocabulary not found"})
 		return
@@ -55,7 +57,9 @@ func GetVocabularyHandler(c *gin.Context) {
 }
 
 func GetAllVocabulariesHandler(c *gin.Context) {
-	vocabularies, err := vocabularyRepo.FindManyVocabulary()
+	vocabularyRepository := vocabularyRepo.NewVocabularyRepository(databases.GetDB())
+
+	vocabularies, err := vocabularyRepository.FindManyVocabulary()
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Vocabulary Get All Error"})
 		return
@@ -75,8 +79,9 @@ func UpdateVocabularyHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	vocabularyRepository := vocabularyRepo.NewVocabularyRepository(databases.GetDB())
 
-	vocabularyRepo.UpdateVocabulary(
+	vocabularyRepository.UpdateVocabulary(
 		id,
 		vocabularyModelValidator.Word,
 		vocabularyModelValidator.Meaning,
@@ -93,7 +98,8 @@ func DeleteVocabularyHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
 		return
 	}
+	vocabularyRepository := vocabularyRepo.NewVocabularyRepository(databases.GetDB())
 
-	vocabularyRepo.DeleteVocabulary(id)
+	vocabularyRepository.DeleteVocabulary(id)
 	c.JSON(http.StatusOK, gin.H{"message": "Vocabulary deleted"})
 }

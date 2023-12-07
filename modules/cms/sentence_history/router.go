@@ -2,6 +2,7 @@ package sentence_history
 
 import (
 	// Import common utilities or middleware if needed
+	"cp23kk1/common/databases"
 	sentenceHistoryRepo "cp23kk1/modules/repository/sentence_history"
 	"net/http"
 	"strconv"
@@ -25,8 +26,8 @@ func CreateSentenceHistoryHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	if err := sentenceHistoryRepo.CreateSentenceHistory(sentenceHistoryModelValidator.UserID, sentenceHistoryModelValidator.SentenceID, sentenceHistoryModelValidator.GameID, sentenceHistoryModelValidator.Correctness); err != nil {
+	shRepository := sentenceHistoryRepo.NewSentenceHistoryRepository(databases.GetDB())
+	if err := shRepository.CreateSentenceHistory(uint(sentenceHistoryModelValidator.UserID), uint(sentenceHistoryModelValidator.SentenceID), sentenceHistoryModelValidator.GameID, sentenceHistoryModelValidator.Correctness); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create SentenceHistory"})
 		return
 	}
@@ -41,8 +42,8 @@ func GetSentenceHistoryHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
 		return
 	}
-
-	history, err := sentenceHistoryRepo.FindSentenceHistoryByID(id)
+	shRepository := sentenceHistoryRepo.NewSentenceHistoryRepository(databases.GetDB())
+	history, err := shRepository.FindSentenceHistoryByID(uint(id))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "SentenceHistory not found"})
 		return
@@ -53,7 +54,9 @@ func GetSentenceHistoryHandler(c *gin.Context) {
 
 // GetAllSentenceHistoryHandler retrieves all SentenceHistory records.
 func GetAllSentenceHistoryHandler(c *gin.Context) {
-	histories, _ := sentenceHistoryRepo.FindSentenceHistoryAll()
+	shRepository := sentenceHistoryRepo.NewSentenceHistoryRepository(databases.GetDB())
+
+	histories, _ := shRepository.FindSentenceHistoryAll()
 
 	c.JSON(http.StatusOK, histories)
 }
@@ -71,8 +74,9 @@ func UpdateSentenceHistoryHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	shRepository := sentenceHistoryRepo.NewSentenceHistoryRepository(databases.GetDB())
 
-	if err := sentenceHistoryRepo.UpdateSentenceHistory(id, sentenceHistoryModelValidator.UserID, sentenceHistoryModelValidator.SentenceID, sentenceHistoryModelValidator.GameID, sentenceHistoryModelValidator.Correctness); err != nil {
+	if err := shRepository.UpdateSentenceHistory(uint(id), uint(sentenceHistoryModelValidator.UserID), uint(sentenceHistoryModelValidator.SentenceID), sentenceHistoryModelValidator.GameID, sentenceHistoryModelValidator.Correctness); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update SentenceHistory"})
 		return
 	}
@@ -87,14 +91,15 @@ func DeleteSentenceHistoryHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
 		return
 	}
+	shRepository := sentenceHistoryRepo.NewSentenceHistoryRepository(databases.GetDB())
 
-	history, err := sentenceHistoryRepo.FindSentenceHistoryByID(id)
+	history, err := shRepository.FindSentenceHistoryByID(uint(id))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "SentenceHistory not found"})
 		return
 	}
 
-	if err := sentenceHistoryRepo.DeleteSentenceHistory(history); err != nil {
+	if err := shRepository.DeleteSentenceHistory(history); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete SentenceHistory"})
 		return
 	}

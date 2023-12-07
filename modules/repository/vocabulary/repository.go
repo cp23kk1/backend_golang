@@ -1,64 +1,64 @@
 package vocabulary
 
 import (
-	"cp23kk1/common/databases"
+	"gorm.io/gorm"
 )
 
+type VocabularyRepository struct {
+	db *gorm.DB
+}
 
+func NewVocabularyRepository(db *gorm.DB) VocabularyRepository {
+	return VocabularyRepository{db: db}
+}
 
-func CreateVocabulary(word, pos, difficultyCefr string, meaning string) {
-	db := databases.GetDB()
+func (v VocabularyRepository) CreateVocabulary(word, pos, difficultyCefr string, meaning string) {
 	vocabulary := &VocabularyModel{
 		Word:           word,
 		Meaning:        meaning,
-		Pos:            pos,
-		DifficultyCefr: difficultyCefr,
+		POS:            pos,
+		DifficultyCEFR: difficultyCefr,
 	}
-	db.Create(vocabulary)
+	v.db.Create(vocabulary)
 }
 
-func FindOneVocabulary(id int) *VocabularyModel {
-	db := databases.GetDB()
+func (v VocabularyRepository) FindOneVocabulary(id int) *VocabularyModel {
 	var vocabulary VocabularyModel
-	db.First(&vocabulary, id)
+	v.db.First(&vocabulary, id)
 	if vocabulary.ID == 0 {
 		return nil // Record not found
 	}
 	return &vocabulary
 }
 
-func FindManyVocabulary() ([]VocabularyModel, error) {
-	db := databases.GetDB()
+func (v VocabularyRepository) FindManyVocabulary() ([]VocabularyModel, error) {
 	var vocabularies []VocabularyModel
-	err := db.Find(&vocabularies).Error
+	err := v.db.Find(&vocabularies).Error
 	return vocabularies, err
 }
 
-func UpdateVocabulary(id int, word, pos, difficultyCefr string, meaning string) {
-	db := databases.GetDB()
-	vocabulary := FindOneVocabulary(id)
+func (v VocabularyRepository) UpdateVocabulary(id int, word, pos, difficultyCefr string, meaning string) {
+	vocabulary := v.FindOneVocabulary(id)
 	if vocabulary != nil {
 		vocabulary.Word = word
 		vocabulary.Meaning = meaning
-		vocabulary.Pos = pos
-		vocabulary.DifficultyCefr = difficultyCefr
-		db.Save(vocabulary)
+		vocabulary.POS = pos
+		vocabulary.DifficultyCEFR = difficultyCefr
+		v.db.Save(vocabulary)
 	}
 }
 
-func DeleteVocabulary(id int) {
-	db := databases.GetDB()
-	vocabulary := FindOneVocabulary(id)
+func (v VocabularyRepository) DeleteVocabulary(id int) {
+	vocabulary := v.FindOneVocabulary(id)
 	if vocabulary != nil {
-		db.Delete(vocabulary)
+		v.db.Delete(vocabulary)
 	}
 }
 
-func RandomVacabulary(limit int) ([]VocabularyModel, error) {
+func (v VocabularyRepository) RandomVacabulary(limit int) ([]VocabularyModel, error) {
 
-	db := databases.GetDB()
 	var vocabularies []VocabularyModel
-	// db.Model(&ScoreBoardModel{}).Preload("User").Find(&scoreBoards).Error
-	err := db.Model(&VocabularyModel{}).Order("RAND()").Limit(limit).Scan(&vocabularies).Error
+	// v.db.Model(&ScoreBoardModel{}).Preload("User").Find(&scoreBoards).Error
+	err := v.db.Model(&VocabularyModel{}).Order("RAND()").Limit(limit).Scan(&vocabularies).Error
 	return vocabularies, err
 }

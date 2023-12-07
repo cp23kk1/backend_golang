@@ -12,6 +12,7 @@ func AddGameplayRoutes(rg *gin.RouterGroup) {
 	gameplay := rg.Group("/gameplays")
 
 	gameplay.GET("/vocabulary", RandomVocabularyForGamePlay)
+	gameplay.POST("/game-result", GameResult)
 }
 
 func VocabulariesRetrieve(c *gin.Context) {
@@ -31,4 +32,19 @@ func RandomVocabularyForGamePlay(c *gin.Context) {
 	}
 	serializer := VocabsSerealizer{c, vocabs}
 	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "success"}, map[string]interface{}{"vocabs": serializer.Response()}))
+}
+
+func GameResult(c *gin.Context) {
+	gameResultValidator := NewGameResultModelValidator()
+	if err := gameResultValidator.Bind(c); err != nil {
+
+		c.JSON(http.StatusBadRequest, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "error"}, map[string]interface{}{"errorMessage": err.Error()}))
+		return
+	}
+	if err := gameResult(gameResultValidator); err != nil {
+
+		c.JSON(http.StatusBadRequest, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "error"}, map[string]interface{}{"errorMessage": err.Error()}))
+		return
+	}
+	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "success"}, map[string]interface{}{}))
 }

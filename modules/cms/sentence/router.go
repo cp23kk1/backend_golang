@@ -1,6 +1,7 @@
 package sentence
 
 import (
+	"cp23kk1/common/databases"
 	SentenceRepo "cp23kk1/modules/repository/sentence"
 	"net/http"
 	"strconv"
@@ -27,9 +28,9 @@ func CreateSentenceHandler(c *gin.Context) {
 		handleError(c, http.StatusBadRequest, "Invalid request data", err)
 		return
 	}
-
+	sentenceRepository := SentenceRepo.NewSentenceRepository(databases.GetDB())
 	// Create the sentence record
-	err := SentenceRepo.CreateSentence(
+	err := sentenceRepository.CreateSentence(
 		sentenceModelValidator.PassageID,
 		sentenceModelValidator.Sequence,
 		sentenceModelValidator.Text,
@@ -47,14 +48,16 @@ func CreateSentenceHandler(c *gin.Context) {
 func UpdateSentenceByIDHandler(c *gin.Context) {
 	// Parse request data
 	id, _ := strconv.Atoi(c.Param("id"))
+
 	sentenceModelValidator := NewSentenceModelValidator()
 	if err := sentenceModelValidator.Bind(c); err != nil {
 		handleError(c, http.StatusBadRequest, "Invalid request data", err)
 		return
 	}
+	sentenceRepository := SentenceRepo.NewSentenceRepository(databases.GetDB())
 
 	// Create the sentence record
-	err := SentenceRepo.UpdateSentence(
+	err := sentenceRepository.UpdateSentence(
 		id,
 		sentenceModelValidator.PassageID,
 		sentenceModelValidator.Sequence,
@@ -72,8 +75,9 @@ func UpdateSentenceByIDHandler(c *gin.Context) {
 
 func GetSentenceByIDHandler(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
+	sentenceRepository := SentenceRepo.NewSentenceRepository(databases.GetDB())
 
-	sentence, err := SentenceRepo.FindSentenceByID(id)
+	sentence, err := sentenceRepository.FindSentenceByID(id)
 	if err != nil {
 		handleError(c, http.StatusNotFound, "Sentence not found", err)
 		return
@@ -95,7 +99,9 @@ func GetSentenceByIDHandler(c *gin.Context) {
 // }
 
 func GetAllSentencesHandler(c *gin.Context) {
-	sentences, err := SentenceRepo.FindAllSentence()
+	sentenceRepository := SentenceRepo.NewSentenceRepository(databases.GetDB())
+
+	sentences, err := sentenceRepository.FindAllSentence()
 	if err != nil {
 		handleError(c, http.StatusInternalServerError, "Internal server error", err)
 		return
@@ -106,16 +112,17 @@ func GetAllSentencesHandler(c *gin.Context) {
 
 func DeleteSentenceHandler(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
+	sentenceRepository := SentenceRepo.NewSentenceRepository(databases.GetDB())
 
 	// Check if the sentence exists
-	_, err := SentenceRepo.FindSentenceByID(id)
+	_, err := sentenceRepository.FindSentenceByID(id)
 	if err != nil {
 		handleError(c, http.StatusNotFound, "Sentence not found", err)
 		return
 	}
 
 	// Delete the sentence
-	err = SentenceRepo.DeleteSentence(id)
+	err = sentenceRepository.DeleteSentence(id)
 	if err != nil {
 		handleError(c, http.StatusInternalServerError, "Failed to delete sentence", err)
 		return

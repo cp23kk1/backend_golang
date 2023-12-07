@@ -1,54 +1,57 @@
 package sentence
 
 import (
-	"cp23kk1/common/databases"
+	"gorm.io/gorm"
 )
 
+type SentenceRepository struct {
+	db *gorm.DB
+}
+
+func NewSentenceRepository(db *gorm.DB) SentenceRepository {
+	return SentenceRepository{db: db}
+}
+
 // CreateSentence creates a new sentence record in the database.
-func CreateSentence(passageId, sequence int, text, meaning string) error {
-	db := databases.GetDB()
+func (s SentenceRepository) CreateSentence(passageId *uint, sequence *int, text, meaning string) error {
 	sentence := &SentenceModel{
-		PassageID: &passageId,
-		Sequence:  &sequence,
+		PassageID: passageId,
+		Sequence:  sequence,
 		Text:      text,
 		Meaning:   meaning,
 	}
-	return db.Create(sentence).Error
+	return s.db.Create(sentence).Error
 }
 
 // GetSentenceByID retrieves a sentence record from the database by its ID.
-func FindSentenceByID(id int) (*SentenceModel, error) {
-	db := databases.GetDB()
+func (s SentenceRepository) FindSentenceByID(id int) (*SentenceModel, error) {
 	var sentence SentenceModel
-	err := db.Preload("Passage").First(&sentence, id).Error
+	err := s.db.Preload("Passage").First(&sentence, id).Error
 	return &sentence, err
 }
-func FindAllSentence() (*[]SentenceModel, error) {
-	db := databases.GetDB()
+func (s SentenceRepository) FindAllSentence() (*[]SentenceModel, error) {
 	var sentence []SentenceModel
-	err := db.Preload("Passage").Find(&sentence).Error
+	err := s.db.Preload("Passage").Find(&sentence).Error
 	return &sentence, err
 }
 
 // UpdateSentence updates an existing sentence record in the database.
-func UpdateSentence(id, passageId, sequence int, text, meaning string) error {
-	db := databases.GetDB()
-	sentence, err := FindSentenceByID(id)
+func (s SentenceRepository) UpdateSentence(id int, passageId *uint, sequence *int, text, meaning string) error {
+	sentence, err := s.FindSentenceByID(id)
 	if err != nil {
 		return err
 	}
 
-	sentence.PassageID = &passageId
-	sentence.Sequence = &sequence
+	sentence.PassageID = passageId
+	sentence.Sequence = sequence
 	sentence.Text = text
 	sentence.Meaning = meaning
 
-	return db.Save(sentence).Error
+	return s.db.Save(sentence).Error
 
 }
 
 // DeleteSentence deletes a sentence record from the database by its ID.
-func DeleteSentence(id int) error {
-	db := databases.GetDB()
-	return db.Delete(&SentenceModel{}, id).Error
+func (s SentenceRepository) DeleteSentence(id int) error {
+	return s.db.Delete(&SentenceModel{}, id).Error
 }

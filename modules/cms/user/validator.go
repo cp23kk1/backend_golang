@@ -8,10 +8,10 @@ import (
 )
 
 type UserModelValidator struct {
-	Email            string    `form:"email" json:"email"`
+	Email            *string   `form:"email" json:"email"`
 	Role             enum.Role `form:"role" json:"role" binding:"required"`
 	DisplayName      string    `form:"displayName" json:"displayName" binding:"required"`
-	Image            string    `form:"image" json:"image" binding:"required"`
+	Image            *string   `form:"image" json:"image"`
 	IsPrivateProfile bool      `form:"isPrivateProfile" json:"isPrivateProfile" `
 }
 

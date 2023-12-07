@@ -1,6 +1,7 @@
 package user
 
 import (
+	"cp23kk1/common/databases"
 	userRepo "cp23kk1/modules/repository/user"
 	"net/http"
 	"strconv"
@@ -19,7 +20,8 @@ func SetupUserRoutes(router *gin.RouterGroup) {
 }
 
 func getAllUsersHandler(c *gin.Context) {
-	users, err := userRepo.FindAllUsers()
+	userRepository := userRepo.NewUserRepository(databases.GetDB())
+	users, err := userRepository.FindAllUsers()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 		return
@@ -34,8 +36,9 @@ func createUserHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	userRepository := userRepo.NewUserRepository(databases.GetDB())
 
-	err := userRepo.CreateUser(userModelValidator.Email, userModelValidator.Role, userModelValidator.DisplayName, userModelValidator.Image, userModelValidator.IsPrivateProfile)
+	err := userRepository.CreateUser(userModelValidator.Email, userModelValidator.Role, userModelValidator.DisplayName, userModelValidator.Image, userModelValidator.IsPrivateProfile)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -49,8 +52,9 @@ func getUserHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
 		return
 	}
+	userRepository := userRepo.NewUserRepository(databases.GetDB())
 
-	user, err := userRepo.FindUserByID(id)
+	user, err := userRepository.FindUserByID(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
@@ -71,7 +75,9 @@ func updateUserHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	err = userRepo.UpdateUser(id, userModelValidator.Email, userModelValidator.Role, userModelValidator.DisplayName, userModelValidator.Image, userModelValidator.IsPrivateProfile)
+	userRepository := userRepo.NewUserRepository(databases.GetDB())
+
+	err = userRepository.UpdateUser(id, userModelValidator.Email, userModelValidator.Role, userModelValidator.DisplayName, userModelValidator.Image, userModelValidator.IsPrivateProfile)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
@@ -86,8 +92,9 @@ func deleteUserHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
 		return
 	}
+	userRepository := userRepo.NewUserRepository(databases.GetDB())
 
-	err = userRepo.DeleteUser(id)
+	err = userRepository.DeleteUser(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return

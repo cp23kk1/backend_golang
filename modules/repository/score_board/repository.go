@@ -1,12 +1,20 @@
 package score_board
 
 import (
-	"cp23kk1/common/databases"
 	"time"
+
+	"gorm.io/gorm"
 )
 
-func CreateScoreBoard(userID, score, week int, startDate, endDate time.Time) error {
-	db := databases.GetDB()
+type ScoreBoardRepository struct {
+	db *gorm.DB
+}
+
+func NewScoreBoardRepository(db *gorm.DB) ScoreBoardRepository {
+	return ScoreBoardRepository{db: db}
+}
+
+func (s *ScoreBoardRepository) CreateScoreBoard(userID uint, score, week int, startDate, endDate time.Time) error {
 
 	scoreBoard := ScoreBoardModel{
 		UserID:    userID,
@@ -15,41 +23,38 @@ func CreateScoreBoard(userID, score, week int, startDate, endDate time.Time) err
 		StartDate: startDate,
 		EndDate:   endDate,
 	}
-	return db.Create(&scoreBoard).Error
+	return s.db.Create(&scoreBoard).Error
 }
-func FindScoreBoardByID(id int) (*ScoreBoardModel, error) {
-	db := databases.GetDB()
+func (s *ScoreBoardRepository) FindScoreBoardByID(id int) (*ScoreBoardModel, error) {
+
 	var scoreBoard ScoreBoardModel
-	if result := db.Preload("User").First(&scoreBoard, id); result.Error != nil {
+	if result := s.db.Preload("User").First(&scoreBoard, id); result.Error != nil {
 		return nil, result.Error
 	}
 	return &scoreBoard, nil
 }
-func FindScoreBoardsByUserID(userID int) ([]ScoreBoardModel, error) {
-	db := databases.GetDB()
+func (s *ScoreBoardRepository) FindScoreBoardsByUserID(userID int) ([]ScoreBoardModel, error) {
 
 	var scoreBoards []ScoreBoardModel
-	if result := db.Where("user_id = ?", userID).Preload("User").Find(&scoreBoards); result.Error != nil {
+	if result := s.db.Where("user_id = ?", userID).Preload("User").Find(&scoreBoards); result.Error != nil {
 		return nil, result.Error
 	}
 	return scoreBoards, nil
 }
-func FindAllScoreBoards() ([]ScoreBoardModel, error) {
-	db := databases.GetDB()
+func (s *ScoreBoardRepository) FindAllScoreBoards() ([]ScoreBoardModel, error) {
 
 	var scoreBoards []ScoreBoardModel
-	err := db.Model(&ScoreBoardModel{}).Preload("User").Find(&scoreBoards).Error
+	err := s.db.Model(&ScoreBoardModel{}).Preload("User").Find(&scoreBoards).Error
 
 	return scoreBoards, err
 }
-func DeleteScoreBoard(id int) error {
-	db := databases.GetDB()
+func (s *ScoreBoardRepository) DeleteScoreBoard(id int) error {
 
-	scoreBoard, err := FindScoreBoardByID(id)
+	scoreBoard, err := s.FindScoreBoardByID(id)
 	if err != nil {
 		return err
 	}
 
-	return db.Delete(scoreBoard).Error
+	return s.db.Delete(scoreBoard).Error
 
 }

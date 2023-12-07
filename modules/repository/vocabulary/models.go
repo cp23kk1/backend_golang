@@ -1,11 +1,11 @@
 package vocabulary
 
 type VocabularyModel struct {
-	ID             int    `gorm:"primary_key"`
-	Word           string `gorm:"not null;column:word;size:255"`
-	Meaning        string `gorm:"not null;column:meaning;size:255"`
-	Pos            string `gorm:"not null;column:pos;size:45"`
-	DifficultyCefr string `gorm:"not null;column:difficulty_cefr;size:45"`
+	ID             uint   `gorm:"primaryKey"`
+	Word           string `gorm:"type:varchar(255);not null"`
+	Meaning        string `gorm:"type:varchar(255);not null"`
+	POS            string `gorm:"type:varchar(45);not null"`
+	DifficultyCEFR string `gorm:"type:varchar(45);not null"`
 }
 
 func (VocabularyModel) TableName() string {
