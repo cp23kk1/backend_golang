@@ -42,7 +42,7 @@ ENV ENV=${ENV}
 ENV ORIGIN=${ORIGIN}
 
 COPY --from=builder /go/src/app/main .
-
+COPY --from=builder /go/src/app/.env .
 
 CMD ["./main"]
 
