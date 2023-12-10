@@ -41,7 +41,7 @@ ENV DB_PORT=${DB_PORT}
 ENV ENV=${ENV}
 ENV ORIGIN=${ORIGIN}
 
-COPY --from=builder /go/src/app/main.go .
+COPY --from=builder /go/src/app/main .
 
 
 CMD ["./main"]
