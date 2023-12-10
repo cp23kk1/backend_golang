@@ -13,43 +13,39 @@ pipeline {
 
     stages {
 
-        stage('Build DB Images') {
+        stage('Build GOLANG Images') {
             steps {
                 script {
                     sh "echo ${params.deployEnvironment}"
                     sh "docker build -t  ${GOLANG_IMAGE_NAME}:${IMAGE_TAG} \
-                     --build-arg DB_HOST=${env.DB_HOST}${params.deployEnvironment} \
-                     --build-arg DB_USERNAME=${env.DB_USERNAME} \
-                     --build-arg DB_NAME=${env.DB_NAME} \
-                     --build-arg DB_PASSWORD=${env.DB_PASSWORD}\
-                     --build-arg DB_PORT=${env.DB_PORT} \
-                     --build-arg ENV=${params.deployEnvironment} \
-                     --build-arg ORIGIN=${env.ORIGIN} ."
+                    --build-arg DB_HOST=${env.DB_HOST}${params.deployEnvironment} \
+                    --build-arg DB_USERNAME=${env.DB_USERNAME} \
+                    --build-arg DB_NAME=${env.DB_NAME} \
+                    --build-arg DB_PASSWORD=${env.DB_PASSWORD}\
+                    --build-arg DB_PORT=${env.DB_PORT} \
+                    --build-arg ENV=${params.deployEnvironment} \
+                    --build-arg ORIGIN=${env.ORIGIN} ."
                 }
             }
         }
         stage ('Remove container'){
             steps {
-              script {
-                    // Run the command and capture the exit code
+            script {
                     def exitCode = sh(script: "docker rm -f ${CONTAINER_NAME}-${params.deployEnvironment}", returnStatus: true)
 
-                    // Check the exit code to determine success or failure
                     if (exitCode == 0) {
                         echo "Container removal was successful"
-                        // Add more steps or logic here if needed
                     } else {
                         echo "Container removal failed or was skipped"
-                        // Add more steps or logic here if needed
                     }
-              }
+            }
             }
         }
 
         stage('Deploy') {
             steps {
                 script {
-                  sh "docker run -d --name ${CONTAINER_NAME}-${params.deployEnvironment} --network ${params.deployEnvironment}-network ${GOLANG_IMAGE_NAME}:${IMAGE_TAG}"
+                sh "docker run -d --name ${CONTAINER_NAME}-${params.deployEnvironment} --network ${params.deployEnvironment}-network ${GOLANG_IMAGE_NAME}:${IMAGE_TAG}"
                 }
             }
         }
