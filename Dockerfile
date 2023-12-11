@@ -1,4 +1,4 @@
-FROM golang:1.18
+FROM golang:1.18 AS builder
 
 WORKDIR /go/src/app
 
@@ -8,6 +8,7 @@ ARG DB_HOST
 ARG DB_PORT
 ARG DB_NAME
 ARG ENV
+ARG ORIGIN
 
 ENV DB_USERNAME=${DB_USERNAME}
 ENV DB_PASSWORD=${DB_PASSWORD}
@@ -15,12 +16,33 @@ ENV DB_NAME=${DB_NAME}
 ENV DB_HOST=${DB_HOST}
 ENV DB_PORT=${DB_PORT}
 ENV ENV=${ENV}
+ENV ORIGIN=${ORIGIN}
 
 COPY . .
 
 RUN go mod tidy
 RUN go mod download
 RUN go build -o main main.go
+FROM golang:1.18 AS runner
+
+ARG DB_USERNAME
+ARG DB_PASSWORD
+ARG DB_HOST
+ARG DB_PORT
+ARG DB_NAME
+ARG ENV
+ARG ORIGIN
+
+ENV DB_USERNAME=${DB_USERNAME}
+ENV DB_PASSWORD=${DB_PASSWORD}
+ENV DB_NAME=${DB_NAME}
+ENV DB_HOST=${DB_HOST}
+ENV DB_PORT=${DB_PORT}
+ENV ENV=${ENV}
+ENV ORIGIN=${ORIGIN}
+
+COPY --from=builder /go/src/app/main .
+COPY --from=builder /go/src/app/.env .
 
 CMD ["./main"]
 

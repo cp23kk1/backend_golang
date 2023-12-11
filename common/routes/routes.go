@@ -15,12 +15,23 @@ import (
 	"cp23kk1/modules/ping"
 	"cp23kk1/modules/users"
 	"os"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 // Run will start the server
 func Run(router *gin.Engine) {
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{os.Getenv("ORIGIN")},
+		AllowMethods:     []string{"PUT", "PATCH", "GET", "POST"},
+		AllowHeaders:     []string{"Origin"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+
+		MaxAge: 12 * time.Hour,
+	}))
 	getRoutes(router)
 	router.Run(":8080")
 }
