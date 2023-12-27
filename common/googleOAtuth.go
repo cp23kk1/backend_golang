@@ -36,10 +36,10 @@ func GetGoogleOauthToken(code string) (*GoogleOauthToken, error) {
 	redirectUrl := config.GoogleOAuthRedirectUrl
 	if redirectUrl == "" {
 		if config.ENV != "prod" {
-			redirectUrl = "httpscapstone23.sit.kmutt.ac.th/kk1/" + config.ENV + "/api/auth/google"
+			redirectUrl = "https://capstone23.sit.kmutt.ac.th/kk1/" + config.ENV + "/api/auth/google"
 		} else {
 
-			redirectUrl = "httpscapstone23.sit.kmutt.ac.th/kk1/api/auth/google"
+			redirectUrl = "https://capstone23.sit.kmutt.ac.th/kk1/api/auth/google"
 		}
 	}
 	values.Add("grant_type", "authorization_code")
