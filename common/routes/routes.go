@@ -1,6 +1,8 @@
 package routes
 
 import (
+	"cp23kk1/common/config"
+	"cp23kk1/modules/auth"
 	"cp23kk1/modules/cms/passage"
 	"cp23kk1/modules/cms/passage_history"
 	"cp23kk1/modules/cms/score_board"
@@ -14,7 +16,6 @@ import (
 	"cp23kk1/modules/history"
 	"cp23kk1/modules/ping"
 	"cp23kk1/modules/users"
-	"os"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -23,8 +24,9 @@ import (
 
 // Run will start the server
 func Run(router *gin.Engine) {
+	config, _ := config.LoadConfig()
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{os.Getenv("ORIGIN")},
+		AllowOrigins:     []string{config.ORIGIN},
 		AllowMethods:     []string{"PUT", "PATCH", "GET", "POST"},
 		AllowHeaders:     []string{"Origin"},
 		ExposeHeaders:    []string{"Content-Length"},
@@ -40,8 +42,9 @@ func Run(router *gin.Engine) {
 // this way every group of routes can be defined in their own file
 // so this one won't be so messy
 func getRoutes(router *gin.Engine) {
+	config, _ := config.LoadConfig()
 	api := router.Group("")
-	if env := os.Getenv("ENV"); env == "prod" {
+	if env := config.ENV; env == "prod" {
 		api = router.Group("/api")
 	} else {
 		api = router.Group("/" + env + "/api")
@@ -51,6 +54,7 @@ func getRoutes(router *gin.Engine) {
 	users.AddUserRoutes(api)
 	gameplays.AddGameplayRoutes(api)
 	history.AddHistoryRoutes(api)
+	auth.AddAuthRoutes(api)
 
 	v1 := api.Group("/cms")
 	passage.SetupPassageRoutes(v1)

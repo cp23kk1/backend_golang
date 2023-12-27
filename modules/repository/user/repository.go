@@ -2,6 +2,7 @@ package user
 
 import (
 	"cp23kk1/modules/repository/enum"
+	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -68,4 +69,27 @@ func (u UserRepository) DeleteUser(id int) error {
 		return result.Error
 	}
 	return nil
+}
+
+func (u UserRepository) Upsert(newUser UserModel) (UserModel, error) {
+
+	var existingUser UserModel
+	result := u.db.Where(UserModel{Email: newUser.Email}).First(&existingUser)
+
+	// If the user doesn't exist, create a new one
+	if result.Error != nil {
+		fmt.Print("NOTFOUNDNDDD")
+		if result.Error == gorm.ErrRecordNotFound {
+			u.db.Create(&newUser)
+			fmt.Println("User created:", newUser)
+			return newUser, nil
+		} else {
+			return UserModel{}, result.Error
+		}
+	} else {
+		// If the user already exists, update the existing record
+		u.db.Model(&existingUser).Updates(newUser)
+		fmt.Println("User updated:", existingUser)
+		return existingUser, nil
+	}
 }
