@@ -7,7 +7,6 @@ pipeline {
 
     environment {
         GOLANG_IMAGE_NAME = "vocaverse-golang"
-        IMAGE_TAG = "latest"
         CONTAINER_NAME = "vocaverse-golang"
     }
 
@@ -16,8 +15,29 @@ pipeline {
         stage('Build GOLANG Images') {
             steps {
                 script {
+                    def envContent = """
+                        DB_USERNAME=${env.DB_USERNAME}
+                        DB_PASSWORD=${env.DB_PASSWORD}
+                        DB_NAME=${env.DB_NAME}
+                        DB_HOST=${env.DB_HOST}${params.deployEnvironment}
+                        DB_PORT=${env.DB_PORT}
+                        ORIGIN=${env.ORIGIN}
+                        ENV=${params.deployEnvironment}
+
+                        ACCESS_TOKEN_PRIVATE_KEY=dm9jYXZlcnNlLWFjY2Vzcy1wcml2YXRl
+                        REFRESH_TOKEN_PRIVATE_KEY=dm9jYXZlcnNlLXJlZnJlc2gtcHJpdmF0ZQ==
+                        ACCESS_TOKEN_EXPIRED_IN="6h"
+                        REFRESH_TOKEN_EXPIRED_IN="720h"
+                        GOOGLE_OAUTH_CLIENT_ID=126533526038-40qi1o4nlvr4k56h01rl3634i4janrce.apps.googleusercontent.com
+                        GOOGLE_OAUTH_CLIENT_SECRET=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
+                    """
+                    writeFile file: '.env', text: envContent
+
+                    // Display the content of the created .env file
+                    echo "Content of .env:"
+                    echo readFile('.env')
                     sh "echo ${params.deployEnvironment}"
-                    sh "docker build -t  ${GOLANG_IMAGE_NAME}:${IMAGE_TAG} \
+                    sh "docker build -t  ${GOLANG_IMAGE_NAME}:${GIT_TAG} \
                     --build-arg DB_HOST=${env.DB_HOST}${params.deployEnvironment} \
                     --build-arg DB_USERNAME=${env.DB_USERNAME} \
                     --build-arg DB_NAME=${env.DB_NAME} \
@@ -45,7 +65,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                sh "docker run -d --name ${CONTAINER_NAME}-${params.deployEnvironment} --network ${params.deployEnvironment}-network ${GOLANG_IMAGE_NAME}:${IMAGE_TAG}"
+                sh "docker run -d --name ${CONTAINER_NAME}-${params.deployEnvironment} --network ${params.deployEnvironment}-network ${GOLANG_IMAGE_NAME}:${GIT_TAG}"
                 }
             }
         }

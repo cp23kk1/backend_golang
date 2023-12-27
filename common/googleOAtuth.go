@@ -33,11 +33,20 @@ func GetGoogleOauthToken(code string) (*GoogleOauthToken, error) {
 
 	config, _ := config.LoadConfig()
 	values := url.Values{}
+	redirectUrl := config.GoogleOAuthRedirectUrl
+	if redirectUrl == "" {
+		if config.ENV != "prod" {
+			redirectUrl = "httpscapstone23.sit.kmutt.ac.th/kk1/" + config.ENV + "/api/auth/google"
+		} else {
+
+			redirectUrl = "httpscapstone23.sit.kmutt.ac.th/kk1/api/auth/google"
+		}
+	}
 	values.Add("grant_type", "authorization_code")
 	values.Add("code", code)
 	values.Add("client_id", config.GoogleClientID)
 	values.Add("client_secret", config.GoogleClientSecret)
-	values.Add("redirect_uri", config.GoogleOAuthRedirectUrl)
+	values.Add("redirect_uri", redirectUrl)
 
 	query := values.Encode()
 	req, err := http.NewRequest("POST", rootURl, bytes.NewBufferString(query))
