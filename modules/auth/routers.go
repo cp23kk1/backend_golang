@@ -83,12 +83,13 @@ func GoogleOAuth(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}
-	c.SetCookie("access_token", access_token, config.AccessTokenMaxAge*60*60, "/", "localhost", false, true)
-	c.SetCookie("refresh_token", refresh_token, config.RefreshTokenMaxAge*60*60, "/", "localhost", false, true)
-	c.SetCookie("logged_in", "true", config.AccessTokenMaxAge*60*60, "/", "localhost", false, false)
+	c.SetCookie("access_token", access_token, config.AccessTokenMaxAge*60*60, "/", config.ORIGIN, false, true)
+	c.SetCookie("refresh_token", refresh_token, config.RefreshTokenMaxAge*60*60, "/", config.ORIGIN, false, true)
+	c.SetCookie("logged_in", "true", config.AccessTokenMaxAge*60*60, "/", config.ORIGIN, false, false)
 	var basePath = ""
 	if config.ENV != "prod" {
 		basePath = config.ENV
 	}
+	fmt.Println("config.ORIGIN: ", config.ORIGIN)
 	c.Redirect(http.StatusTemporaryRedirect, fmt.Sprint(config.ORIGIN+"/"+basePath, pathUrl))
 }
