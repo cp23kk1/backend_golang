@@ -7,6 +7,7 @@ type Role string
 const (
 	ADMIN Role = "admin"
 	USER  Role = "user"
+	GUEST Role = "guest"
 )
 
 func (self *Role) Scan(value interface{}) error {

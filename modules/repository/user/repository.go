@@ -15,17 +15,12 @@ func NewUserRepository(db *gorm.DB) UserRepository {
 	return UserRepository{db: db}
 }
 
-func (u UserRepository) CreateUser(email *string, role enum.Role, displayName string, image *string, isPrivateProfile bool) error {
-
-	user := UserModel{
-		Email:            email,
-		Role:             role,
-		DisplayName:      &displayName,
-		IsActive:         true,
-		Image:            image,
-		IsPrivateProfile: isPrivateProfile,
+func (u UserRepository) CreateUser(user UserModel) (UserModel, error) {
+	err := u.db.Create(&user).Error
+	if err != nil {
+		return UserModel{}, err
 	}
-	return u.db.Create(&user).Error
+	return user, nil
 }
 
 func (u UserRepository) FindUserByID(id int) (*UserModel, error) {

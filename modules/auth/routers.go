@@ -15,7 +15,7 @@ func AddAuthRoutes(rg *gin.RouterGroup) {
 	auth := rg.Group("/auth")
 
 	auth.GET("/google", GoogleOAuth)
-
+	auth.POST("/guest", GuestLogin)
 	auth.Use(AuthMiddleware(true))
 	auth.POST("/sign-out", logout)
 
@@ -90,6 +90,17 @@ func GoogleOAuth(c *gin.Context) {
 	if config.ENV != "prod" {
 		basePath = config.ENV
 	}
-	fmt.Println("config.ORIGIN: ", config.ORIGIN)
 	c.Redirect(http.StatusTemporaryRedirect, fmt.Sprint(config.ORIGIN+"/"+basePath, pathUrl))
+}
+func GuestLogin(c *gin.Context) {
+	config, err := config.LoadConfig()
+	access_token, refresh_token, err := GuestLoginService()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Status: "failed", Message: err.Error()}, map[string]interface{}{}))
+		return
+	}
+	c.SetCookie("access_token", *access_token, config.AccessTokenMaxAge*60*60, "/", config.ORIGIN, false, true)
+	c.SetCookie("refresh_token", *refresh_token, 0, "/", config.ORIGIN, false, true)
+	c.SetCookie("logged_in", "true", config.AccessTokenMaxAge*60*60, "/", config.ORIGIN, false, false)
+	c.JSON(http.StatusCreated, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Status: "success", Message: "GuestUser created"}, map[string]interface{}{}))
 }
