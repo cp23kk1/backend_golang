@@ -5,6 +5,7 @@ import (
 	"cp23kk1/common/config"
 	"cp23kk1/common/databases"
 	"cp23kk1/modules/repository/user"
+	"time"
 )
 
 func GuestLoginService() (*string, *string, error) {
@@ -24,7 +25,7 @@ func GuestLoginService() (*string, *string, error) {
 
 	// Generate Tokens
 	access_token, err := common.CreateToken(config.AccessTokenExpiresIn, newUser.ID, config.AccessTokenPrivateKey)
-	refresh_token, err := common.CreateToken(0, newUser.ID, config.RefreshTokenPrivateKey)
+	refresh_token, err := common.CreateToken(time.Duration(time.Hour*525600), newUser.ID, config.RefreshTokenPrivateKey)
 	if err != nil {
 		return nil, nil, err
 	}
