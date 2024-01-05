@@ -49,13 +49,13 @@ func UpdateContextUserModel(c *gin.Context, userId interface{}) {
 // You can custom middlewares yourself as the doc: https://github.com/gin-gonic/gin#custom-middleware
 //
 //	r.Use(AuthMiddleware(true))
-func AuthMiddleware(auto401 bool, keyToken string) gin.HandlerFunc {
+func AuthMiddleware(auto401 bool, tokenName string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		UpdateContextUserModel(c, 0)
 		config, _ := config.LoadConfig()
-		token, err := c.Cookie(keyToken)
+		token, err := c.Cookie(tokenName)
 		key := ""
-		if keyToken == "access_token" {
+		if tokenName == "access_token" {
 			key = config.AccessTokenPrivateKey
 		} else {
 			key = config.RefreshTokenPrivateKey
