@@ -16,8 +16,10 @@ func AddAuthRoutes(rg *gin.RouterGroup) {
 
 	auth.GET("/google", GoogleOAuth)
 	auth.POST("/guest", GuestLogin)
-	auth.Use(AuthMiddleware(true))
-	auth.POST("/sign-out", logout)
+	refreshAuthRoute := auth.Use(AuthMiddleware(true, "refresh_token"))
+	refreshAuthRoute.POST("/refresh", RefreshToken)
+	authRoute := auth.Use(AuthMiddleware(true, "access_token"))
+	authRoute.POST("/sign-out", logout)
 
 }
 func logout(c *gin.Context) {
@@ -26,6 +28,22 @@ func logout(c *gin.Context) {
 	c.SetCookie("refresh_token", "", 0, "/", "", true, true)
 	c.SetCookie("logged_in", "", 0, "/", "", true, false)
 	return
+}
+
+func RefreshToken(c *gin.Context) {
+	config, _ := config.LoadConfig()
+	userId, exists := c.Get("userId")
+	fmt.Println("userId:  ", userId)
+	if exists == false {
+		c.JSON(http.StatusUnauthorized, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Status: "failed", Message: "Error when retrived token"}, map[string]interface{}{}))
+	}
+	access_token, err := common.CreateToken(config.AccessTokenExpiresIn, userId, config.AccessTokenPrivateKey)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+	c.SetCookie("access_token", access_token, config.AccessTokenMaxAge*60*60, "/", config.ORIGIN, false, true)
+
 }
 func GoogleOAuth(c *gin.Context) {
 	userRepository := user.NewUserRepository(databases.GetDB())
