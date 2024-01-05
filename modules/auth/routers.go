@@ -90,6 +90,5 @@ func GoogleOAuth(c *gin.Context) {
 	if config.ENV != "prod" {
 		basePath = config.ENV
 	}
-	fmt.Println("config.ORIGIN: ", config.ORIGIN)
 	c.Redirect(http.StatusTemporaryRedirect, fmt.Sprint(config.ORIGIN+"/"+basePath, pathUrl))
 }
