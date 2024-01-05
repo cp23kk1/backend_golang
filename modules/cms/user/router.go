@@ -38,7 +38,14 @@ func createUserHandler(c *gin.Context) {
 	}
 	userRepository := userRepo.NewUserRepository(databases.GetDB())
 
-	err := userRepository.CreateUser(userModelValidator.Email, userModelValidator.Role, userModelValidator.DisplayName, userModelValidator.Image, userModelValidator.IsPrivateProfile)
+	newUser := &userRepo.UserModel{
+		Email:            userModelValidator.Email,
+		Role:             userModelValidator.Role,
+		DisplayName:      &userModelValidator.DisplayName,
+		Image:            userModelValidator.Image,
+		IsPrivateProfile: userModelValidator.IsPrivateProfile,
+	}
+	_, err := userRepository.CreateUser(*newUser)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
