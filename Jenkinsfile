@@ -42,6 +42,7 @@ pipeline {
                         REFRESH_TOKEN_EXPIRED_IN=${env.REFRESH_TOKEN_EXPIRED_IN}
                         GOOGLE_OAUTH_CLIENT_ID=${env.GOOGLE_OAUTH_CLIENT_ID}
                         GOOGLE_OAUTH_CLIENT_SECRET=${env.GOOGLE_OAUTH_CLIENT_SECRET}
+                        GOOGLE_OAUTH_REDIRECT_URL=${params.deployEnvironment == 'prod' ? env.GOOGLE_OAUTH_REDIRECT_URL_PROD : params.deployEnvironment == 'dev' ? env.GOOGLE_OAUTH_REDIRECT_URL_DEV : env.GOOGLE_OAUTH_REDIRECT_URL_SIT}
                     """
                     writeFile file: '.env', text: envContent
 
