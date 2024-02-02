@@ -64,20 +64,20 @@ type SentenceResponse struct {
 	Meaning string `json:"meaning"`
 }
 
-func (self *SentenceSerealizer) Response() VocabResponse {
+func (self *SentenceSerealizer) Response() SentenceResponse {
 	sentenceModel := self.SentenceModel
-	var vocabs VocabResponse
-	err := mapstructure.Decode(sentenceModel, &vocabs)
+	var sentence SentenceResponse
+	err := mapstructure.Decode(sentenceModel, &sentence)
 	if err != nil {
 		fmt.Println("Error mapping data:", err)
-		return vocabs
+		return sentence
 	}
-	return vocabs
+	return sentence
 }
 
-func (self *SentencesSerealizer) Response() []VocabResponse {
+func (self *SentencesSerealizer) Response() []SentenceResponse {
 	sentenceModel := self.sentences
-	var sentences []VocabResponse
+	var sentences []SentenceResponse
 
 	for _, sentence := range sentenceModel {
 		serializer := SentenceSerealizer{self.C, sentence}
