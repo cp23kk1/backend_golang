@@ -50,3 +50,10 @@ func (p PassageRepository) DeletePassage(id int) error {
 	return p.db.Delete(passage).Error
 
 }
+func (v PassageRepository) RandomPassage(limit int) ([]PassageModel, error) {
+
+	var passages []PassageModel
+	// v.db.Model(&ScoreBoardModel{}).Preload("User").Find(&scoreBoards).Error
+	err := v.db.Model(&PassageModel{}).Order("RAND()").Limit(limit).Scan(&passages).Error
+	return passages, err
+}
