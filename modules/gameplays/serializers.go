@@ -98,9 +98,8 @@ type PassagesSerealizer struct {
 }
 
 type PassageResponse struct {
-	ID      uint   `json:"id"`
-	Text    string `json:"text"`
-	Meaning string `json:"meaning"`
+	ID    uint   `json:"id"`
+	Title string `json:"title"`
 }
 
 func (self *PassageSerealizer) Response() PassageResponse {
