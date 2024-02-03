@@ -50,5 +50,5 @@ func RandomPassageForGamePlay(c *gin.Context) {
 		return
 	}
 	serializer := PassagesSerealizer{c, passages}
-	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "Get Passage successfully", Status: "success"}, map[string]interface{}{"sentences": serializer.Response()}))
+	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "Get Passage successfully", Status: "success"}, map[string]interface{}{"passages": serializer.Response()}))
 }
