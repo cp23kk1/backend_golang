@@ -55,3 +55,11 @@ func (s SentenceRepository) UpdateSentence(id int, passageId *uint, sequence *in
 func (s SentenceRepository) DeleteSentence(id int) error {
 	return s.db.Delete(&SentenceModel{}, id).Error
 }
+
+func (v SentenceRepository) RandomSentence(limit int) ([]SentenceModel, error) {
+
+	var sentences []SentenceModel
+	// v.db.Model(&ScoreBoardModel{}).Preload("User").Find(&scoreBoards).Error
+	err := v.db.Model(&SentenceModel{}).Order("RAND()").Limit(limit).Scan(&sentences).Error
+	return sentences, err
+}
