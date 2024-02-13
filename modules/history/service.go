@@ -31,27 +31,23 @@ func getScoreBoard() ([]scoreBoardRepo.ScoreBoardModel, error) {
 func gameResult(gameResultValidator GameResultModelValidator) error {
 	tx := databases.GetDB().Begin()
 
-	userId := 2
-	if gameResultValidator.UserID != nil {
-		userId = *gameResultValidator.UserID
-	}
 	scoreBoardRepository := score_board.NewScoreBoardRepository(tx)
 	vhRepository := vocabulary_history.NewVocabularyHistoryRepository(tx)
 	shRepository := sentence_history.NewSentenceHistoryRepository(tx)
 	phRepository := passage_history.NewPassageHistoryRepository(tx)
-	if err := scoreBoardRepository.CreateScoreBoard(uint(userId), gameResultValidator.CurrentSocore, 1, time.Now(), time.Now()); err != nil {
+	if err := scoreBoardRepository.CreateScoreBoard(uint(*gameResultValidator.UserID), gameResultValidator.CurrentSocore, 1, time.Now(), time.Now()); err != nil {
 		tx.Rollback()
 		return err
 	}
-	if err := vhRepository.CreateVocabularyHistoryWithArray(uint(userId), gameResultValidator.Vocabs, gameResultValidator.GameID); err != nil {
+	if err := vhRepository.CreateVocabularyHistoryWithArray(uint(*gameResultValidator.UserID), gameResultValidator.Vocabs, gameResultValidator.GameID); err != nil {
 		tx.Rollback()
 		return err
 	}
-	if err := shRepository.CreateSentenceHistoryWithArray(uint(userId), gameResultValidator.Sentences, gameResultValidator.GameID); err != nil {
+	if err := shRepository.CreateSentenceHistoryWithArray(uint(*gameResultValidator.UserID), gameResultValidator.Sentences, gameResultValidator.GameID); err != nil {
 		tx.Rollback()
 		return err
 	}
-	if err := phRepository.CreatePassageHistoryWithArray(uint(userId), gameResultValidator.Passages, gameResultValidator.GameID); err != nil {
+	if err := phRepository.CreatePassageHistoryWithArray(uint(*gameResultValidator.UserID), gameResultValidator.Passages, gameResultValidator.GameID); err != nil {
 		tx.Rollback()
 		return err
 	}
