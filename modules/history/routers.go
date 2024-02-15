@@ -32,9 +32,10 @@ func GameResult(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "error"}, map[string]interface{}{"errorMessage": err.Error()}))
 		return
 	}
-	*gameResultValidator.UserID = c.MustGet("userId").(int)
-	if err := gameResult(gameResultValidator); err != nil {
+	userId := int(c.MustGet("userId").(float64))
+	*gameResultValidator.UserID = userId
 
+	if err := gameResult(gameResultValidator); err != nil {
 		c.JSON(http.StatusBadRequest, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "error"}, map[string]interface{}{"errorMessage": err.Error()}))
 		return
 	}
