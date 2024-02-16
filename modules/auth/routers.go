@@ -25,6 +25,7 @@ func logout(c *gin.Context) {
 	c.SetCookie("access_token", "", 0, "/", "", true, true)
 	c.SetCookie("refresh_token", "", 0, "/", "", true, true)
 	c.SetCookie("logged_in", "", 0, "/", "", true, false)
+	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Status: "success", Message: "Logout Successfully"}, map[string]interface{}{}))
 	return
 }
 
