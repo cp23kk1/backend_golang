@@ -38,7 +38,7 @@ func createUserHandler(c *gin.Context) {
 	}
 	userRepository := userRepo.NewUserRepository(databases.GetDB())
 
-	newUser := &userRepo.UserModel{
+	newUser := &databases.UserModel{
 		Email:            userModelValidator.Email,
 		Role:             userModelValidator.Role,
 		DisplayName:      &userModelValidator.DisplayName,

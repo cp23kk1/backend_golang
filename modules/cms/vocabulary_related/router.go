@@ -69,7 +69,7 @@ func GetAllVocabularyRelatedHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, vocabularyRelated)
 }
 func UpdateVocabularyRelatedHandler(c *gin.Context) {
-	var vocabularyRelated vocabularyRelatedRepo.VocabularyRelatedModel
+	var vocabularyRelated databases.VocabularyRelatedModel
 	if err := c.ShouldBindJSON(&vocabularyRelated); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

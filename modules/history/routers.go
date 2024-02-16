@@ -3,7 +3,6 @@ package history
 import (
 	"cp23kk1/common"
 	"cp23kk1/modules/auth"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -33,8 +32,7 @@ func GameResult(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "error"}, map[string]interface{}{"errorMessage": err.Error()}))
 		return
 	}
-	userId := int(c.MustGet("userId").(float64))
-	fmt.Println("userId", userId)
+	userId := c.MustGet("userId").(uint)
 
 	if err := gameResult(gameResultValidator, userId); err != nil {
 		c.JSON(http.StatusBadRequest, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "error"}, map[string]interface{}{"errorMessage": err.Error()}))

@@ -1,6 +1,7 @@
 package score_board
 
 import (
+	"cp23kk1/common/databases"
 	"time"
 
 	"gorm.io/gorm"
@@ -16,7 +17,7 @@ func NewScoreBoardRepository(db *gorm.DB) ScoreBoardRepository {
 
 func (s *ScoreBoardRepository) CreateScoreBoard(userID uint, score, week int, startDate, endDate time.Time) error {
 
-	scoreBoard := ScoreBoardModel{
+	scoreBoard := databases.ScoreBoardModel{
 		UserID:    userID,
 		Score:     score,
 		Week:      week,
@@ -25,26 +26,26 @@ func (s *ScoreBoardRepository) CreateScoreBoard(userID uint, score, week int, st
 	}
 	return s.db.Create(&scoreBoard).Error
 }
-func (s *ScoreBoardRepository) FindScoreBoardByID(id int) (*ScoreBoardModel, error) {
+func (s *ScoreBoardRepository) FindScoreBoardByID(id int) (*databases.ScoreBoardModel, error) {
 
-	var scoreBoard ScoreBoardModel
+	var scoreBoard databases.ScoreBoardModel
 	if result := s.db.Preload("User").First(&scoreBoard, id); result.Error != nil {
 		return nil, result.Error
 	}
 	return &scoreBoard, nil
 }
-func (s *ScoreBoardRepository) FindScoreBoardsByUserID(userID int) ([]ScoreBoardModel, error) {
+func (s *ScoreBoardRepository) FindScoreBoardsByUserID(userID int) ([]databases.ScoreBoardModel, error) {
 
-	var scoreBoards []ScoreBoardModel
+	var scoreBoards []databases.ScoreBoardModel
 	if result := s.db.Where("user_id = ?", userID).Preload("User").Find(&scoreBoards); result.Error != nil {
 		return nil, result.Error
 	}
 	return scoreBoards, nil
 }
-func (s *ScoreBoardRepository) FindAllScoreBoards() ([]ScoreBoardModel, error) {
+func (s *ScoreBoardRepository) FindAllScoreBoards() ([]databases.ScoreBoardModel, error) {
 
-	var scoreBoards []ScoreBoardModel
-	err := s.db.Model(&ScoreBoardModel{}).Preload("User").Find(&scoreBoards).Error
+	var scoreBoards []databases.ScoreBoardModel
+	err := s.db.Model(&databases.ScoreBoardModel{}).Preload("User").Find(&scoreBoards).Error
 
 	return scoreBoards, err
 }

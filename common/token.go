@@ -28,7 +28,7 @@ func CreateToken(ttl time.Duration, payload interface{}, key string) (string, er
 }
 
 // ValidateToken validates a JSON Web Token (JWT) using the specified key.
-func ValidateToken(tokenString string, key string) (interface{}, error) {
+func ValidateToken(tokenString string, key string) (uint, error) {
 	// Parse the token
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		// Check the signing method
@@ -41,22 +41,22 @@ func ValidateToken(tokenString string, key string) (interface{}, error) {
 	})
 
 	if err != nil {
-		return nil, fmt.Errorf("error parsing token: %w", err)
+		return 0, fmt.Errorf("error parsing token: %w", err)
 	}
 
 	// Check if the token is valid
 	if !token.Valid {
-		return nil, fmt.Errorf("invalid token")
+		return 0, fmt.Errorf("invalid token")
 	}
 
 	// Extract claims
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		return nil, fmt.Errorf("error extracting claims")
+		return 0, fmt.Errorf("error extracting claims")
 	}
 
 	// You can access the individual claims here
-	subject := claims["sub"]
+	subject := uint(claims["sub"].(float64))
 
 	return subject, nil
 }

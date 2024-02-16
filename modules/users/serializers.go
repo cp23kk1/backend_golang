@@ -1,8 +1,8 @@
 package users
 
 import (
+	"cp23kk1/common/databases"
 	"cp23kk1/modules/repository/enum"
-	userRepo "cp23kk1/modules/repository/user"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
@@ -17,12 +17,12 @@ type UserResponse struct {
 	Active         bool
 	Image          *string
 	PrivateProfile bool
-	ScoreBoards    []userRepo.ScoreBoardModel
+	ScoreBoards    []databases.ScoreBoardModel
 }
 
 type UserSerializer struct {
 	c *gin.Context
-	userRepo.UserModel
+	databases.UserModel
 }
 
 func (self *UserSerializer) Response() UserResponse {

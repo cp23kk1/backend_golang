@@ -1,6 +1,8 @@
 package vocabulary_history
 
 import (
+	"cp23kk1/common/databases"
+
 	"gorm.io/gorm"
 )
 
@@ -14,7 +16,7 @@ func NewVocabularyHistoryRepository(db *gorm.DB) VocabularyHistoryRepository {
 
 func (vh VocabularyHistoryRepository) CreateVocabularyHistory(userID uint, vocabularyID uint, gameID string, correctness bool) error {
 
-	history := &VocabularyHistoryModel{
+	history := &databases.VocabularyHistoryModel{
 		UserID:       userID,
 		VocabularyID: vocabularyID,
 		GameID:       gameID,
@@ -27,25 +29,25 @@ func (vh VocabularyHistoryRepository) CreateVocabularyHistoryWithArray(userID ui
 	if len(vocabularies) == 0 {
 		return nil
 	}
-	history := []*VocabularyHistoryModel{}
+	history := []*databases.VocabularyHistoryModel{}
 
 	for _, v := range vocabularies {
-		history = append(history, &VocabularyHistoryModel{UserID: userID, VocabularyID: uint(v.VocabularyID), Correctness: v.Correctness, GameID: gameID})
+		history = append(history, &databases.VocabularyHistoryModel{UserID: userID, VocabularyID: uint(v.VocabularyID), Correctness: v.Correctness, GameID: gameID})
 	}
 	return vh.db.Create(history).Error
 }
-func (vh VocabularyHistoryRepository) FindVocabularyHistoryByID(id uint) (*VocabularyHistoryModel, error) {
+func (vh VocabularyHistoryRepository) FindVocabularyHistoryByID(id uint) (*databases.VocabularyHistoryModel, error) {
 
-	var history VocabularyHistoryModel
+	var history databases.VocabularyHistoryModel
 	if err := vh.db.Where("id = ?", id).Preload("User").Preload("Vocabulary").First(&history).Error; err != nil {
 		return nil, err
 	}
 	return &history, nil
 }
 
-func (vh VocabularyHistoryRepository) FindVocabularyHistoryAll() (*[]VocabularyHistoryModel, error) {
+func (vh VocabularyHistoryRepository) FindVocabularyHistoryAll() (*[]databases.VocabularyHistoryModel, error) {
 
-	var history []VocabularyHistoryModel
+	var history []databases.VocabularyHistoryModel
 	if err := vh.db.Preload("User").Preload("Vocabulary").Find(&history).Error; err != nil {
 		return nil, err
 	}
@@ -57,7 +59,7 @@ func (vh VocabularyHistoryRepository) UpdateVocabularyHistory(id, userID, vocabu
 		return err
 	}
 	if vocabularyHistory != nil {
-		history := &VocabularyHistoryModel{
+		history := &databases.VocabularyHistoryModel{
 			ID:           id,
 			UserID:       userID,
 			VocabularyID: vocabularyID,
@@ -69,7 +71,7 @@ func (vh VocabularyHistoryRepository) UpdateVocabularyHistory(id, userID, vocabu
 	return nil
 }
 
-func (vh VocabularyHistoryRepository) DeleteVocabularyHistory(history *VocabularyHistoryModel) error {
+func (vh VocabularyHistoryRepository) DeleteVocabularyHistory(history *databases.VocabularyHistoryModel) error {
 
 	return vh.db.Delete(history).Error
 }

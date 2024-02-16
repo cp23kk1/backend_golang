@@ -10,23 +10,23 @@ import (
 type VocabularyService struct {
 }
 
-func getVocabularies() ([]vocabularyRepo.VocabularyModel, error) {
+func getVocabularies() ([]databases.VocabularyModel, error) {
 	vocabularyRepository := vocabularyRepo.NewVocabularyRepository(databases.GetDB())
 	return vocabularyRepository.FindManyVocabulary()
 }
-func randomFromGamePlay() ([]vocabularyRepo.VocabularyModel, error) {
+func randomFromGamePlay() ([]databases.VocabularyModel, error) {
 	vocabularyRepository := vocabularyRepo.NewVocabularyRepository(databases.GetDB())
 
 	return vocabularyRepository.RandomVacabulary(50)
 }
 
-func randomSentenceForGamePlay() ([]sentenceRepo.SentenceModel, error) {
+func randomSentenceForGamePlay() ([]databases.SentenceModel, error) {
 	vocabularyRepository := sentenceRepo.NewSentenceRepository(databases.GetDB())
 
 	return vocabularyRepository.RandomSentence(50)
 }
 
-func randomPassageForGamePlay() ([]passageRepo.PassageModel, error) {
+func randomPassageForGamePlay() ([]databases.PassageModel, error) {
 	vocabularyRepository := passageRepo.NewPassageRepository(databases.GetDB())
 
 	return vocabularyRepository.RandomPassage(50)

@@ -1,6 +1,8 @@
 package sentence_history
 
 import (
+	"cp23kk1/common/databases"
+
 	"gorm.io/gorm"
 )
 
@@ -14,7 +16,7 @@ func NewSentenceHistoryRepository(db *gorm.DB) SentenceHistoryRepository {
 
 func (sh SentenceHistoryRepository) CreateSentenceHistory(userID uint, sentenceID uint, gameID string, correctness bool) error {
 
-	history := &SentenceHistoryModel{
+	history := &databases.SentenceHistoryModel{
 		UserID:      userID,
 		SentenceID:  sentenceID,
 		GameID:      gameID,
@@ -27,23 +29,23 @@ func (sh SentenceHistoryRepository) CreateSentenceHistoryWithArray(userID uint, 
 	if len(sentences) == 0 {
 		return nil
 	}
-	history := []*SentenceHistoryModel{}
+	history := []*databases.SentenceHistoryModel{}
 
 	for _, s := range sentences {
-		history = append(history, &SentenceHistoryModel{UserID: userID, SentenceID: uint(s.SentenceID), Correctness: s.Correctness, GameID: gameID})
+		history = append(history, &databases.SentenceHistoryModel{UserID: userID, SentenceID: uint(s.SentenceID), Correctness: s.Correctness, GameID: gameID})
 	}
 	return sh.db.Create(history).Error
 }
-func (sh SentenceHistoryRepository) FindSentenceHistoryByID(id uint) (*SentenceHistoryModel, error) {
-	var history SentenceHistoryModel
+func (sh SentenceHistoryRepository) FindSentenceHistoryByID(id uint) (*databases.SentenceHistoryModel, error) {
+	var history databases.SentenceHistoryModel
 	if err := sh.db.Where("id = ?", id).Preload("User").Preload("Sentence").First(&history).Error; err != nil {
 		return nil, err
 	}
 	return &history, nil
 }
 
-func (sh SentenceHistoryRepository) FindSentenceHistoryAll() (*[]SentenceHistoryModel, error) {
-	var history []SentenceHistoryModel
+func (sh SentenceHistoryRepository) FindSentenceHistoryAll() (*[]databases.SentenceHistoryModel, error) {
+	var history []databases.SentenceHistoryModel
 	if err := sh.db.Preload("User").Preload("Sentence").Find(&history).Error; err != nil {
 		return nil, err
 	}
@@ -55,7 +57,7 @@ func (sh SentenceHistoryRepository) UpdateSentenceHistory(id, userID uint, sente
 		return err
 	}
 	if sentenceHistory != nil {
-		history := &SentenceHistoryModel{
+		history := &databases.SentenceHistoryModel{
 			ID:          id,
 			UserID:      userID,
 			SentenceID:  sentenceID,
@@ -67,6 +69,6 @@ func (sh SentenceHistoryRepository) UpdateSentenceHistory(id, userID uint, sente
 	return nil
 }
 
-func (sh SentenceHistoryRepository) DeleteSentenceHistory(history *SentenceHistoryModel) error {
+func (sh SentenceHistoryRepository) DeleteSentenceHistory(history *databases.SentenceHistoryModel) error {
 	return sh.db.Delete(history).Error
 }

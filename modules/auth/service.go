@@ -14,7 +14,7 @@ func GuestLoginService() (*string, *string, error) {
 	userRepository := user.NewUserRepository(databases.GetDB())
 
 	displayName := "Guest"
-	guestUser := &user.UserModel{
+	guestUser := &databases.UserModel{
 
 		Email:       nil,
 		DisplayName: &displayName,
@@ -56,7 +56,7 @@ func GoogleOAuthService(c *gin.Context) (access, refresh string, err error) {
 		return "", "", err
 	}
 
-	resBody := &user.UserModel{
+	resBody := &databases.UserModel{
 
 		Email:       &userFromGoogle.Email,
 		DisplayName: &userFromGoogle.Name,

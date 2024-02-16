@@ -3,7 +3,6 @@ package users
 import (
 	"cp23kk1/common"
 	"cp23kk1/common/databases"
-	userRepo "cp23kk1/modules/repository/user"
 	"net/http"
 	"strings"
 
@@ -37,7 +36,7 @@ var MyAuth2Extractor = &request.MultiExtractor{
 
 // A helper to write user_id and user_model to the context
 func UpdateContextUserModel(c *gin.Context, my_user_id uint) {
-	var myUserModel userRepo.UserModel
+	var myUserModel databases.UserModel
 	if my_user_id != 0 {
 		db := databases.GetDB()
 		db.First(&myUserModel, my_user_id)
