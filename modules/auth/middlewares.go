@@ -62,7 +62,7 @@ func AuthMiddleware(auto401 bool, tokenName string) gin.HandlerFunc {
 		subject, err := common.ValidateToken(token, key)
 		if err != nil {
 			if auto401 {
-				c.JSON(http.StatusUnauthorized, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Status: "failed", Message: err.Error()}, map[string]interface{}{}))
+				c.AbortWithStatusJSON(http.StatusUnauthorized, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Status: "failed", Message: err.Error()}, map[string]interface{}{}))
 			}
 			return
 		}
