@@ -7,7 +7,7 @@ import (
 
 type UserUseCase struct{}
 
-func getUser(id int) (*databases.UserModel, error) {
+func getUser(id uint) (*databases.UserModel, error) {
 	userRepository := userRepo.NewUserRepository(databases.GetDB())
 	return userRepository.FindUserByID(id)
 }

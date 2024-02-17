@@ -128,8 +128,8 @@ func (VocabularyHistoryModel) TableName() string {
 }
 
 type VocabularyRelatedModel struct {
-	VocabularyID int `gorm:"primaryKey"`
-	SentenceID   int `gorm:"primaryKey"`
+	VocabularyID uint `gorm:"primaryKey"`
+	SentenceID   uint `gorm:"primaryKey"`
 
 	Vocabulary VocabularyModel `gorm:"foreignkey:ID;references:VocabularyID"`
 	Sentence   SentenceModel   `gorm:"foreignkey:ID;references:SentenceID"`

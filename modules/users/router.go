@@ -5,25 +5,35 @@ import (
 	"strconv"
 
 	"cp23kk1/common"
+	"cp23kk1/common/databases"
+	"cp23kk1/modules/auth"
 
 	"github.com/gin-gonic/gin"
 )
 
 func AddUserRoutes(rg *gin.RouterGroup) {
-	users := rg.Group("/users")
+	users := rg.Group("/user")
 
-	users.GET("/:id", UserRetrieve)
+	users.Use(auth.AuthMiddleware(true, "access_token"))
+	users.GET("/profile", GetProfile)
+	users.GET("/profile/:id", GetProfile)
 }
 
-func UserRetrieve(c *gin.Context) {
-	userId, _ := strconv.Atoi(c.Param("id"))
-	user, err := getUser(userId)
+func GetProfile(c *gin.Context) {
+	userId, err := strconv.Atoi(c.Param("id"))
+	var user *databases.UserModel = nil
 	if err != nil {
-		c.JSON(http.StatusNotFound, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: err.Error()}, map[string]interface{}{}))
+		user, err = getUser(c.MustGet("userId").(uint))
+	} else {
+
+		user, err = getUser(uint(userId))
+	}
+	if err != nil {
+		c.JSON(http.StatusNotFound, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Status: "failed", Message: err.Error()}, map[string]interface{}{}))
 		return
 	}
 	serealizer := UserSerializer{c, *user}
-	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "success"}, map[string]interface{}{"users": serealizer.Response()}))
+	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Status: "success", Message: "Get profile user successfully."}, map[string]interface{}{"users": serealizer.Response()}))
 
 	// serializer := UserSerializer{c, user}
 	// c.JSON(http.StatusOK, gin.H{"user": serializer.Response()})

@@ -24,7 +24,7 @@ func (u UserRepository) CreateUser(user databases.UserModel) (databases.UserMode
 	return user, nil
 }
 
-func (u UserRepository) FindUserByID(id int) (*databases.UserModel, error) {
+func (u UserRepository) FindUserByID(id uint) (*databases.UserModel, error) {
 	var user databases.UserModel
 	err := u.db.Where("id = ?", id).Preload("ScoreBoards").First(&user).Error
 	return &user, err
@@ -35,7 +35,7 @@ func (u UserRepository) FindAllUsers() (*[]databases.UserModel, error) {
 	return &user, err
 }
 
-func (u UserRepository) UpdateUser(id int, email *string, role enum.Role, displayName string, image *string, isPrivateProfile bool) error {
+func (u UserRepository) UpdateUser(id uint, email *string, role enum.Role, displayName string, image *string, isPrivateProfile bool) error {
 
 	user, err := u.FindUserByID(id)
 	if err != nil {
@@ -54,7 +54,7 @@ func (u UserRepository) UpdateUser(id int, email *string, role enum.Role, displa
 	return nil
 }
 
-func (u UserRepository) DeleteUser(id int) error {
+func (u UserRepository) DeleteUser(id uint) error {
 
 	user, err := u.FindUserByID(id)
 	if err != nil {

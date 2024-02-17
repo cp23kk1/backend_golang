@@ -10,14 +10,12 @@ import (
 )
 
 type UserResponse struct {
-	ID             int
-	Email          *string
-	Role           *enum.Role
-	DisplayName    *string
-	Active         bool
-	Image          *string
-	PrivateProfile bool
-	ScoreBoards    []databases.ScoreBoardModel
+	Email            *string   `json:"email"`
+	Role             enum.Role `json:"role"`
+	DisplayName      *string   `json:"displayName"`
+	IsActive         bool      `json:"isActive"`
+	Image            *string   `json:"image"`
+	IsPrivateProfile bool      `json:"isPrivate"`
 }
 
 type UserSerializer struct {
