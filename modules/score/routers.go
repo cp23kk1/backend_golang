@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"cp23kk1/common"
+	"cp23kk1/modules/auth"
 
 	"github.com/gin-gonic/gin"
 )
@@ -11,7 +12,7 @@ import (
 func AddScoreRoutes(rg *gin.RouterGroup) {
 	score := rg.Group("/score")
 
-	// score.Use(auth.AuthMiddleware(true, "access_token"))
+	score.Use(auth.AuthMiddleware(true, "access_token"))
 	score.GET("/scoreboard", RandomVocabularyForGamePlay)
 }
 
