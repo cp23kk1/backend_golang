@@ -15,6 +15,7 @@ import (
 	"cp23kk1/modules/gameplays"
 	"cp23kk1/modules/history"
 	"cp23kk1/modules/ping"
+	"cp23kk1/modules/score"
 	"cp23kk1/modules/users"
 	"time"
 
@@ -55,6 +56,7 @@ func getRoutes(router *gin.Engine) {
 	gameplays.AddGameplayRoutes(api)
 	history.AddHistoryRoutes(api)
 	auth.AddAuthRoutes(api)
+	score.AddScoreRoutes(api)
 
 	v1 := api.Group("/cms")
 	passage.SetupPassageRoutes(v1)
