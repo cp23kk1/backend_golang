@@ -1,6 +1,7 @@
 package gameplays
 
 import (
+	passageRepo "cp23kk1/modules/repository/passage"
 	sentenceRepo "cp23kk1/modules/repository/sentence"
 	vocabularyRepo "cp23kk1/modules/repository/vocabulary"
 	"fmt"
@@ -85,4 +86,41 @@ func (self *SentencesSerealizer) Response() []SentenceResponse {
 
 	}
 	return sentences
+}
+
+type PassageSerealizer struct {
+	C *gin.Context
+	passageRepo.PassageModel
+}
+type PassagesSerealizer struct {
+	C        *gin.Context
+	passages []passageRepo.PassageModel
+}
+
+type PassageResponse struct {
+	ID    uint   `json:"id"`
+	Title string `json:"title"`
+}
+
+func (self *PassageSerealizer) Response() PassageResponse {
+	passageModel := self.PassageModel
+	var passage PassageResponse
+	err := mapstructure.Decode(passageModel, &passage)
+	if err != nil {
+		fmt.Println("Error mapping data:", err)
+		return passage
+	}
+	return passage
+}
+
+func (self *PassagesSerealizer) Response() []PassageResponse {
+	passageModel := self.passages
+	var passages []PassageResponse
+
+	for _, passage := range passageModel {
+		serializer := PassageSerealizer{self.C, passage}
+		passages = append(passages, serializer.Response())
+
+	}
+	return passages
 }
