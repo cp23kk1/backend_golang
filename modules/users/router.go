@@ -33,7 +33,7 @@ func GetProfile(c *gin.Context) {
 		return
 	}
 	serealizer := UserSerializer{c, *user}
-	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Status: "success", Message: "Get profile user successfully."}, map[string]interface{}{"users": serealizer.Response()}))
+	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Status: "success", Message: "Get profile user successfully."}, serealizer.Response()))
 
 	// serializer := UserSerializer{c, user}
 	// c.JSON(http.StatusOK, gin.H{"user": serializer.Response()})
