@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     parameters {
-      choice(choices: ["dev", "sit", "prod"], description: "Which environment to deploy?", name: "deployEnvironment")
+        choice(choices: ["dev", "sit", "prod"], description: "Which environment to deploy?", name: "deployEnvironment")
     }
 
     environment {
@@ -11,7 +11,19 @@ pipeline {
     }
 
     stages {
+        stage ('Remove container'){
+                    steps {
+                    script {
+                            def exitCode = sh(script: "docker rm -f ${CONTAINER_NAME}-${params.deployEnvironment}", returnStatus: true)
 
+                            if (exitCode == 0) {
+                                echo "Container removal was successful"
+                            } else {
+                                echo "Container removal failed or was skipped"
+                            }
+                    }
+                    }
+                }
         stage('Build GOLANG Images') {
             steps {
                 script {
@@ -24,12 +36,13 @@ pipeline {
                         ORIGIN=${env.ORIGIN}
                         ENV=${params.deployEnvironment}
 
-                        ACCESS_TOKEN_PRIVATE_KEY=dm9jYXZlcnNlLWFjY2Vzcy1wcml2YXRl
-                        REFRESH_TOKEN_PRIVATE_KEY=dm9jYXZlcnNlLXJlZnJlc2gtcHJpdmF0ZQ==
-                        ACCESS_TOKEN_EXPIRED_IN="6h"
-                        REFRESH_TOKEN_EXPIRED_IN="720h"
-                        GOOGLE_OAUTH_CLIENT_ID=126533526038-40qi1o4nlvr4k56h01rl3634i4janrce.apps.googleusercontent.com
-                        GOOGLE_OAUTH_CLIENT_SECRET=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
+                        ACCESS_TOKEN_PRIVATE_KEY=${env.ACCESS_TOKEN_PRIVATE_KEY}
+                        REFRESH_TOKEN_PRIVATE_KEY=${env.REFRESH_TOKEN_PRIVATE_KEY}
+                        ACCESS_TOKEN_EXPIRED_IN=${env.ACCESS_TOKEN_EXPIRED_IN}
+                        REFRESH_TOKEN_EXPIRED_IN=${env.REFRESH_TOKEN_EXPIRED_IN}
+                        GOOGLE_OAUTH_CLIENT_ID=${env.GOOGLE_OAUTH_CLIENT_ID}
+                        GOOGLE_OAUTH_CLIENT_SECRET=${env.GOOGLE_OAUTH_CLIENT_SECRET}
+                        GOOGLE_OAUTH_REDIRECT_URL=${params.deployEnvironment == 'prod' ? env.GOOGLE_OAUTH_REDIRECT_URL_PROD : params.deployEnvironment == 'dev' ? env.GOOGLE_OAUTH_REDIRECT_URL_DEV : env.GOOGLE_OAUTH_REDIRECT_URL_SIT}
                     """
                     writeFile file: '.env', text: envContent
 
@@ -48,20 +61,6 @@ pipeline {
                 }
             }
         }
-        stage ('Remove container'){
-            steps {
-            script {
-                    def exitCode = sh(script: "docker rm -f ${CONTAINER_NAME}-${params.deployEnvironment}", returnStatus: true)
-
-                    if (exitCode == 0) {
-                        echo "Container removal was successful"
-                    } else {
-                        echo "Container removal failed or was skipped"
-                    }
-            }
-            }
-        }
-
         stage('Deploy') {
             steps {
                 script {

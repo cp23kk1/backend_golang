@@ -1,6 +1,7 @@
 package gameplays
 
 import (
+	sentenceRepo "cp23kk1/modules/repository/sentence"
 	vocabularyRepo "cp23kk1/modules/repository/vocabulary"
 	"fmt"
 
@@ -46,4 +47,42 @@ func (self *VocabsSerealizer) Response() []VocabResponse {
 
 	}
 	return vocabs
+}
+
+type SentenceSerealizer struct {
+	C *gin.Context
+	sentenceRepo.SentenceModel
+}
+type SentencesSerealizer struct {
+	C         *gin.Context
+	sentences []sentenceRepo.SentenceModel
+}
+
+type SentenceResponse struct {
+	ID      uint   `json:"id"`
+	Text    string `json:"text"`
+	Meaning string `json:"meaning"`
+}
+
+func (self *SentenceSerealizer) Response() SentenceResponse {
+	sentenceModel := self.SentenceModel
+	var sentence SentenceResponse
+	err := mapstructure.Decode(sentenceModel, &sentence)
+	if err != nil {
+		fmt.Println("Error mapping data:", err)
+		return sentence
+	}
+	return sentence
+}
+
+func (self *SentencesSerealizer) Response() []SentenceResponse {
+	sentenceModel := self.sentences
+	var sentences []SentenceResponse
+
+	for _, sentence := range sentenceModel {
+		serializer := SentenceSerealizer{self.C, sentence}
+		sentences = append(sentences, serializer.Response())
+
+	}
+	return sentences
 }
