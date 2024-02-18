@@ -19,7 +19,7 @@ func GuestLoginService() (*string, *string, error) {
 		Email:       nil,
 		DisplayName: &displayName,
 		Image:       nil,
-		Role:        "guest",
+		Role:        "user",
 	}
 
 	newUser, err := userRepository.CreateUser(*guestUser)
