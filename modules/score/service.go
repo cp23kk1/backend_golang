@@ -9,3 +9,8 @@ func getHighScoreBoard() ([]databases.ScoreBoardModel, error) {
 	scoreBoardRepository := scoreBoardRepo.NewScoreBoardRepository(databases.GetDB())
 	return scoreBoardRepository.FindAllHighScoreBoardsByWeekLimit(5, 1)
 }
+
+func getBestScoreUser(userId uint) ([]databases.ScoreBoardModel, error) {
+	scoreBoardRepository := scoreBoardRepo.NewScoreBoardRepository(databases.GetDB())
+	return scoreBoardRepository.FindMaxScoreBoardsByUserID(userId)
+}

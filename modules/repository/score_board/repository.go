@@ -57,6 +57,16 @@ func (s *ScoreBoardRepository) FindAllHighScoreBoardsByWeekLimit(limit, week int
 
 	return scoreBoards, err
 }
+
+func (s *ScoreBoardRepository) FindMaxScoreBoardsByUserID(userID uint) ([]databases.ScoreBoardModel, error) {
+
+	var scoreBoards []databases.ScoreBoardModel
+	if result := s.db.Where("user_id = ?", userID).Preload("User").Order("score desc").Limit(1).Find(&scoreBoards); result.Error != nil {
+		return nil, result.Error
+	}
+	return scoreBoards, nil
+}
+
 func (s *ScoreBoardRepository) DeleteScoreBoard(id int) error {
 
 	scoreBoard, err := s.FindScoreBoardByID(id)

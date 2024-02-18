@@ -25,6 +25,11 @@ type ScoreBoardResponse struct {
 	DisplayName *string   `json:"displayName"`
 }
 
+type BestScoreResponse struct {
+	Score int     `json:"score"`
+	Mode  *string `json:"mode"`
+}
+
 func ConvertToScoreBoardResponse(scoreBoard databases.ScoreBoardModel) ScoreBoardResponse {
 
 	return ScoreBoardResponse{
@@ -36,6 +41,15 @@ func ConvertToScoreBoardResponse(scoreBoard databases.ScoreBoardModel) ScoreBoar
 		DisplayName: scoreBoard.User.DisplayName,
 	}
 }
+
+func ConvertToBestScoreResponse(scoreBoard databases.ScoreBoardModel) BestScoreResponse {
+
+	return BestScoreResponse{
+		Score: scoreBoard.Score,
+		Mode:  nil,
+	}
+}
+
 func (self *ScoreSerealizer) Response() ScoreBoardResponse {
 	scoreBoardModel := self.ScoreBoardModel
 
@@ -51,9 +65,32 @@ func (self *ScoresSerealizer) Response() []ScoreBoardResponse {
 	scoreBoardModel := self.scoreBoards
 	var scoreBoards []ScoreBoardResponse
 
-	for _, vocab := range scoreBoardModel {
-		serializer := ScoreSerealizer{self.C, vocab}
+	for _, score := range scoreBoardModel {
+		serializer := ScoreSerealizer{self.C, score}
 		scoreBoards = append(scoreBoards, serializer.Response())
+
+	}
+	return scoreBoards
+}
+
+func (self *ScoreSerealizer) BestScoreResponse() BestScoreResponse {
+	scoreBoardModel := self.ScoreBoardModel
+
+	scoreBoards := ConvertToBestScoreResponse(scoreBoardModel)
+	// if err != nil {
+	// 	fmt.Println("Error mapping data:", err)
+	// 	return scoreBoards
+	// }
+	return scoreBoards
+}
+
+func (self *ScoresSerealizer) BestScoreResponse() []BestScoreResponse {
+	scoreBoardModel := self.scoreBoards
+	var scoreBoards []BestScoreResponse
+
+	for _, score := range scoreBoardModel {
+		serializer := ScoreSerealizer{self.C, score}
+		scoreBoards = append(scoreBoards, serializer.BestScoreResponse())
 
 	}
 	return scoreBoards
