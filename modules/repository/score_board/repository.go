@@ -53,7 +53,7 @@ func (s *ScoreBoardRepository) FindAllScoreBoards() ([]databases.ScoreBoardModel
 func (s *ScoreBoardRepository) FindAllHighScoreBoardsByWeekLimit(limit, week int) ([]databases.ScoreBoardModel, error) {
 
 	var scoreBoards []databases.ScoreBoardModel
-	err := s.db.Model(&databases.ScoreBoardModel{}).Preload("User").Raw("SELECT * FROM score_board WHERE (user_id, score) IN ( SELECT user_id, MAX(score) AS max_score FROM score_board GROUP BY user_id ) ORDER BY score DESC;").Limit(limit).Find(&scoreBoards).Error
+	err := s.db.Model(&databases.ScoreBoardModel{}).Preload("User").Raw("SELECT * FROM score_board WHERE (user_id, score) IN ( SELECT user_id, MAX(score) AS max_score FROM score_board WHERE week = ? GROUP BY user_id ) ORDER BY score DESC LIMIT ?;", week, limit).Find(&scoreBoards).Error
 
 	return scoreBoards, err
 }
