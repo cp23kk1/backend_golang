@@ -33,7 +33,7 @@ pipeline {
                         DB_NAME=${env.DB_NAME}
                         DB_HOST=${env.DB_HOST}${params.deployEnvironment}
                         DB_PORT=${env.DB_PORT}
-                        ORIGIN=${env.ORIGIN}
+                        ORIGIN=${params.deployEnvironment == 'prod' ? env.PUBLIC_ORIGIN : env.ORIGIN}
                         ENV=${params.deployEnvironment}
 
                         ACCESS_TOKEN_PRIVATE_KEY=${env.ACCESS_TOKEN_PRIVATE_KEY}
