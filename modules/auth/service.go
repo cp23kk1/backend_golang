@@ -14,11 +14,12 @@ func GuestLoginService() (*string, *string, error) {
 	userRepository := user.NewUserRepository(databases.GetDB())
 
 	displayName := "Guest"
+	guestImage := "https://icons.veryicon.com/png/o/miscellaneous/youyinzhibo/guest.png"
 	guestUser := &databases.UserModel{
 
 		Email:       nil,
 		DisplayName: &displayName,
-		Image:       nil,
+		Image:       &guestImage,
 		Role:        "user",
 	}
 
