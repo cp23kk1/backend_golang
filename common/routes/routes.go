@@ -25,9 +25,9 @@ import (
 
 // Run will start the server
 func Run(router *gin.Engine) {
-	// config, _ := config.LoadConfig()
+	config, _ := config.LoadConfig()
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"https://capstone23.sit.kmutt.ac.th", "https://cp23kk1.sit.kmutt.ac.th", ""},
+		AllowOrigins:     []string{config.ORIGIN},
 		AllowMethods:     []string{"PUT", "PATCH", "GET", "POST"},
 		AllowHeaders:     []string{"*"},
 		ExposeHeaders:    []string{"Content-Length"},
