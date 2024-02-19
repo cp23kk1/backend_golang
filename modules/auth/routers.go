@@ -35,6 +35,7 @@ func RefreshToken(c *gin.Context) {
 	fmt.Println("userId:  ", userId)
 	if exists == false {
 		c.JSON(http.StatusUnauthorized, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Status: "failed", Message: "Error when retrived token"}, map[string]interface{}{}))
+		return
 	}
 	access_token, err := common.CreateToken(config.AccessTokenExpiresIn, userId, config.AccessTokenPrivateKey)
 	if err != nil {
@@ -42,6 +43,9 @@ func RefreshToken(c *gin.Context) {
 		return
 	}
 	c.SetCookie("access_token", access_token, config.AccessTokenMaxAge*60*60, "/", config.ORIGIN, false, true)
+	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Status: "success", Message: "Refresh token Successfully"}, map[string]interface{}{}))
+
+	return
 
 }
 func GoogleOAuth(c *gin.Context) {
@@ -64,6 +68,7 @@ func GoogleOAuth(c *gin.Context) {
 		basePath = config.ENV
 	}
 	c.Redirect(http.StatusTemporaryRedirect, fmt.Sprint(config.ORIGIN+"/"+basePath, pathUrl))
+	return
 }
 func GuestLogin(c *gin.Context) {
 	config, err := config.LoadConfig()
@@ -76,4 +81,5 @@ func GuestLogin(c *gin.Context) {
 	c.SetCookie("refresh_token", *refresh_token, 0, "/", config.ORIGIN, false, true)
 	c.SetCookie("logged_in", "true", config.AccessTokenMaxAge*60*60, "/", config.ORIGIN, false, false)
 	c.JSON(http.StatusCreated, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Status: "success", Message: "GuestUser created"}, map[string]interface{}{}))
+	return
 }
