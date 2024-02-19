@@ -26,8 +26,14 @@ import (
 // Run will start the server
 func Run(router *gin.Engine) {
 	config, _ := config.LoadConfig()
+	var origin string = ""
+	if config.ENV == "prod" {
+		origin = "*"
+	} else {
+		origin = config.ORIGIN
+	}
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{config.ORIGIN},
+		AllowOrigins:     []string{origin},
 		AllowMethods:     []string{"PUT", "PATCH", "GET", "POST"},
 		AllowHeaders:     []string{"*"},
 		ExposeHeaders:    []string{"Content-Length"},
