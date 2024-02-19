@@ -17,6 +17,7 @@ type ScoresSerealizer struct {
 }
 
 type ScoreBoardResponse struct {
+	ID          uint      `json:"scoreId"`
 	Score       int       `json:"score"`
 	Week        int       `json:"week"`
 	StartDate   time.Time `json:"startDate"`
@@ -33,6 +34,7 @@ type BestScoreResponse struct {
 func ConvertToScoreBoardResponse(scoreBoard databases.ScoreBoardModel) ScoreBoardResponse {
 
 	return ScoreBoardResponse{
+		ID:          scoreBoard.ID,
 		Score:       scoreBoard.Score,
 		Week:        scoreBoard.Week,
 		StartDate:   scoreBoard.StartDate,

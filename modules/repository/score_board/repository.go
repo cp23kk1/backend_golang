@@ -58,6 +58,14 @@ func (s *ScoreBoardRepository) FindAllHighScoreBoardsByWeekLimit(limit, week int
 	return scoreBoards, err
 }
 
+func (s *ScoreBoardRepository) FindHighScoreBoardsByWeekAndUserId(userId uint, week int) (databases.ScoreBoardModel, error) {
+
+	var scoreBoards databases.ScoreBoardModel
+	err := s.db.Model(&databases.ScoreBoardModel{}).Preload("User").Where("user_id = ?", userId).Order("score desc").First(&scoreBoards).Error
+
+	return scoreBoards, err
+}
+
 func (s *ScoreBoardRepository) FindMaxScoreBoardsByUserID(userID uint) ([]databases.ScoreBoardModel, error) {
 
 	var scoreBoards []databases.ScoreBoardModel

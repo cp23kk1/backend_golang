@@ -23,8 +23,11 @@ func getScoreBoard(c *gin.Context) {
 		c.JSON(http.StatusNotFound, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "WeeklyScore NotFound", Status: "error"}, map[string]interface{}{}))
 		return
 	}
+	userScoreBoard, _ := getUserScoreBoard(c.MustGet("userId").(uint))
 	serializer := ScoresSerealizer{c, scoreBoards}
-	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "Get WeeklyScore successfully", Status: "success"}, map[string]interface{}{"weeklyScore": serializer.Response()}))
+	serializer1 := ScoreSerealizer{c, userScoreBoard}
+
+	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "Get WeeklyScore successfully", Status: "success"}, map[string]interface{}{"weeklyScore": serializer.Response(), "userScore": serializer1.Response()}))
 }
 
 func getBestScore(c *gin.Context) {
