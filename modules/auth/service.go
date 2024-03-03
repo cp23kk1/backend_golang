@@ -14,12 +14,13 @@ func GuestLoginService() (*string, *string, error) {
 	userRepository := user.NewUserRepository(databases.GetDB())
 
 	displayName := "Guest"
-	guestUser := &user.UserModel{
+	guestImage := "https://icons.veryicon.com/png/o/miscellaneous/youyinzhibo/guest.png"
+	guestUser := &databases.UserModel{
 
 		Email:       nil,
 		DisplayName: &displayName,
-		Image:       nil,
-		Role:        "guest",
+		Image:       &guestImage,
+		Role:        "user",
 	}
 
 	newUser, err := userRepository.CreateUser(*guestUser)
@@ -56,7 +57,7 @@ func GoogleOAuthService(c *gin.Context) (access, refresh string, err error) {
 		return "", "", err
 	}
 
-	resBody := &user.UserModel{
+	resBody := &databases.UserModel{
 
 		Email:       &userFromGoogle.Email,
 		DisplayName: &userFromGoogle.Name,

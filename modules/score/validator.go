@@ -1,4 +1,4 @@
-package history
+package score
 
 import (
 	"cp23kk1/common"
@@ -11,7 +11,7 @@ import (
 
 type GameResultModelValidator struct {
 	// TODO: temporarily userid future will use from request
-	UserID        *int
+	UserID        *int                                               `form:"userID" json:"userID"`
 	GameID        string                                             `form:"gameID" json:"gameID" binding:"required"`
 	CurrentSocore int                                                `form:"current_score" json:"current_score" binding:"required"`
 	Vocabs        []vocabulary_history.VocabularyFromGameResultModel `form:"vocabs" json:"vocabs" binding:"required"`

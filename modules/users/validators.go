@@ -1,15 +1,13 @@
 package users
 
-import (
-	userRepo "cp23kk1/modules/repository/user"
-)
+import "cp23kk1/common/databases"
 
 type UserModelValidator struct {
 	User struct {
 		Username string `form:"username" json:"username" binding:"exists,alphanum,min=4,max=255"`
 		Email    string `form:"email" json:"email" binding:"exists,email"`
 	} `json:"user"`
-	userModel userRepo.UserModel `json:"-"`
+	userModel databases.UserModel `json:"-"`
 }
 
 // func (self *UserModelValidator) Bind(c *gin.Context) error {

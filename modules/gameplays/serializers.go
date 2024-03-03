@@ -1,9 +1,7 @@
 package gameplays
 
 import (
-	passageRepo "cp23kk1/modules/repository/passage"
-	sentenceRepo "cp23kk1/modules/repository/sentence"
-	vocabularyRepo "cp23kk1/modules/repository/vocabulary"
+	"cp23kk1/common/databases"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
@@ -12,11 +10,11 @@ import (
 
 type VocabSerealizer struct {
 	C *gin.Context
-	vocabularyRepo.VocabularyModel
+	databases.VocabularyModel
 }
 type VocabsSerealizer struct {
 	C      *gin.Context
-	vocabs []vocabularyRepo.VocabularyModel
+	vocabs []databases.VocabularyModel
 }
 
 type VocabResponse struct {
@@ -52,11 +50,11 @@ func (self *VocabsSerealizer) Response() []VocabResponse {
 
 type SentenceSerealizer struct {
 	C *gin.Context
-	sentenceRepo.SentenceModel
+	databases.SentenceModel
 }
 type SentencesSerealizer struct {
 	C         *gin.Context
-	sentences []sentenceRepo.SentenceModel
+	sentences []databases.SentenceModel
 }
 
 type SentenceResponse struct {
@@ -90,11 +88,11 @@ func (self *SentencesSerealizer) Response() []SentenceResponse {
 
 type PassageSerealizer struct {
 	C *gin.Context
-	passageRepo.PassageModel
+	databases.PassageModel
 }
 type PassagesSerealizer struct {
 	C        *gin.Context
-	passages []passageRepo.PassageModel
+	passages []databases.PassageModel
 }
 
 type PassageResponse struct {

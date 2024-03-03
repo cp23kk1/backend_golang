@@ -38,7 +38,7 @@ func createUserHandler(c *gin.Context) {
 	}
 	userRepository := userRepo.NewUserRepository(databases.GetDB())
 
-	newUser := &userRepo.UserModel{
+	newUser := &databases.UserModel{
 		Email:            userModelValidator.Email,
 		Role:             userModelValidator.Role,
 		DisplayName:      &userModelValidator.DisplayName,
@@ -61,7 +61,7 @@ func getUserHandler(c *gin.Context) {
 	}
 	userRepository := userRepo.NewUserRepository(databases.GetDB())
 
-	user, err := userRepository.FindUserByID(id)
+	user, err := userRepository.FindUserByID(uint(id))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
@@ -84,7 +84,7 @@ func updateUserHandler(c *gin.Context) {
 	}
 	userRepository := userRepo.NewUserRepository(databases.GetDB())
 
-	err = userRepository.UpdateUser(id, userModelValidator.Email, userModelValidator.Role, userModelValidator.DisplayName, userModelValidator.Image, userModelValidator.IsPrivateProfile)
+	err = userRepository.UpdateUser(uint(id), userModelValidator.Email, userModelValidator.Role, userModelValidator.DisplayName, userModelValidator.Image, userModelValidator.IsPrivateProfile)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
@@ -101,7 +101,7 @@ func deleteUserHandler(c *gin.Context) {
 	}
 	userRepository := userRepo.NewUserRepository(databases.GetDB())
 
-	err = userRepository.DeleteUser(id)
+	err = userRepository.DeleteUser(uint(id))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return

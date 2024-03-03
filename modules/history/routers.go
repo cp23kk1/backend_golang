@@ -2,6 +2,7 @@ package history
 
 import (
 	"cp23kk1/common"
+	"cp23kk1/modules/auth"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -14,8 +15,8 @@ func AddHistoryRoutes(rg *gin.RouterGroup) {
 	// history.GET("/sentence", SentencesHistoryRetrieve)
 	// history.GET("/passage", PassagesHistoryRetrieve)
 	// history.POST("/game-result", GameResult)
-
 	history.POST("/passage-history", CreatePassageHistory)
+	history.Use(auth.AuthMiddleware(true, "access_token"))
 	history.POST("/game-result", GameResult)
 
 }
@@ -31,8 +32,9 @@ func GameResult(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "error"}, map[string]interface{}{"errorMessage": err.Error()}))
 		return
 	}
-	if err := gameResult(gameResultValidator); err != nil {
+	userId := c.MustGet("userId").(uint)
 
+	if err := gameResult(gameResultValidator, userId); err != nil {
 		c.JSON(http.StatusBadRequest, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "error"}, map[string]interface{}{"errorMessage": err.Error()}))
 		return
 	}

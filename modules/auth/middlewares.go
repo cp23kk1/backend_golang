@@ -4,7 +4,7 @@ import (
 	"cp23kk1/common"
 	"cp23kk1/common/config"
 	"cp23kk1/common/databases"
-	userRepo "cp23kk1/modules/repository/user"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -36,8 +36,8 @@ var MyAuth2Extractor = &request.MultiExtractor{
 }
 
 // A helper to write user_id and user_model to the context
-func UpdateContextUserModel(c *gin.Context, userId interface{}) {
-	var myUserModel userRepo.UserModel
+func UpdateContextUserModel(c *gin.Context, userId uint) {
+	var myUserModel databases.UserModel
 	if userId != 0 {
 		db := databases.GetDB()
 		db.First(&myUserModel, userId)
@@ -51,6 +51,10 @@ func UpdateContextUserModel(c *gin.Context, userId interface{}) {
 //	r.Use(AuthMiddleware(true))
 func AuthMiddleware(auto401 bool, tokenName string) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		origin := c.Request.Header.Get("Origin")
+
+		// Log or handle the Origin information as needed
+		fmt.Printf("Request from Origin: %s\n", origin)
 		UpdateContextUserModel(c, 0)
 		config, _ := config.LoadConfig()
 		token, err := c.Cookie(tokenName)
@@ -63,7 +67,7 @@ func AuthMiddleware(auto401 bool, tokenName string) gin.HandlerFunc {
 		subject, err := common.ValidateToken(token, key)
 		if err != nil {
 			if auto401 {
-				c.JSON(http.StatusUnauthorized, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Status: "failed", Message: err.Error()}, map[string]interface{}{}))
+				c.AbortWithStatusJSON(http.StatusUnauthorized, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Status: "failed", Message: err.Error()}, map[string]interface{}{}))
 			}
 			return
 		}

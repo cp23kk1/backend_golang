@@ -1,6 +1,8 @@
 package vocabulary
 
 import (
+	"cp23kk1/common/databases"
+
 	"gorm.io/gorm"
 )
 
@@ -13,7 +15,7 @@ func NewVocabularyRepository(db *gorm.DB) VocabularyRepository {
 }
 
 func (v VocabularyRepository) CreateVocabulary(word, pos, difficultyCefr string, meaning string) {
-	vocabulary := &VocabularyModel{
+	vocabulary := &databases.VocabularyModel{
 		Word:           word,
 		Meaning:        meaning,
 		POS:            pos,
@@ -22,8 +24,8 @@ func (v VocabularyRepository) CreateVocabulary(word, pos, difficultyCefr string,
 	v.db.Create(vocabulary)
 }
 
-func (v VocabularyRepository) FindOneVocabulary(id int) *VocabularyModel {
-	var vocabulary VocabularyModel
+func (v VocabularyRepository) FindOneVocabulary(id int) *databases.VocabularyModel {
+	var vocabulary databases.VocabularyModel
 	v.db.First(&vocabulary, id)
 	if vocabulary.ID == 0 {
 		return nil // Record not found
@@ -31,8 +33,8 @@ func (v VocabularyRepository) FindOneVocabulary(id int) *VocabularyModel {
 	return &vocabulary
 }
 
-func (v VocabularyRepository) FindManyVocabulary() ([]VocabularyModel, error) {
-	var vocabularies []VocabularyModel
+func (v VocabularyRepository) FindManyVocabulary() ([]databases.VocabularyModel, error) {
+	var vocabularies []databases.VocabularyModel
 	err := v.db.Find(&vocabularies).Error
 	return vocabularies, err
 }
@@ -55,10 +57,10 @@ func (v VocabularyRepository) DeleteVocabulary(id int) {
 	}
 }
 
-func (v VocabularyRepository) RandomVacabulary(limit int) ([]VocabularyModel, error) {
+func (v VocabularyRepository) RandomVacabulary(limit int) ([]databases.VocabularyModel, error) {
 
-	var vocabularies []VocabularyModel
+	var vocabularies []databases.VocabularyModel
 	// v.db.Model(&ScoreBoardModel{}).Preload("User").Find(&scoreBoards).Error
-	err := v.db.Model(&VocabularyModel{}).Order("RAND()").Limit(limit).Scan(&vocabularies).Error
+	err := v.db.Model(&databases.VocabularyModel{}).Order("RAND()").Limit(limit).Scan(&vocabularies).Error
 	return vocabularies, err
 }

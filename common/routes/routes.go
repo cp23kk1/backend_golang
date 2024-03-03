@@ -15,6 +15,7 @@ import (
 	"cp23kk1/modules/gameplays"
 	"cp23kk1/modules/history"
 	"cp23kk1/modules/ping"
+	"cp23kk1/modules/score"
 	"cp23kk1/modules/users"
 	"time"
 
@@ -25,10 +26,16 @@ import (
 // Run will start the server
 func Run(router *gin.Engine) {
 	config, _ := config.LoadConfig()
+	var origin string = ""
+	if config.ENV == "prod" {
+		origin = "*"
+	} else {
+		origin = config.ORIGIN
+	}
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{config.ORIGIN},
+		AllowOrigins:     []string{origin},
 		AllowMethods:     []string{"PUT", "PATCH", "GET", "POST"},
-		AllowHeaders:     []string{"Origin"},
+		AllowHeaders:     []string{"*"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 
@@ -55,6 +62,7 @@ func getRoutes(router *gin.Engine) {
 	gameplays.AddGameplayRoutes(api)
 	history.AddHistoryRoutes(api)
 	auth.AddAuthRoutes(api)
+	score.AddScoreRoutes(api)
 
 	v1 := api.Group("/cms")
 	passage.SetupPassageRoutes(v1)

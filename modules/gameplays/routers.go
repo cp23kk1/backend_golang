@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"cp23kk1/common"
+	"cp23kk1/modules/auth"
 
 	"github.com/gin-gonic/gin"
 )
@@ -11,6 +12,7 @@ import (
 func AddGameplayRoutes(rg *gin.RouterGroup) {
 	gameplay := rg.Group("/gameplays")
 
+	gameplay.Use(auth.AuthMiddleware(true, "access_token"))
 	gameplay.GET("/vocabulary", RandomVocabularyForGamePlay)
 	gameplay.GET("/sentence", RandomSentenceForGamePlay)
 	gameplay.GET("/passage", RandomPassageForGamePlay)

@@ -5,30 +5,21 @@ import (
 
 	"cp23kk1/common/databases"
 	"cp23kk1/common/routes"
-	"cp23kk1/modules/repository/passage"
-	passageHistoryRepo "cp23kk1/modules/repository/passage_history"
-	scoreBoardRepo "cp23kk1/modules/repository/score_board"
-	"cp23kk1/modules/repository/sentence"
-	"cp23kk1/modules/repository/sentence_history"
-	userRepo "cp23kk1/modules/repository/user"
-	vocabularyRepo "cp23kk1/modules/repository/vocabulary"
-	"cp23kk1/modules/repository/vocabulary_history"
-	"cp23kk1/modules/repository/vocabulary_related"
 
 	"gorm.io/gorm"
 )
 
 func Migrate(db *gorm.DB) {
 
-	db.AutoMigrate(&userRepo.UserModel{})
-	db.AutoMigrate(&scoreBoardRepo.ScoreBoardModel{})
-	db.AutoMigrate(&vocabularyRepo.VocabularyModel{})
-	db.AutoMigrate(&passage.PassageModel{})
-	db.AutoMigrate(&sentence.SentenceModel{})
-	db.AutoMigrate(&passageHistoryRepo.PassageHistoryModel{})
-	db.AutoMigrate(&vocabulary_history.VocabularyHistoryModel{})
-	db.AutoMigrate(&sentence_history.SentenceHistoryModel{})
-	db.AutoMigrate(&vocabulary_related.VocabularyRelatedModel{})
+	db.AutoMigrate(&databases.UserModel{})
+	db.AutoMigrate(&databases.ScoreBoardModel{})
+	db.AutoMigrate(&databases.VocabularyModel{})
+	db.AutoMigrate(&databases.PassageModel{})
+	db.AutoMigrate(&databases.SentenceModel{})
+	db.AutoMigrate(&databases.PassageHistoryModel{})
+	db.AutoMigrate(&databases.VocabularyHistoryModel{})
+	db.AutoMigrate(&databases.SentenceHistoryModel{})
+	db.AutoMigrate(&databases.VocabularyRelatedModel{})
 
 	// db.AutoMigrate(&userRepo.UserModel{},
 	// 	&scoreBoardRepo.ScoreBoardModel{},
