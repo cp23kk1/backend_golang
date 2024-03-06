@@ -143,7 +143,7 @@ type QuestionModel struct {
 }
 type QuestionPassageModel struct {
 	DataID       string            `json:"dataId"`
-	Questions    []QuestionModel   `json:"quetsions"`
+	Questions    []QuestionModel   `json:"questions"`
 	Title        string            `json:"title"`
 	QuestionType enum.QuestionType `json:"questionType"`
 }
