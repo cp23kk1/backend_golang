@@ -55,6 +55,6 @@ func (p PassageRepository) DeletePassage(id int) error {
 func (v PassageRepository) RandomPassage(limit int) ([]databases.PassageModel, error) {
 
 	var passages []databases.PassageModel
-	err := v.db.Model(&databases.PassageModel{}).Order("RAND()").Limit(limit).Scan(&passages).Error
+	err := v.db.Preload("Sentences").Preload("Sentences.Vocabularies").Order("RAND()").Limit(limit).Find(&passages).Error
 	return passages, err
 }

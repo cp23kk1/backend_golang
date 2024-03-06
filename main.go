@@ -12,6 +12,7 @@ import (
 func Migrate(db *gorm.DB) {
 
 	db.AutoMigrate(&databases.UserModel{})
+	db.AutoMigrate(&databases.DifficultyModel{})
 	db.AutoMigrate(&databases.ScoreBoardModel{})
 	db.AutoMigrate(&databases.VocabularyModel{})
 	db.AutoMigrate(&databases.PassageModel{})

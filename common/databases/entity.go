@@ -1,15 +1,20 @@
 package databases
 
 import (
-	"cp23kk1/modules/repository/enum"
+	"cp23kk1/common/enum"
 	"time"
 
 	"gorm.io/gorm"
 )
 
 type PassageModel struct {
-	ID    uint   `gorm:"primaryKey"`
-	Title string `gorm:"type:varchar(255);not null"`
+	ID           string `gorm:"primaryKey"`
+	Title        string `gorm:"type:varchar(256);not null"`
+	DifficultyID *uint  `gorm:"null"`
+
+	// Foreign key reference to the Difficulty model
+	Difficulty DifficultyModel `gorm:"foreignKey:DifficultyID"`
+	Sentences  []SentenceModel `gorm:"foreignKey:PassageID;references:id"`
 }
 
 func (PassageModel) TableName() string {
@@ -17,11 +22,13 @@ func (PassageModel) TableName() string {
 }
 
 type PassageHistoryModel struct {
-	ID          uint   `gorm:"primaryKey"`
-	UserID      uint   `gorm:"not null"`
-	PassageID   uint   `gorm:"not null"`
-	GameID      string `gorm:"not null;type:varchar(45)"`
-	Correctness bool   `gorm:"not null"`
+	ID           uint   `gorm:"primaryKey"`
+	UserID       uint   `gorm:"not null"`
+	PassageID    uint   `gorm:"not null"`
+	SentenceID   uint   `gorm:"not null"`
+	VocabularyID uint   `gorm:"not null"`
+	GameID       string `gorm:"not null;type:varchar(45)"`
+	Correctness  bool   `gorm:"not null"`
 
 	// Foreign key references
 	User    UserModel    `gorm:"foreignKey:UserID"`
@@ -39,6 +46,8 @@ type ScoreBoardModel struct {
 	Week      int       `gorm:"not null"`
 	StartDate time.Time `gorm:"not null"`
 	EndDate   time.Time `gorm:"not null"`
+	GameID    string    `gorm:"type:varchar(36);not null"`
+	Mode      string    `gorm:"type:varchar(256);not null"`
 
 	// Foreign key reference to the User model
 	User UserModel `gorm:"foreignKey:UserID"`
@@ -48,14 +57,27 @@ func (ScoreBoardModel) TableName() string {
 	return "score_board"
 }
 
-type SentenceModel struct {
-	ID        uint   `gorm:"primaryKey"`
-	PassageID *uint  `gorm:"index;foreignKey:PassageID"`
-	Sequence  *int   `gorm:"index"`
-	Text      string `gorm:"type:varchar(255);not null"`
-	Meaning   string `gorm:"type:varchar(255);not null"`
+type DifficultyModel struct {
+	ID          uint   `gorm:"primaryKey"`
+	Standard    string `gorm:"type:varchar(16);not null"`
+	Level       string `gorm:"type:varchar(16);not null"`
+	Description string `gorm:"type:varchar(256);not null"`
+}
 
-	Passage PassageModel
+func (DifficultyModel) TableName() string {
+	return "difficulty"
+}
+
+type SentenceModel struct {
+	ID        string  `gorm:"primaryKey"`
+	PassageID *string `gorm:"index;foreignKey:PassageID"`
+	Sequence  *int    `gorm:"index"`
+	Sentence  string  `gorm:"type:varchar(512);not null"`
+	Meaning   string  `gorm:"type:varchar(1024);not null"`
+	Tense     string  `gorm:"type:varchar(512);not null"`
+
+	Vocabularies []*VocabularyModel `gorm:"many2many:vocabulary_related;foreignKey:ID;joinForeignKey:sentence_id;References:ID;JoinReferences:vocabulary_id;"`
+	Passage      PassageModel
 }
 
 func (SentenceModel) TableName() string {
@@ -87,7 +109,7 @@ type UserModel struct {
 
 	ID               uint              `gorm:"primaryKey"`
 	Email            *string           `gorm:"type:varchar(320);unique;index"`
-	Role             enum.Role         `gorm:"not null;column:role;type:enum('admin','user');"`
+	Role             enum.Role         `gorm:"not null;column:role;type:enum('admin','user','guest');"`
 	DisplayName      *string           `gorm:"type:varchar(255)"`
 	IsActive         bool              `gorm:"not null;default:true"`
 	Image            *string           `gorm:"type:varchar(255)"`
@@ -100,11 +122,20 @@ func (UserModel) TableName() string {
 }
 
 type VocabularyModel struct {
-	ID             uint   `gorm:"primaryKey"`
-	Word           string `gorm:"type:varchar(255);not null"`
-	Meaning        string `gorm:"type:varchar(255);not null"`
-	POS            string `gorm:"type:varchar(45);not null"`
-	DifficultyCEFR string `gorm:"type:varchar(45);not null"`
+	ID           string `gorm:"primaryKey"`
+	DifficultyID uint   `gorm:"null"`
+	Vocabulary   string `gorm:"type:varchar(256);not null"`
+	Meaning      string `gorm:"type:varchar(256);not null"`
+	Definition   string `gorm:"type:varchar(256);not null"`
+	POS          string `gorm:"type:varchar(256);not null"`
+	Tag          string `gorm:"type:varchar(256);not null"`
+	Lemma        string `gorm:"type:varchar(256);not null"`
+	Dep          string `gorm:"type:varchar(256);not null"`
+
+	Sentences []*SentenceModel `gorm:"many2many:vocabulary_related;foreignKey:ID;joinForeignKey:vocabulary_id;References:ID;JoinReferences:sentence_id;"`
+
+	// Foreign key reference to the Difficulty model
+	Difficulty DifficultyModel `gorm:"foreignKey:DifficultyID"`
 }
 
 func (VocabularyModel) TableName() string {
@@ -128,8 +159,8 @@ func (VocabularyHistoryModel) TableName() string {
 }
 
 type VocabularyRelatedModel struct {
-	VocabularyID uint `gorm:"primaryKey"`
-	SentenceID   uint `gorm:"primaryKey"`
+	VocabularyID string `gorm:"primaryKey"`
+	SentenceID   string `gorm:"primaryKey"`
 
 	Vocabulary VocabularyModel `gorm:"foreignkey:ID;references:VocabularyID"`
 	Sentence   SentenceModel   `gorm:"foreignkey:ID;references:SentenceID"`

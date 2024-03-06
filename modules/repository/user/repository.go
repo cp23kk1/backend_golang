@@ -2,7 +2,7 @@ package user
 
 import (
 	"cp23kk1/common/databases"
-	"cp23kk1/modules/repository/enum"
+	"cp23kk1/common/enum"
 	"fmt"
 
 	"gorm.io/gorm"

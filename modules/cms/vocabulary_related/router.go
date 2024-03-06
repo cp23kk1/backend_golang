@@ -26,7 +26,7 @@ func CreateVocabularyRelatedHandler(c *gin.Context) {
 		return
 	}
 	vocabularyRelatedRepository := vocabularyRelatedRepo.NewVocaubularyRelated(databases.GetDB())
-	err := vocabularyRelatedRepository.CreateVocabularyRelated(uint(vocabularyRelatedModelValidator.VocabularyID), uint(vocabularyRelatedModelValidator.SentenceID))
+	err := vocabularyRelatedRepository.CreateVocabularyRelated(vocabularyRelatedModelValidator.VocabularyID, vocabularyRelatedModelValidator.SentenceID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create Model"})
 		return
@@ -36,20 +36,13 @@ func CreateVocabularyRelatedHandler(c *gin.Context) {
 }
 
 func GetVocabularyRelatedHandler(c *gin.Context) {
-	vocabularyID, err := strconv.Atoi(c.Param("vocabularyID"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid vocabularyID"})
-		return
-	}
+	vocabularyID := c.Param("vocabularyID")
 
-	sentenceID, err := strconv.Atoi(c.Param("sentenceID"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid sentenceID"})
-		return
-	}
+	sentenceID := c.Param("sentenceID")
+
 	vocabularyRelatedRepository := vocabularyRelatedRepo.NewVocaubularyRelated(databases.GetDB())
 
-	vocabularyRelated, err := vocabularyRelatedRepository.FindVocabularyRelatedByID(uint(vocabularyID), uint(sentenceID))
+	vocabularyRelated, err := vocabularyRelatedRepository.FindVocabularyRelatedByID(vocabularyID, sentenceID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "VocabularyRelated not found"})
 		return
