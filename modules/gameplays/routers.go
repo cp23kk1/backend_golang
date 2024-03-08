@@ -61,5 +61,5 @@ func RandomForSinglePlayer(c *gin.Context) {
 		c.JSON(http.StatusNotFound, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "Questions NotFound", Status: "error"}, map[string]interface{}{}))
 		return
 	}
-	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "Get Questions successfully", Status: "success"}, map[string]interface{}{"questions": questions, "passageQuetions": passageQuestion}))
+	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "Get Questions successfully", Status: "success"}, map[string]interface{}{"questions": questions, "passageQuestion": passageQuestion}))
 }
