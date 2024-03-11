@@ -85,11 +85,12 @@ func (SentenceModel) TableName() string {
 }
 
 type SentenceHistoryModel struct {
-	ID          uint   `gorm:"primaryKey"`
-	UserID      uint   `gorm:"not null"`
-	SentenceID  uint   `gorm:"not null"`
-	GameID      string `gorm:"not null;type:varchar(45)"`
-	Correctness bool   `gorm:"not null"`
+	ID           uint   `gorm:"primaryKey"`
+	UserID       uint   `gorm:"not null"`
+	SentenceID   string `gorm:"not null"`
+	GameID       string `gorm:"not null;type:varchar(45)"`
+	Correctness  bool   `gorm:"not null"`
+	VocabularyID string `gorm:"not null"`
 
 	// Foreign key references
 	User     UserModel     `gorm:"foreignKey:UserID"`
@@ -145,7 +146,7 @@ func (VocabularyModel) TableName() string {
 type VocabularyHistoryModel struct {
 	ID           uint   `gorm:"primaryKey"`
 	UserID       uint   `gorm:"not null"`
-	VocabularyID uint   `gorm:"not null"`
+	VocabularyID string `gorm:"not null"`
 	GameID       string `gorm:"type:varchar(45);not null"`
 	Correctness  bool   `gorm:"not null"`
 

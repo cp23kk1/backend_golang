@@ -14,7 +14,7 @@ func NewSentenceHistoryRepository(db *gorm.DB) SentenceHistoryRepository {
 	return SentenceHistoryRepository{db: db}
 }
 
-func (sh SentenceHistoryRepository) CreateSentenceHistory(userID uint, sentenceID uint, gameID string, correctness bool) error {
+func (sh SentenceHistoryRepository) CreateSentenceHistory(userID uint, sentenceID string, gameID string, correctness bool) error {
 
 	history := &databases.SentenceHistoryModel{
 		UserID:      userID,
@@ -32,7 +32,7 @@ func (sh SentenceHistoryRepository) CreateSentenceHistoryWithArray(userID uint, 
 	history := []*databases.SentenceHistoryModel{}
 
 	for _, s := range sentences {
-		history = append(history, &databases.SentenceHistoryModel{UserID: userID, SentenceID: uint(s.SentenceID), Correctness: s.Correctness, GameID: gameID})
+		history = append(history, &databases.SentenceHistoryModel{UserID: userID, SentenceID: s.SentenceID, Correctness: s.Correctness, GameID: gameID, VocabularyID: s.AnswerID})
 	}
 	return sh.db.Create(history).Error
 }
@@ -51,7 +51,7 @@ func (sh SentenceHistoryRepository) FindSentenceHistoryAll() (*[]databases.Sente
 	}
 	return &history, nil
 }
-func (sh SentenceHistoryRepository) UpdateSentenceHistory(id, userID uint, sentenceID uint, gameID string, correctness bool) error {
+func (sh SentenceHistoryRepository) UpdateSentenceHistory(id, userID uint, sentenceID string, gameID string, correctness bool) error {
 	sentenceHistory, err := sh.FindSentenceHistoryByID(id)
 	if err != nil {
 		return err

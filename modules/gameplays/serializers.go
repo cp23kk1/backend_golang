@@ -135,11 +135,12 @@ type QuestionsSerealizer struct {
 }
 
 type QuestionModel struct {
-	DataID       string            `json:"dataId"`
-	Question     string            `json:"question"`
-	Answers      []AnswerModel     `json:"answers"`
-	Pos          *string           `json:"pos"`
-	QuestionType enum.QuestionType `json:"questionsType"`
+	DataID          string            `json:"dataId"`
+	Question        string            `json:"question"`
+	Answers         []AnswerModel     `json:"answers"`
+	CorrectAnswerID string            `json:"correctAnswerId"`
+	Pos             *string           `json:"pos"`
+	QuestionType    enum.QuestionType `json:"questionsType"`
 }
 type QuestionPassageModel struct {
 	DataID       string            `json:"dataId"`

@@ -45,7 +45,7 @@ func (v VocabularyRepository) FindManyVocabulary() ([]databases.VocabularyModel,
 
 func (v VocabularyRepository) FindManyVocabularyNotSameVocabByPosAndLimit(vocabularyId string, pos string, limit int) ([]databases.VocabularyModel, error) {
 	var vocabularies []databases.VocabularyModel
-	err := v.db.Where("id <> ?", vocabularyId).Where("pos = ?", pos).Limit(limit).Find(&vocabularies).Error
+	err := v.db.Where("id <> ?", vocabularyId).Where("pos = ?", pos).Order("RAND()").Limit(limit).Find(&vocabularies).Error
 	return vocabularies, err
 }
 

@@ -6,7 +6,6 @@ import (
 	passageRepo "cp23kk1/modules/repository/passage"
 	sentenceRepo "cp23kk1/modules/repository/sentence"
 	vocabularyRepo "cp23kk1/modules/repository/vocabulary"
-	"fmt"
 	"math/rand"
 	"time"
 )
@@ -52,17 +51,17 @@ func randomQuestionForGameplay() ([]QuestionModel, QuestionPassageModel, error) 
 	if err != nil {
 		return []QuestionModel{}, QuestionPassageModel{}, err
 	}
-	fmt.Println(passage[0].Sentences)
 	for vocabIndex := range vocabs {
 		vocabsForAnswer, _ := vocabularyRepository.FindManyVocabularyNotSameVocabByPosAndLimit(vocabs[vocabIndex].ID, vocabs[vocabIndex].POS, 2)
 		answerVocabs := mapVocabToAnswer(vocabsForAnswer)
 		answerVocabs = append(answerVocabs, AnswerModel{Answer: vocabs[vocabIndex].Meaning, Correctness: true})
 		result = append(result, QuestionModel{
-			Question:     vocabs[vocabIndex].Vocabulary,
-			Pos:          &vocabs[vocabIndex].POS,
-			Answers:      answerVocabs,
-			QuestionType: enum.VOCABULARY,
-			DataID:       vocabs[vocabIndex].ID})
+			Question:        vocabs[vocabIndex].Vocabulary,
+			Pos:             &vocabs[vocabIndex].POS,
+			Answers:         answerVocabs,
+			QuestionType:    enum.VOCABULARY,
+			CorrectAnswerID: vocabs[vocabIndex].ID,
+			DataID:          vocabs[vocabIndex].ID})
 	}
 	result = generatedSentenceQuestion(sentences, result, vocabularyRepository)
 
@@ -94,19 +93,20 @@ func generatedSentenceQuestion(sentences []databases.SentenceModel, result []Que
 
 	temp := result
 	for sentenceIndex := range sentences {
-		// randIndex := rand.Intn(len(sentences[sentenceIndex].Vocabularies))
-		sentenceCorrectAnswer := sentences[sentenceIndex].Vocabularies[0]
+		randIndex := rand.Intn(len(sentences[sentenceIndex].Vocabularies))
+		sentenceCorrectAnswer := sentences[sentenceIndex].Vocabularies[randIndex]
 		sentenceOtherAnswer, _ := vocabularyRepository.FindManyVocabularyNotSameVocabByPosAndLimit(sentenceCorrectAnswer.ID, sentenceCorrectAnswer.POS, 1)
 		answerSentence := mapVocabToSentenceAnswer(sentenceOtherAnswer)
 		answerSentence = append(answerSentence, AnswerModel{Answer: sentenceCorrectAnswer.Vocabulary,
 			Correctness: true})
 
 		temp = append(temp, QuestionModel{
-			Question:     sentences[sentenceIndex].Sentence,
-			Answers:      answerSentence,
-			Pos:          &sentences[sentenceIndex].Tense,
-			QuestionType: enum.SENTENCE,
-			DataID:       sentences[sentenceIndex].ID})
+			Question:        sentences[sentenceIndex].Sentence,
+			Answers:         answerSentence,
+			Pos:             &sentences[sentenceIndex].Tense,
+			QuestionType:    enum.SENTENCE,
+			CorrectAnswerID: sentences[sentenceIndex].Vocabularies[randIndex].ID,
+			DataID:          sentences[sentenceIndex].ID})
 	}
 	return temp
 }

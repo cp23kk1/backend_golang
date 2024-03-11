@@ -14,7 +14,7 @@ func NewVocabularyHistoryRepository(db *gorm.DB) VocabularyHistoryRepository {
 	return VocabularyHistoryRepository{db: db}
 }
 
-func (vh VocabularyHistoryRepository) CreateVocabularyHistory(userID uint, vocabularyID uint, gameID string, correctness bool) error {
+func (vh VocabularyHistoryRepository) CreateVocabularyHistory(userID uint, vocabularyID string, gameID string, correctness bool) error {
 
 	history := &databases.VocabularyHistoryModel{
 		UserID:       userID,
@@ -32,7 +32,7 @@ func (vh VocabularyHistoryRepository) CreateVocabularyHistoryWithArray(userID ui
 	history := []*databases.VocabularyHistoryModel{}
 
 	for _, v := range vocabularies {
-		history = append(history, &databases.VocabularyHistoryModel{UserID: userID, VocabularyID: uint(v.VocabularyID), Correctness: v.Correctness, GameID: gameID})
+		history = append(history, &databases.VocabularyHistoryModel{UserID: userID, VocabularyID: v.VocabularyID, Correctness: v.Correctness, GameID: gameID})
 	}
 	return vh.db.Create(history).Error
 }
@@ -53,7 +53,7 @@ func (vh VocabularyHistoryRepository) FindVocabularyHistoryAll() (*[]databases.V
 	}
 	return &history, nil
 }
-func (vh VocabularyHistoryRepository) UpdateVocabularyHistory(id, userID, vocabularyID uint, gameID string, correctness bool) error {
+func (vh VocabularyHistoryRepository) UpdateVocabularyHistory(id, userID uint, vocabularyID string, gameID string, correctness bool) error {
 	vocabularyHistory, err := vh.FindVocabularyHistoryByID(id)
 	if err != nil {
 		return err
