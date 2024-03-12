@@ -63,10 +63,10 @@ func randomQuestionForGameplay() ([]QuestionModel, QuestionPassageModel, error) 
 			CorrectAnswerID: vocabs[vocabIndex].ID,
 			DataID:          vocabs[vocabIndex].ID})
 	}
-	result = generatedSentenceQuestion(sentences, result, vocabularyRepository)
+	result = generatedSentenceQuestion(sentences, result, vocabularyRepository, enum.SENTENCE)
 
 	passageQuestion := QuestionPassageModel{DataID: passage[0].ID,
-		Questions: generatedSentenceQuestion(passage[0].Sentences, []QuestionModel{}, vocabularyRepository),
+		Questions: generatedSentenceQuestion(passage[0].Sentences, []QuestionModel{}, vocabularyRepository, enum.SENTENCE),
 		Title:     passage[0].Title, QuestionType: enum.PASSAGE}
 
 	return result, passageQuestion, nil
@@ -88,7 +88,7 @@ func mapVocabToSentenceAnswer(vocabs []databases.VocabularyModel) []AnswerModel 
 	return answerVocabs
 }
 
-func generatedSentenceQuestion(sentences []databases.SentenceModel, result []QuestionModel, vocabularyRepository vocabularyRepo.VocabularyRepository) []QuestionModel {
+func generatedSentenceQuestion(sentences []databases.SentenceModel, result []QuestionModel, vocabularyRepository vocabularyRepo.VocabularyRepository, questionType enum.QuestionType) []QuestionModel {
 	rand.Seed(time.Now().UnixNano())
 
 	temp := result
@@ -104,7 +104,7 @@ func generatedSentenceQuestion(sentences []databases.SentenceModel, result []Que
 			Question:        sentences[sentenceIndex].Sentence,
 			Answers:         answerSentence,
 			Pos:             &sentences[sentenceIndex].Tense,
-			QuestionType:    enum.SENTENCE,
+			QuestionType:    questionType,
 			CorrectAnswerID: sentences[sentenceIndex].Vocabularies[randIndex].ID,
 			DataID:          sentences[sentenceIndex].ID})
 	}
