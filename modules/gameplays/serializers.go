@@ -146,10 +146,11 @@ type QuestionPassageModel struct {
 	DataID       string            `json:"dataId"`
 	Questions    []QuestionModel   `json:"questions"`
 	Title        string            `json:"title"`
-	QuestionType enum.QuestionType `json:"questionType"`
+	QuestionType enum.QuestionType `json:"questionsType"`
 }
 
 type AnswerModel struct {
+	AnswerID    string `json:"answerId"`
 	Answer      string `json:"answer"`
 	Correctness bool   `json:"correctness"`
 }

@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func createPassageHistory(userID, passageID uint, gameID string, correctness bool) error {
+func createPassageHistory(userID uint, passageID, gameID string, correctness bool) error {
 	phRepository := passageHistoryRepo.NewPassageHistoryRepository(databases.GetDB())
 	err := phRepository.CreatePassageHistory(userID, passageID, gameID, correctness)
 	return err

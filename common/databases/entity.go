@@ -24,9 +24,9 @@ func (PassageModel) TableName() string {
 type PassageHistoryModel struct {
 	ID           uint   `gorm:"primaryKey"`
 	UserID       uint   `gorm:"not null"`
-	PassageID    uint   `gorm:"not null"`
-	SentenceID   uint   `gorm:"not null"`
-	VocabularyID uint   `gorm:"not null"`
+	PassageID    string `gorm:"not null"`
+	SentenceID   string `gorm:"not null"`
+	VocabularyID string `gorm:"not null"`
 	GameID       string `gorm:"not null;type:varchar(45)"`
 	Correctness  bool   `gorm:"not null"`
 

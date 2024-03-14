@@ -83,7 +83,7 @@ func mapVocabToAnswer(vocabs []databases.VocabularyModel) []AnswerModel {
 func mapVocabToSentenceAnswer(vocabs []databases.VocabularyModel) []AnswerModel {
 	answerVocabs := []AnswerModel{}
 	for vocabIndex := range vocabs {
-		answerVocabs = append(answerVocabs, AnswerModel{Answer: vocabs[vocabIndex].Vocabulary, Correctness: false})
+		answerVocabs = append(answerVocabs, AnswerModel{AnswerID: vocabs[vocabIndex].ID, Answer: vocabs[vocabIndex].Vocabulary, Correctness: false})
 	}
 	return answerVocabs
 }
@@ -97,7 +97,7 @@ func generatedSentenceQuestion(sentences []databases.SentenceModel, result []Que
 		sentenceCorrectAnswer := sentences[sentenceIndex].Vocabularies[randIndex]
 		sentenceOtherAnswer, _ := vocabularyRepository.FindManyVocabularyNotSameVocabByPosAndLimit(sentenceCorrectAnswer.ID, sentenceCorrectAnswer.POS, 1)
 		answerSentence := mapVocabToSentenceAnswer(sentenceOtherAnswer)
-		answerSentence = append(answerSentence, AnswerModel{Answer: sentenceCorrectAnswer.Vocabulary,
+		answerSentence = append(answerSentence, AnswerModel{AnswerID: sentenceCorrectAnswer.ID, Answer: sentenceCorrectAnswer.Vocabulary,
 			Correctness: true})
 
 		temp = append(temp, QuestionModel{

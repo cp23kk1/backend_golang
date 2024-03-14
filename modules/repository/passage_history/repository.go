@@ -14,7 +14,7 @@ func NewPassageHistoryRepository(db *gorm.DB) PassageHistoryRepository {
 	return PassageHistoryRepository{db: db}
 }
 
-func (ph PassageHistoryRepository) CreatePassageHistory(userID, passageID uint, gameID string, correctness bool) error {
+func (ph PassageHistoryRepository) CreatePassageHistory(userID uint, passageID, gameID string, correctness bool) error {
 
 	passageHistory := databases.PassageHistoryModel{
 		UserID:      userID,
@@ -32,7 +32,7 @@ func (ph PassageHistoryRepository) CreatePassageHistoryWithArray(userID uint, pa
 	history := []*databases.PassageHistoryModel{}
 
 	for _, p := range passages {
-		history = append(history, &databases.PassageHistoryModel{UserID: userID, PassageID: uint(p.PassageID), Correctness: p.Correctness, GameID: gameID})
+		history = append(history, &databases.PassageHistoryModel{UserID: userID, PassageID: p.PassageID, Correctness: p.Correctness, GameID: gameID, SentenceID: p.SentenceID, VocabularyID: p.VocabularyID})
 	}
 	return ph.db.Create(history).Error
 }
