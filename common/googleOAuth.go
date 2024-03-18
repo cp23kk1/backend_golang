@@ -128,7 +128,8 @@ func GetGoogleUser(access_token string, id_token string) (*GoogleUserResult, err
 		Name:           GoogleUserRes["name"].(string),
 		Given_name:     GoogleUserRes["given_name"].(string),
 		Picture:        GoogleUserRes["picture"].(string),
-		Locale:         GoogleUserRes["locale"].(string),
+		// google change policy ?
+		// Locale:         GoogleUserRes["locale"].(string),
 	}
 
 	return userBody, nil
