@@ -120,7 +120,7 @@ func GetGoogleUser(access_token string, id_token string) (*GoogleUserResult, err
 	if err := json.Unmarshal(resBody, &GoogleUserRes); err != nil {
 		return nil, err
 	}
-
+	fmt.Println(GoogleUserRes)
 	userBody := &GoogleUserResult{
 		Id:             GoogleUserRes["id"].(string),
 		Email:          GoogleUserRes["email"].(string),
