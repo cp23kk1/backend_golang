@@ -43,7 +43,8 @@ func CreateScoreBoardHandler(c *gin.Context) {
 		scoreBoardModelValidator.Score,
 		scoreBoardModelValidator.Week,
 		startDate,
-		endDate)
+		endDate,
+		scoreBoardModelValidator.GameID, scoreBoardModelValidator.Mode)
 	c.JSON(http.StatusCreated, gin.H{"message": "Score board created successfully"})
 }
 

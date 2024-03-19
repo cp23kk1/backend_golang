@@ -15,7 +15,7 @@ func NewScoreBoardRepository(db *gorm.DB) ScoreBoardRepository {
 	return ScoreBoardRepository{db: db}
 }
 
-func (s *ScoreBoardRepository) CreateScoreBoard(userID uint, score, week int, startDate, endDate time.Time) error {
+func (s *ScoreBoardRepository) CreateScoreBoard(userID uint, score, week int, startDate, endDate time.Time, gameId, mode string) error {
 
 	scoreBoard := databases.ScoreBoardModel{
 		UserID:    userID,
@@ -23,6 +23,8 @@ func (s *ScoreBoardRepository) CreateScoreBoard(userID uint, score, week int, st
 		Week:      week,
 		StartDate: startDate,
 		EndDate:   endDate,
+		GameID:    gameId,
+		Mode:      mode,
 	}
 	return s.db.Create(&scoreBoard).Error
 }

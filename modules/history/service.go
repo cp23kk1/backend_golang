@@ -35,7 +35,7 @@ func gameResult(gameResultValidator GameResultModelValidator, userId uint) error
 	vhRepository := vocabulary_history.NewVocabularyHistoryRepository(tx)
 	shRepository := sentence_history.NewSentenceHistoryRepository(tx)
 	phRepository := passage_history.NewPassageHistoryRepository(tx)
-	if err := scoreBoardRepository.CreateScoreBoard(userId, gameResultValidator.CurrentSocore, 1, time.Now(), time.Now()); err != nil {
+	if err := scoreBoardRepository.CreateScoreBoard(userId, gameResultValidator.CurrentSocore, 1, time.Now(), time.Now(), gameResultValidator.GameID, ""); err != nil {
 		tx.Rollback()
 		return err
 	}
