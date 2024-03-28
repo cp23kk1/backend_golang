@@ -93,7 +93,11 @@ func generatedSentenceQuestion(sentences []databases.SentenceModel, result []Que
 
 	temp := result
 	for sentenceIndex := range sentences {
-		randIndex := rand.Intn(len(sentences[sentenceIndex].Vocabularies))
+		lengthSentenceAnswers := len(sentences[sentenceIndex].Vocabularies)
+		if lengthSentenceAnswers == 0 {
+			lengthSentenceAnswers = 1
+		}
+		randIndex := rand.Intn(lengthSentenceAnswers)
 		sentenceCorrectAnswer := sentences[sentenceIndex].Vocabularies[randIndex]
 		sentenceOtherAnswer, _ := vocabularyRepository.FindManyVocabularyNotSameVocabByPosAndLimit(sentenceCorrectAnswer.ID, sentenceCorrectAnswer.POS, 1)
 		answerSentence := mapVocabToSentenceAnswer(sentenceOtherAnswer)
