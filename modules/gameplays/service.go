@@ -95,7 +95,7 @@ func generatedSentenceQuestion(sentences []databases.SentenceModel, result []Que
 	for sentenceIndex := range sentences {
 		lengthSentenceAnswers := len(sentences[sentenceIndex].Vocabularies)
 		if lengthSentenceAnswers == 0 {
-			lengthSentenceAnswers = 1
+			continue
 		}
 		randIndex := rand.Intn(lengthSentenceAnswers)
 		sentenceCorrectAnswer := sentences[sentenceIndex].Vocabularies[randIndex]
