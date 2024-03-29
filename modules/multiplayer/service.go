@@ -29,6 +29,7 @@ func ServeWs(w http.ResponseWriter, r *http.Request, isCreate bool) {
 		if c != nil {
 			c = str_err
 		}
+		fmt.Println(err.Error())
 		ws.Close()
 	}
 	fmt.Println("service31")
