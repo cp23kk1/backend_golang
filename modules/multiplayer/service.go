@@ -22,6 +22,8 @@ func ServeWs(w http.ResponseWriter, r *http.Request, isCreate bool) {
 		ws.Close()
 
 	}
+	fmt.Println("service25")
+
 	if err != nil || str_err != nil {
 		c := err
 		if c != nil {
@@ -29,6 +31,7 @@ func ServeWs(w http.ResponseWriter, r *http.Request, isCreate bool) {
 		}
 		ws.Close()
 	}
+	fmt.Println("service31")
 	// ws.ReadJSON(&roomId)
 
 	c := &hub.Connection{Send: make(chan []byte, 256), Ws: ws}
