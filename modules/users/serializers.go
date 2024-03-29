@@ -4,10 +4,7 @@ import (
 	"cp23kk1/common/databases"
 	"cp23kk1/common/enum"
 
-	"fmt"
-
 	"github.com/gin-gonic/gin"
-	"github.com/mitchellh/mapstructure"
 )
 
 type UserResponse struct {
@@ -16,6 +13,7 @@ type UserResponse struct {
 	DisplayName      *string   `json:"displayName"`
 	IsActive         bool      `json:"isActive"`
 	Image            *string   `json:"image"`
+	CreateAt         string    `json:"createAt"`
 	IsPrivateProfile bool      `json:"isPrivate"`
 }
 
@@ -24,14 +22,21 @@ type UserSerializer struct {
 	databases.UserModel
 }
 
+func ConvertToUserResponse(user databases.UserModel) UserResponse {
+
+	return UserResponse{
+		Email:            user.Email,
+		Role:             user.Role,
+		DisplayName:      user.DisplayName,
+		IsActive:         user.IsActive,
+		Image:            user.Image,
+		CreateAt:         user.CreatedAt.String(),
+		IsPrivateProfile: user.IsPrivateProfile,
+	}
+}
 func (self *UserSerializer) Response() UserResponse {
 	userModel := self.UserModel
 	// userModel := self.c.MustGet("my_user_model").(UserModel)
-	var user UserResponse
-	err := mapstructure.Decode(userModel, &user)
-	if err != nil {
-		fmt.Println("Error mapping data:", err)
-		return user
-	}
-	return user
+
+	return ConvertToUserResponse(userModel)
 }

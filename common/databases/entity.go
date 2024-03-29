@@ -108,13 +108,14 @@ type SentenceFromGameResultModel struct {
 type UserModel struct {
 	gorm.Model
 
-	ID               uint              `gorm:"primaryKey"`
-	Email            *string           `gorm:"type:varchar(320);unique;index"`
-	Role             enum.Role         `gorm:"not null;column:role;type:enum('admin','user','guest');"`
-	DisplayName      *string           `gorm:"type:varchar(255)"`
-	IsActive         bool              `gorm:"not null;default:true"`
-	Image            *string           `gorm:"type:varchar(255)"`
-	IsPrivateProfile bool              `gorm:"not null;default:false"`
+	ID               uint      `gorm:"primaryKey"`
+	Email            *string   `gorm:"type:varchar(320);unique;index"`
+	Role             enum.Role `gorm:"not null;column:role;type:enum('admin','user','guest');"`
+	DisplayName      *string   `gorm:"type:varchar(255)"`
+	IsActive         bool      `gorm:"not null;default:true"`
+	Image            *string   `gorm:"type:varchar(255)"`
+	IsPrivateProfile bool      `gorm:"not null;default:false"`
+	CreatedAt        time.Time
 	ScoreBoards      []ScoreBoardModel `gorm:"foreignKey:UserID;references:id"`
 }
 
