@@ -8,6 +8,7 @@ import (
 )
 
 type UserResponse struct {
+	ID               uint      `json:"id"`
 	Email            *string   `json:"email"`
 	Role             enum.Role `json:"role"`
 	DisplayName      *string   `json:"displayName"`
@@ -25,6 +26,7 @@ type UserSerializer struct {
 func ConvertToUserResponse(user databases.UserModel) UserResponse {
 
 	return UserResponse{
+		ID:               user.ID,
 		Email:            user.Email,
 		Role:             user.Role,
 		DisplayName:      user.DisplayName,

@@ -17,6 +17,7 @@ func AddGameplayRoutes(rg *gin.RouterGroup) {
 	gameplay.GET("/sentence", RandomSentenceForGamePlay)
 	gameplay.GET("/passage", RandomPassageForGamePlay)
 	gameplay.GET("/single-player", RandomForSinglePlayer)
+	gameplay.POST("/multi-player", RandomForMultiPlayer)
 }
 
 func VocabulariesRetrieve(c *gin.Context) {
@@ -62,4 +63,18 @@ func RandomForSinglePlayer(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "Get Questions successfully", Status: "success"}, map[string]interface{}{"questions": questions, "passageQuestion": passageQuestion}))
+}
+func RandomForMultiPlayer(c *gin.Context) {
+	multiPlayerValidator := NewMultiPlayerValidator()
+	if err := multiPlayerValidator.Bind(c); err != nil {
+
+		c.JSON(http.StatusBadRequest, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: err.Error(), Status: "error"}, map[string]interface{}{"errorMessage": err.Error()}))
+		return
+	}
+	questions, err := randomQuestionForMultiPlayerGameplay(multiPlayerValidator.Mode, multiPlayerValidator.NumberOfQuestion)
+	if err != nil {
+		c.JSON(http.StatusNotFound, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "Questions NotFound", Status: "error"}, map[string]interface{}{}))
+		return
+	}
+	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "Get Questions successfully", Status: "success"}, map[string]interface{}{"questions": questions}))
 }

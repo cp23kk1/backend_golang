@@ -17,8 +17,10 @@ func ServeWs(w http.ResponseWriter, r *http.Request, isCreate bool) {
 
 	room := hub.H.Rooms[roomId]
 	if !isCreate && room.Name == "" {
-		ws.Close()
+		fmt.Println("service20")
 
+		ws.Close()
+		return
 	}
 	fmt.Println("service25")
 
@@ -28,7 +30,10 @@ func ServeWs(w http.ResponseWriter, r *http.Request, isCreate bool) {
 			c = str_err
 		}
 		ws.Close()
+		return
 	}
+	fmt.Println("service25")
+
 	// ws.ReadJSON(&roomId)
 
 	c := &hub.Connection{Send: make(chan []byte, 256), Ws: ws}

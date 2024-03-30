@@ -22,7 +22,7 @@ const (
 	pingPeriod = (pongWait * 9) / 10
 
 	// Maximum message size allowed from peer.
-	maxMessageSize = 512
+	maxMessageSize = 2048
 )
 
 var (
@@ -89,7 +89,7 @@ func (s *Subscription) WritePump() {
 				return
 			}
 			if err := c.write(websocket.TextMessage, message); err != nil {
-
+				fmt.Println(err.Error())
 				return
 			}
 		case <-ticker.C:

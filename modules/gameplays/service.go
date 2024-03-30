@@ -31,6 +31,47 @@ func randomPassageForGamePlay() ([]databases.PassageModel, error) {
 
 	return passageRepository.RandomPassage(50)
 }
+
+func randomQuestionForMultiPlayerGameplay(mode string, numberOfQuestion int) ([]QuestionModel, error) {
+	result := []QuestionModel{}
+
+	db := databases.GetDB()
+	vocabularyRepository := vocabularyRepo.NewVocabularyRepository(db)
+	// sentenceRepository := sentenceRepo.NewSentenceRepository(db)
+	// passageRepository := passageRepo.NewPassageRepository(db)
+
+	vocabs, err := vocabularyRepository.RandomVacabulary(numberOfQuestion)
+	if err != nil {
+		return []QuestionModel{}, err
+	}
+	// sentences, err := sentenceRepository.RandomSentence(5)
+	// if err != nil {
+	// 	return []QuestionModel{}, QuestionPassageModel{}, err
+	// }
+	// passage, err := passageRepository.RandomPassage(1)
+	// if err != nil {
+	// 	return []QuestionModel{}, QuestionPassageModel{}, err
+	// }
+	for vocabIndex := range vocabs {
+		vocabsForAnswer, _ := vocabularyRepository.FindManyVocabularyNotSameVocabByPosAndLimit(vocabs[vocabIndex].ID, vocabs[vocabIndex].POS, 2)
+		answerVocabs := mapVocabToAnswer(vocabsForAnswer)
+		answerVocabs = append(answerVocabs, AnswerModel{AnswerID: vocabs[vocabIndex].ID, Answer: vocabs[vocabIndex].Meaning, Correctness: true})
+		result = append(result, QuestionModel{
+			Question:        vocabs[vocabIndex].Vocabulary,
+			Pos:             &vocabs[vocabIndex].POS,
+			Answers:         answerVocabs,
+			QuestionType:    enum.VOCABULARY,
+			CorrectAnswerID: vocabs[vocabIndex].ID,
+			DataID:          vocabs[vocabIndex].ID})
+	}
+	// result = generatedSentenceQuestion(sentences, result, vocabularyRepository, enum.SENTENCE)
+
+	// passageQuestion := QuestionPassageModel{DataID: passage[0].ID,
+	// 	Questions: generatedSentenceQuestion(passage[0].Sentences, []QuestionModel{}, vocabularyRepository, enum.SENTENCE),
+	// 	Title:     passage[0].Title, QuestionType: enum.PASSAGE}
+
+	return result, nil
+}
 func randomQuestionForGameplay() ([]QuestionModel, QuestionPassageModel, error) {
 	result := []QuestionModel{}
 
@@ -54,7 +95,7 @@ func randomQuestionForGameplay() ([]QuestionModel, QuestionPassageModel, error) 
 	for vocabIndex := range vocabs {
 		vocabsForAnswer, _ := vocabularyRepository.FindManyVocabularyNotSameVocabByPosAndLimit(vocabs[vocabIndex].ID, vocabs[vocabIndex].POS, 2)
 		answerVocabs := mapVocabToAnswer(vocabsForAnswer)
-		answerVocabs = append(answerVocabs, AnswerModel{Answer: vocabs[vocabIndex].Meaning, Correctness: true})
+		answerVocabs = append(answerVocabs, AnswerModel{AnswerID: vocabs[vocabIndex].ID, Answer: vocabs[vocabIndex].Meaning, Correctness: true})
 		result = append(result, QuestionModel{
 			Question:        vocabs[vocabIndex].Vocabulary,
 			Pos:             &vocabs[vocabIndex].POS,
@@ -75,7 +116,7 @@ func randomQuestionForGameplay() ([]QuestionModel, QuestionPassageModel, error) 
 func mapVocabToAnswer(vocabs []databases.VocabularyModel) []AnswerModel {
 	answerVocabs := []AnswerModel{}
 	for vocabIndex := range vocabs {
-		answerVocabs = append(answerVocabs, AnswerModel{Answer: vocabs[vocabIndex].Meaning, Correctness: false})
+		answerVocabs = append(answerVocabs, AnswerModel{AnswerID: vocabs[vocabIndex].ID, Answer: vocabs[vocabIndex].Meaning, Correctness: false})
 	}
 	return answerVocabs
 }
