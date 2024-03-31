@@ -50,7 +50,7 @@ func GetProfile(c *gin.Context) {
 
 func GetStatistic(c *gin.Context) {
 	// userId, err := strconv.Atoi(c.Param("id"))
-	userId, _ := strconv.Atoi(c.Param("userId"))
+	userId := c.MustGet("userId").(int)
 
 	getStatisticService(c, userId)
 
