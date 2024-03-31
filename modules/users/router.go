@@ -1,6 +1,7 @@
 package users
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -33,6 +34,7 @@ func GetProfile(c *gin.Context) {
 		c.JSON(http.StatusNotFound, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Status: "failed", Message: err.Error()}, map[string]interface{}{}))
 		return
 	}
+	fmt.Println("userprofile ", userId)
 	serealizer := UserSerializer{c, *user}
 	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Status: "success", Message: "Get profile user successfully."}, serealizer.Response()))
 
@@ -50,7 +52,7 @@ func GetProfile(c *gin.Context) {
 
 func GetStatistic(c *gin.Context) {
 	// userId, err := strconv.Atoi(c.Param("id"))
-	userId := c.MustGet("userId").(int)
+	userId, _ := strconv.Atoi(c.Param("userId"))
 
 	getStatisticService(c, userId)
 
