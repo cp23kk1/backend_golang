@@ -5,6 +5,7 @@ import (
 	"cp23kk1/common/config"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/gin-gonic/gin"
 )
@@ -47,24 +48,26 @@ func RefreshToken(c *gin.Context) {
 }
 func GoogleOAuth(c *gin.Context) {
 	config, err := config.LoadConfig()
-	fmt.Println(c.Get("userId"))
 	var pathUrl string = "/"
 
 	if c.Query("state") != "" {
 		pathUrl = c.Query("state")
 	}
+	var basePath = ""
+	if config.ENV != "prod" {
+		basePath = config.ENV
+	}
+	urlA, err := url.Parse(config.ORIGIN + "/" + basePath + pathUrl)
 	access_token, refresh_token, err := GoogleOAuthService(c)
 	if err != nil {
 		c.JSON(http.StatusBadGateway, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}
+	fmt.Println("userId: ", urlA.Query().Get("id"))
 	c.SetCookie("access_token", access_token, config.AccessTokenMaxAge*60*60, "/", config.ORIGIN, false, true)
 	c.SetCookie("refresh_token", refresh_token, config.RefreshTokenMaxAge*60*60, "/", config.ORIGIN, false, true)
 	c.SetCookie("logged_in", "true", config.AccessTokenMaxAge*60*60, "/", config.ORIGIN, false, false)
-	var basePath = ""
-	if config.ENV != "prod" {
-		basePath = config.ENV
-	}
+
 	c.Redirect(http.StatusTemporaryRedirect, fmt.Sprint(config.ORIGIN+"/"+basePath, pathUrl))
 }
 func GuestLogin(c *gin.Context) {
