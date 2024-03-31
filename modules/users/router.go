@@ -34,7 +34,7 @@ func GetProfile(c *gin.Context) {
 		c.JSON(http.StatusNotFound, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Status: "failed", Message: err.Error()}, map[string]interface{}{}))
 		return
 	}
-	fmt.Println("userprofile ", userId)
+	fmt.Println("userprofile ", c.MustGet("userId").(uint))
 	serealizer := UserSerializer{c, *user}
 	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Status: "success", Message: "Get profile user successfully."}, serealizer.Response()))
 
@@ -52,8 +52,8 @@ func GetProfile(c *gin.Context) {
 
 func GetStatistic(c *gin.Context) {
 	// userId, err := strconv.Atoi(c.Param("id"))
-	userId, _ := strconv.Atoi(c.Param("userId"))
+	userId, _ := c.MustGet("userId").(uint)
 
-	getStatisticService(c, userId)
+	getStatisticService(c, int(userId))
 
 }
