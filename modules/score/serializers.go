@@ -24,6 +24,8 @@ type ScoreBoardResponse struct {
 	EndDate     time.Time `json:"endDate"`
 	Email       *string   `json:"email"`
 	DisplayName *string   `json:"displayName"`
+	UserID      uint      `json:"userId"`
+	UserImage   *string   `json:"userImage"`
 }
 
 type BestScoreResponse struct {
@@ -41,6 +43,8 @@ func ConvertToScoreBoardResponse(scoreBoard databases.ScoreBoardModel) ScoreBoar
 		EndDate:     scoreBoard.EndDate,
 		Email:       scoreBoard.User.Email,
 		DisplayName: scoreBoard.User.DisplayName,
+		UserID:      scoreBoard.User.ID,
+		UserImage:   scoreBoard.User.Image,
 	}
 }
 

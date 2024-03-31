@@ -47,6 +47,7 @@ func RefreshToken(c *gin.Context) {
 }
 func GoogleOAuth(c *gin.Context) {
 	config, err := config.LoadConfig()
+	fmt.Println(c.Get("userId"))
 	var pathUrl string = "/"
 
 	if c.Query("state") != "" {
