@@ -43,6 +43,24 @@ func (sh SentenceHistoryRepository) FindSentenceHistoryByID(id uint) (*databases
 	}
 	return &history, nil
 }
+func (sh SentenceHistoryRepository) FindSentenceHistoriesByUserID(userID int) ([]databases.SentenceHistoryModel, error) {
+
+	var sentenceHistories []databases.SentenceHistoryModel
+	// if result := sh.db.Where("user_id = ?", userID).Preload("User").Preload("Sentence").Find(&sentenceHistories); result.Error != nil {
+	if result := sh.db.Where("user_id = ?", userID).Find(&sentenceHistories); result.Error != nil {
+		return nil, result.Error
+	}
+	return sentenceHistories, nil
+}
+func (sh SentenceHistoryRepository) FindSentenceHistoriesByUserIDAndCorrect(userID int) ([]databases.SentenceHistoryModel, error) {
+
+	var sentenceHistories []databases.SentenceHistoryModel
+	// if result := sh.db.Where("user_id = ?", userID).Preload("User").Preload("Sentence").Find(&sentenceHistories); result.Error != nil {
+	if result := sh.db.Where("user_id = ?", userID).Where("correctness = true").Find(&sentenceHistories); result.Error != nil {
+		return nil, result.Error
+	}
+	return sentenceHistories, nil
+}
 
 func (sh SentenceHistoryRepository) FindSentenceHistoryAll() (*[]databases.SentenceHistoryModel, error) {
 	var history []databases.SentenceHistoryModel
@@ -71,4 +89,15 @@ func (sh SentenceHistoryRepository) UpdateSentenceHistory(id, userID uint, sente
 
 func (sh SentenceHistoryRepository) DeleteSentenceHistory(history *databases.SentenceHistoryModel) error {
 	return sh.db.Delete(history).Error
+}
+func (sh SentenceHistoryRepository) FindCountSentenceHistoryGroupByPOS(userId int) []SentenceHistoryCountModel {
+	var result []SentenceHistoryCountModel
+	sh.db.Raw("select count(s.id) as count ,b.tense as tense from vocaverse.sentence_history s join vocaverse.sentence b on s.sentence_id = b.id where s.user_id = ? group by b.tense order by b.tense;", userId).Find(&result)
+	return result
+}
+
+func (sh SentenceHistoryRepository) FindCountSentenceHistoryGroupByPOSAndCorrect(userId int) []SentenceHistoryCountModel {
+	var result []SentenceHistoryCountModel
+	sh.db.Raw("select count(s.id) as count ,b.tense as tense from vocaverse.sentence_history s join vocaverse.sentence b on s.sentence_id = b.id where s.correctness and s.user_id = ? group by b.tense order by b.tense", userId).Find(&result)
+	return result
 }

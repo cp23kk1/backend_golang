@@ -5,3 +5,8 @@ type SentenceFromGameResultModel struct {
 	Correctness bool   `form:"correctness" json:"correctness" binding:"required"`
 	AnswerID    string `form:"answerId" json:"answerId" binding:"required"`
 }
+
+type SentenceHistoryCountModel struct {
+	Count int    `json:"count"`
+	Tense string `json:"tense"`
+}

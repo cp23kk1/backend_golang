@@ -17,6 +17,7 @@ func AddUserRoutes(rg *gin.RouterGroup) {
 	users.Use(auth.AuthMiddleware(true, "access_token"))
 	users.GET("/profile", GetProfile)
 	users.GET("/profile/:id", GetProfile)
+	users.GET("/statistic", GetStatistic)
 }
 
 func GetProfile(c *gin.Context) {
@@ -45,4 +46,18 @@ func GetProfile(c *gin.Context) {
 	// v1.Use(users.AuthMiddleware(true))
 	// users.UserRegister(v1.Group("/user"))
 	// users.ProfileRegister(v1.Group("/profiles"))
+}
+
+func GetStatistic(c *gin.Context) {
+	// userId, err := strconv.Atoi(c.Param("id"))
+	userId, err := strconv.Atoi(c.Param("id"))
+	var user *databases.UserModel = nil
+	if err != nil {
+		user, err = getUser(c.MustGet("userId").(uint))
+	} else {
+
+		user, err = getUser(uint(userId))
+	}
+	getStatisticService(c, userId)
+
 }

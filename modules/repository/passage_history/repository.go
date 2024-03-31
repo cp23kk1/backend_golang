@@ -55,7 +55,18 @@ func (ph PassageHistoryRepository) FindPassageHistoryByID(id int) (*databases.Pa
 func (ph PassageHistoryRepository) FindPassageHistoriesByUserID(userID int) ([]databases.PassageHistoryModel, error) {
 
 	var passageHistories []databases.PassageHistoryModel
-	if result := ph.db.Where("user_id = ?", userID).Preload("User").Preload("Passage").Find(&passageHistories); result.Error != nil {
+	// if result := ph.db.Where("user_id = ?", userID).Preload("User").Preload("Passage").Find(&passageHistories); result.Error != nil {
+	if result := ph.db.Where("user_id = ?", userID).Find(&passageHistories); result.Error != nil {
+		return nil, result.Error
+	}
+	return passageHistories, nil
+}
+
+func (ph PassageHistoryRepository) FindPassageHistoriesByUserIDAndCorrect(userID int) ([]databases.PassageHistoryModel, error) {
+
+	var passageHistories []databases.PassageHistoryModel
+	// if result := ph.db.Where("user_id = ?", userID).Preload("User").Preload("Passage").Find(&passageHistories); result.Error != nil {
+	if result := ph.db.Where("user_id = ?", userID).Where("correctness = true").Find(&passageHistories); result.Error != nil {
 		return nil, result.Error
 	}
 	return passageHistories, nil
