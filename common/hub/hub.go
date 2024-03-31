@@ -70,6 +70,9 @@ func (s *Subscription) ReadPump() {
 		}
 		msg = bytes.TrimSpace(bytes.Replace(msg, newline, space, -1))
 		m := message{s.RoomId, msg}
+
+		//send message
+
 		H.Broadcast <- m
 	}
 }
@@ -115,7 +118,7 @@ type Hub struct {
 	// Register requests from the clients.
 	Register chan Subscription
 
-	// Create lobby and Register requests from the clients.
+	// Create Lobby and Register requests from the clients.
 	CreateLobby chan Subscription
 
 	// Unregister requests from clients.
@@ -126,11 +129,11 @@ type message struct {
 	Room string `json:"room"`
 	Data []byte `json:"data"`
 }
-type lobby struct {
-	RoomId       string `json:"room_id"`
+type Lobby struct {
+	RoomId       string `json:"roomId"`
 	Name         string `json:"name"`
-	NumberPlayer int    `json:"num"`
-	MaxPlayer    int    `json:"max_player"`
+	NumberPlayer int    `json:"numberPlayer"`
+	MaxPlayer    int    `json:"maxPlayer"`
 }
 type TRoom struct {
 	Name        string
@@ -202,11 +205,13 @@ func (h *Hub) Run() {
 	}
 }
 
-func (h *Hub) GetLobby() []lobby {
-	result := []lobby{}
+func (h *Hub) GetLobby() []Lobby {
+	result := []Lobby{}
 	for i, s := range h.Rooms {
 		fmt.Print(s)
-		result = append(result, lobby{RoomId: i, Name: h.Rooms[i].Name, NumberPlayer: len(h.Rooms[i].Connections), MaxPlayer: h.Rooms[i].MaxPlayer})
+		if len(s.Connections) < s.MaxPlayer {
+			result = append(result, Lobby{RoomId: i, Name: h.Rooms[i].Name, NumberPlayer: len(h.Rooms[i].Connections), MaxPlayer: h.Rooms[i].MaxPlayer})
+		}
 	}
 	return result
 }

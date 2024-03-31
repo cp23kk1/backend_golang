@@ -50,3 +50,7 @@ func ServeWs(w http.ResponseWriter, r *http.Request, isCreate bool) {
 	go s.ReadPump()
 
 }
+
+func GetlobbyService() []hub.Lobby {
+	return hub.H.GetLobby()
+}

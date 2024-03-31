@@ -1,6 +1,9 @@
 package multiplayer
 
 import (
+	"cp23kk1/common"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -10,6 +13,7 @@ func AddMultiplayerRoutes(rg *gin.RouterGroup) {
 	// gameplay.Use(auth.AuthMiddleware(true, "access_token"))
 	multiplayerRouter.GET("create-lobby", CreateLobby)
 	multiplayerRouter.GET("join-lobby", JoinLobby)
+	multiplayerRouter.GET("get-lobby", GetLobby)
 }
 
 func JoinLobby(c *gin.Context) {
@@ -18,5 +22,9 @@ func JoinLobby(c *gin.Context) {
 }
 func CreateLobby(c *gin.Context) {
 	ServeWs(c.Writer, c.Request, true)
+}
+func GetLobby(c *gin.Context) {
+
+	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "success"}, map[string]interface{}{"lobby": GetlobbyService()}))
 
 }
