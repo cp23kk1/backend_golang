@@ -7,7 +7,6 @@ import (
 	"cp23kk1/modules/repository/sentence_history"
 	userRepo "cp23kk1/modules/repository/user"
 	"cp23kk1/modules/repository/vocabulary_history"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -20,7 +19,6 @@ func getUser(id uint) (*databases.UserModel, error) {
 	return userRepository.FindUserByID(id)
 }
 func getStatisticService(c *gin.Context, userId int) {
-	fmt.Println("userId ", userId)
 	db := databases.GetDB()
 	passageHistoryRepository := passage_history.NewPassageHistoryRepository(db)
 	vocabularyHistoryRepository := vocabulary_history.NewVocabularyHistoryRepository(db)
@@ -38,8 +36,6 @@ func getStatisticService(c *gin.Context, userId int) {
 	countSentence := sentenceHistoryRepository.FindCountSentenceHistoryGroupByPOS(userId)
 	countSentenceCorrect := sentenceHistoryRepository.FindCountSentenceHistoryGroupByPOSAndCorrect(userId)
 
-	fmt.Println(vocabulary)
-	fmt.Println(countVocabulary)
 	if err != nil {
 		c.JSON(http.StatusNotFound, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: err.Error(), Status: "error"}, map[string]interface{}{}))
 		return

@@ -21,7 +21,7 @@ func AddUserRoutes(rg *gin.RouterGroup) {
 }
 
 func GetProfile(c *gin.Context) {
-	userId, err := strconv.Atoi(c.Param("id"))
+	userId, err := strconv.Atoi(c.Param("userId"))
 	var user *databases.UserModel = nil
 	if err != nil {
 		user, err = getUser(c.MustGet("userId").(uint))
@@ -50,7 +50,7 @@ func GetProfile(c *gin.Context) {
 
 func GetStatistic(c *gin.Context) {
 	// userId, err := strconv.Atoi(c.Param("id"))
-	userId, _ := strconv.Atoi(c.Param("id"))
+	userId, _ := strconv.Atoi(c.Param("userId"))
 
 	getStatisticService(c, userId)
 
