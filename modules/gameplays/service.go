@@ -104,10 +104,10 @@ func randomQuestionForGameplay() ([]QuestionModel, QuestionPassageModel, error) 
 			CorrectAnswerID: vocabs[vocabIndex].ID,
 			DataID:          vocabs[vocabIndex].ID})
 	}
-	result = generatedSentenceQuestion(sentences, result, vocabularyRepository, enum.SENTENCE)
+	result = generatedSentenceQuestion(sentences, result, vocabularyRepository, enum.SENTENCE, 1)
 
 	passageQuestion := QuestionPassageModel{DataID: passage[0].ID,
-		Questions: generatedSentenceQuestion(passage[0].Sentences, []QuestionModel{}, vocabularyRepository, enum.SENTENCE),
+		Questions: generatedSentenceQuestion(passage[0].Sentences, []QuestionModel{}, vocabularyRepository, enum.SENTENCE, 0),
 		Title:     passage[0].Title, QuestionType: enum.PASSAGE}
 
 	return result, passageQuestion, nil
@@ -129,7 +129,7 @@ func mapVocabToSentenceAnswer(vocabs []databases.VocabularyModel) []AnswerModel 
 	return answerVocabs
 }
 
-func generatedSentenceQuestion(sentences []databases.SentenceModel, result []QuestionModel, vocabularyRepository vocabularyRepo.VocabularyRepository, questionType enum.QuestionType) []QuestionModel {
+func generatedSentenceQuestion(sentences []databases.SentenceModel, result []QuestionModel, vocabularyRepository vocabularyRepo.VocabularyRepository, questionType enum.QuestionType, numAnswer int) []QuestionModel {
 	rand.Seed(time.Now().UnixNano())
 
 	temp := result
@@ -140,7 +140,7 @@ func generatedSentenceQuestion(sentences []databases.SentenceModel, result []Que
 		}
 		randIndex := rand.Intn(lengthSentenceAnswers)
 		sentenceCorrectAnswer := sentences[sentenceIndex].Vocabularies[randIndex]
-		sentenceOtherAnswer, _ := vocabularyRepository.FindManyVocabularyNotSameVocabByPosAndLimit(sentenceCorrectAnswer.ID, sentenceCorrectAnswer.POS, 1)
+		sentenceOtherAnswer, _ := vocabularyRepository.FindManyVocabularyNotSameVocabByPosAndLimit(sentenceCorrectAnswer.ID, sentenceCorrectAnswer.POS, numAnswer)
 		answerSentence := mapVocabToSentenceAnswer(sentenceOtherAnswer)
 		answerSentence = append(answerSentence, AnswerModel{AnswerID: sentenceCorrectAnswer.ID, Answer: sentenceCorrectAnswer.Vocabulary,
 			Correctness: true})
