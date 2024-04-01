@@ -19,7 +19,7 @@ func AddUserRoutes(rg *gin.RouterGroup) {
 	users.GET("/profile", GetProfile)
 	users.GET("/profile/:id", GetProfile)
 	users.GET("/statistic", GetStatistic)
-	users.PUT("/statistic", UpdateProfile)
+	users.PUT("/profile", UpdateProfile)
 }
 
 func GetProfile(c *gin.Context) {
