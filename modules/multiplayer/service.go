@@ -32,7 +32,7 @@ func ServeWs(w http.ResponseWriter, r *http.Request, isCreate bool) {
 		ws.Close()
 		return
 	}
-	fmt.Println("service25")
+	fmt.Println("service35")
 
 	// ws.ReadJSON(&roomId)
 
