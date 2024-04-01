@@ -57,3 +57,22 @@ func GetStatistic(c *gin.Context) {
 	getStatisticService(c, int(userId))
 
 }
+
+func UpdateProfile(c *gin.Context) {
+	userId, _ := c.MustGet("userId").(uint)
+	// userId := uint(5)
+	changeDisplayNameValidator := NewChangeDisplayNameValidator()
+	if err := changeDisplayNameValidator.Bind(c); err != nil {
+
+		c.JSON(http.StatusBadRequest, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: err.Error(), Status: "failed"}, map[string]interface{}{}))
+		return
+	}
+	if err := updateUser(userId, changeDisplayNameValidator); err != nil {
+
+		c.JSON(http.StatusBadRequest, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: err.Error(), Status: "failed"}, map[string]interface{}{}))
+		return
+	}
+
+	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "Update user success", Status: "successfully"}, map[string]interface{}{}))
+
+}

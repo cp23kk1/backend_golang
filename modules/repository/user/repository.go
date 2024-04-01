@@ -53,6 +53,20 @@ func (u UserRepository) UpdateUser(id uint, email *string, role enum.Role, displ
 	}
 	return nil
 }
+func (u UserRepository) UpdateDislayNameUser(id uint, displayName string) error {
+
+	user, err := u.FindUserByID(id)
+	if err != nil {
+		return err
+	}
+
+	user.DisplayName = &displayName
+
+	if result := u.db.Save(&user); result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
 
 func (u UserRepository) DeleteUser(id uint) error {
 

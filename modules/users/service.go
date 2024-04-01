@@ -51,3 +51,8 @@ func getStatisticService(c *gin.Context, userId int) {
 	return
 
 }
+
+func updateUser(id uint, changeDisplayNameValidator ChangeDisplayNameValidator) error {
+	userRepository := userRepo.NewUserRepository(databases.GetDB())
+	return userRepository.UpdateDislayNameUser(id, changeDisplayNameValidator.NewDisplayName)
+}
