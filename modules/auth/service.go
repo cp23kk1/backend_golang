@@ -5,6 +5,7 @@ import (
 	"cp23kk1/common/config"
 	"cp23kk1/common/databases"
 	"cp23kk1/modules/repository/user"
+	"fmt"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -36,7 +37,7 @@ func GuestLoginService() (*string, *string, error) {
 
 }
 
-func GoogleOAuthService(c *gin.Context) (access, refresh string, err error) {
+func GoogleOAuthService(c *gin.Context, id string) (access, refresh string, err error) {
 	userRepository := user.NewUserRepository(databases.GetDB())
 	code := c.Query("code")
 	if code == "" {
@@ -65,6 +66,10 @@ func GoogleOAuthService(c *gin.Context) (access, refresh string, err error) {
 		// Provider:    "google",
 		Role: "user",
 	}
+
+	user, err := userRepository.FindUserByEmail(userFromGoogle.Email)
+
+	fmt.Println(user)
 
 	updatedUser, err := userRepository.Upsert(*resBody)
 	if err != nil {

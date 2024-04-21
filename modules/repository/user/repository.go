@@ -29,6 +29,12 @@ func (u UserRepository) FindUserByID(id uint) (*databases.UserModel, error) {
 	err := u.db.Where("id = ?", id).Preload("ScoreBoards").First(&user).Error
 	return &user, err
 }
+
+func (u UserRepository) FindUserByEmail(email string) (*databases.UserModel, error) {
+	var user databases.UserModel
+	err := u.db.Where("email = ?", email).Preload("ScoreBoards").First(&user).Error
+	return &user, err
+}
 func (u UserRepository) FindAllUsers() (*[]databases.UserModel, error) {
 	var user []databases.UserModel
 	err := u.db.Preload("ScoreBoards").Find(&user).Error

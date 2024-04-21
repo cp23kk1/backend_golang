@@ -58,12 +58,13 @@ func GoogleOAuth(c *gin.Context) {
 		basePath = config.ENV
 	}
 	urlA, err := url.Parse(config.ORIGIN + "/" + basePath + pathUrl)
-	access_token, refresh_token, err := GoogleOAuthService(c)
+	access_token, refresh_token, err := GoogleOAuthService(c, urlA.Query().Get("id"))
 	if err != nil {
 		c.JSON(http.StatusBadGateway, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}
 	fmt.Println("userId: ", urlA.Query().Get("id"))
+
 	c.SetCookie("access_token", access_token, config.AccessTokenMaxAge*60*60, "/", config.ORIGIN, false, true)
 	c.SetCookie("refresh_token", refresh_token, config.RefreshTokenMaxAge*60*60, "/", config.ORIGIN, false, true)
 	c.SetCookie("logged_in", "true", config.AccessTokenMaxAge*60*60, "/", config.ORIGIN, false, false)
