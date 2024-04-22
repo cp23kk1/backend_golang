@@ -41,11 +41,11 @@ func (u UserRepository) FindAllUsers() (*[]databases.UserModel, error) {
 	return &user, err
 }
 
-func (u UserRepository) UpdateUser(id uint, email *string, role enum.Role, displayName string, image *string, isPrivateProfile bool) error {
+func (u UserRepository) UpdateUser(id uint, email *string, role enum.Role, displayName string, image *string, isPrivateProfile bool) (*databases.UserModel, error) {
 
 	user, err := u.FindUserByID(id)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	user.Email = email
@@ -55,9 +55,9 @@ func (u UserRepository) UpdateUser(id uint, email *string, role enum.Role, displ
 	user.IsPrivateProfile = isPrivateProfile
 
 	if result := u.db.Save(&user); result.Error != nil {
-		return result.Error
+		return nil, result.Error
 	}
-	return nil
+	return user, nil
 }
 func (u UserRepository) UpdateDislayNameUser(id uint, displayName string) error {
 
