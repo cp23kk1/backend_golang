@@ -70,7 +70,8 @@ func GoogleOAuthService(c *gin.Context, id string) (access, refresh string, err 
 
 	user, err := userRepository.FindUserByEmail(userFromGoogle.Email)
 	if err == nil && id != "" {
-		fmt.Println(user.Email)
+		fmt.Println("email", user.Email)
+		fmt.Println("id", id)
 		return "", "", errors.New("math: user found")
 	}
 
