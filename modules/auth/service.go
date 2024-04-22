@@ -5,6 +5,7 @@ import (
 	"cp23kk1/common/config"
 	"cp23kk1/common/databases"
 	"cp23kk1/modules/repository/user"
+	"errors"
 	"fmt"
 	"time"
 
@@ -68,8 +69,10 @@ func GoogleOAuthService(c *gin.Context, id string) (access, refresh string, err 
 	}
 
 	user, err := userRepository.FindUserByEmail(userFromGoogle.Email)
-
-	fmt.Println(user)
+	if err == nil && id != "" {
+		fmt.Println(user.Email)
+		return "", "", errors.New("math: user found")
+	}
 
 	updatedUser, err := userRepository.Upsert(*resBody)
 	if err != nil {

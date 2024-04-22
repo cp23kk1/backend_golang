@@ -58,9 +58,10 @@ func GoogleOAuth(c *gin.Context) {
 		basePath = config.ENV
 	}
 	urlA, err := url.Parse(config.ORIGIN + "/" + basePath + pathUrl)
-	access_token, refresh_token, err := GoogleOAuthService(c, urlA.Query().Get("id"))
+	id := urlA.Query().Get("id")
+	access_token, refresh_token, err := GoogleOAuthService(c, id)
 	if err != nil {
-		c.JSON(http.StatusBadGateway, gin.H{"status": "fail", "message": err.Error()})
+		c.Redirect(http.StatusTemporaryRedirect, fmt.Sprint(config.ORIGIN+"/"+basePath))
 		return
 	}
 	fmt.Println("userId: ", urlA.Query().Get("id"))
