@@ -6,7 +6,7 @@ import (
 	"cp23kk1/common/databases"
 	"cp23kk1/modules/repository/user"
 	"errors"
-	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -70,27 +70,47 @@ func GoogleOAuthService(c *gin.Context, id string) (access, refresh string, err 
 
 	user, err := userRepository.FindUserByEmail(userFromGoogle.Email)
 	if err == nil && id != "" {
-		fmt.Println("email", user.Email)
-		fmt.Println("id", id)
 		return "", "", errors.New("math: user found")
 	}
+	if id != "" {
+		id, err := strconv.Atoi(id)
+		updatedUser, err := userRepository.UpdateUser(uint(id), resBody.Email, resBody.Role, *resBody.DisplayName, resBody.Image, resBody.IsPrivateProfile)
+		if err != nil {
+			return "", "", err
+		}
 
-	updatedUser, err := userRepository.Upsert(*resBody)
-	if err != nil {
-		return "", "", err
+		config, _ := config.LoadConfig()
+
+		// Generate Tokens
+		access_token, err := common.CreateToken(config.AccessTokenExpiresIn, updatedUser.ID, config.AccessTokenPrivateKey)
+		if err != nil {
+			return "", "", err
+		}
+
+		refresh_token, err := common.CreateToken(config.RefreshTokenExpiresIn, updatedUser.ID, config.RefreshTokenPrivateKey)
+		if err != nil {
+			return "", "", err
+		}
+		return access_token, refresh_token, err
+	} else {
+		updatedUser, err := userRepository.Upsert(*resBody)
+		if err != nil {
+			return "", "", err
+		}
+
+		config, _ := config.LoadConfig()
+
+		// Generate Tokens
+		access_token, err := common.CreateToken(config.AccessTokenExpiresIn, updatedUser.ID, config.AccessTokenPrivateKey)
+		if err != nil {
+			return "", "", err
+		}
+
+		refresh_token, err := common.CreateToken(config.RefreshTokenExpiresIn, updatedUser.ID, config.RefreshTokenPrivateKey)
+		if err != nil {
+			return "", "", err
+		}
+		return access_token, refresh_token, err
 	}
 
-	config, _ := config.LoadConfig()
-
-	// Generate Tokens
-	access_token, err := common.CreateToken(config.AccessTokenExpiresIn, updatedUser.ID, config.AccessTokenPrivateKey)
-	if err != nil {
-		return "", "", err
-	}
-
-	refresh_token, err := common.CreateToken(config.RefreshTokenExpiresIn, updatedUser.ID, config.RefreshTokenPrivateKey)
-	if err != nil {
-		return "", "", err
-	}
-	return access_token, refresh_token, err
 }
