@@ -53,6 +53,7 @@ func Run(router *gin.Engine) {
 func getRoutes(router *gin.Engine) {
 	config, _ := config.LoadConfig()
 	api := router.Group("")
+	prodScoket := router.Group("kk1-socket")
 	if env := config.ENV; env == "prod" {
 		api = router.Group("/api")
 	} else {
@@ -68,6 +69,7 @@ func getRoutes(router *gin.Engine) {
 	auth.AddAuthRoutes(api)
 	score.AddScoreRoutes(api)
 	multiplayer.AddMultiplayerRoutes(api)
+	multiplayer.AddMultiplayerRoutes(prodScoket)
 
 	v1 := api.Group("/cms")
 	passage.SetupPassageRoutes(v1)
