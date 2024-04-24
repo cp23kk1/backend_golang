@@ -61,7 +61,7 @@ func GoogleOAuth(c *gin.Context) {
 	id := urlA.Query().Get("id")
 	access_token, refresh_token, err := GoogleOAuthService(c, id)
 	if err != nil {
-		c.Redirect(http.StatusTemporaryRedirect, fmt.Sprint(config.ORIGIN+"/"+basePath))
+		c.Redirect(http.StatusTemporaryRedirect, fmt.Sprint(config.ORIGIN+"/"+basePath+"/connect-google-falied"))
 		return
 	}
 	fmt.Println("userId: ", urlA.Query().Get("id"))
