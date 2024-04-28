@@ -94,7 +94,6 @@ func (u UserRepository) Upsert(newUser databases.UserModel) (databases.UserModel
 
 	// If the user doesn't exist, create a new one
 	if result.Error != nil {
-		fmt.Print("NOTFOUNDNDDD")
 		if result.Error == gorm.ErrRecordNotFound {
 			u.db.Create(&newUser)
 			fmt.Println("User created:", newUser)
@@ -104,8 +103,8 @@ func (u UserRepository) Upsert(newUser databases.UserModel) (databases.UserModel
 		}
 	} else {
 		// If the user already exists, update the existing record
-		u.db.Model(&existingUser).Updates(newUser)
-		fmt.Println("User updated:", existingUser)
+		// u.db.Model(&existingUser).Updates(newUser)
+		// fmt.Println("User updated:", existingUser)
 		return existingUser, nil
 	}
 }
