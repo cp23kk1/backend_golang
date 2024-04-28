@@ -138,6 +138,7 @@ type Lobby struct {
 type TRoom struct {
 	Name        string
 	MaxPlayer   int
+	isPlayed    bool
 	Connections map[*Connection]bool
 }
 
@@ -208,10 +209,15 @@ func (h *Hub) Run() {
 func (h *Hub) GetLobby() []Lobby {
 	result := []Lobby{}
 	for i, s := range h.Rooms {
-		fmt.Print(s)
-		if len(s.Connections) < s.MaxPlayer {
+		if len(s.Connections) < s.MaxPlayer && !s.isPlayed {
 			result = append(result, Lobby{RoomId: i, Name: h.Rooms[i].Name, NumberPlayer: len(h.Rooms[i].Connections), MaxPlayer: h.Rooms[i].MaxPlayer})
 		}
 	}
 	return result
+}
+
+func (h *Hub) UpdateLobby(id string, isPlayed bool) {
+	room := h.Rooms[id]
+	room.isPlayed = isPlayed
+	h.Rooms[id] = room
 }

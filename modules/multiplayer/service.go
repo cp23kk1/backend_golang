@@ -54,3 +54,8 @@ func ServeWs(w http.ResponseWriter, r *http.Request, isCreate bool) {
 func GetlobbyService() []hub.Lobby {
 	return hub.H.GetLobby()
 }
+
+func UpdateRoomService(id string, isPlayed bool) []hub.Lobby {
+	hub.H.UpdateLobby(id, isPlayed)
+	return hub.H.GetLobby()
+}

@@ -14,6 +14,7 @@ func AddMultiplayerRoutes(rg *gin.RouterGroup) {
 	multiplayerRouter.GET("create-lobby", CreateLobby)
 	multiplayerRouter.GET("join-lobby", JoinLobby)
 	multiplayerRouter.GET("get-lobby", GetLobby)
+	multiplayerRouter.POST("update-lobby", UpdateLobby)
 }
 
 func JoinLobby(c *gin.Context) {
@@ -26,5 +27,10 @@ func CreateLobby(c *gin.Context) {
 func GetLobby(c *gin.Context) {
 
 	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "success"}, map[string]interface{}{"lobby": GetlobbyService()}))
+
+}
+func UpdateLobby(c *gin.Context) {
+	updateModel := NewUpdateLobbyModelValidator()
+	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "success"}, map[string]interface{}{"lobby": UpdateRoomService(updateModel.RoomID, updateModel.IsPlayed)}))
 
 }
