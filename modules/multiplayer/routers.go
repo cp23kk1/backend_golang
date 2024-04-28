@@ -31,6 +31,11 @@ func GetLobby(c *gin.Context) {
 }
 func UpdateLobby(c *gin.Context) {
 	updateModel := NewUpdateLobbyModelValidator()
+	if err := updateModel.Bind(c); err != nil {
+
+		c.JSON(http.StatusBadRequest, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "error"}, map[string]interface{}{"errorMessage": err.Error()}))
+		return
+	}
 	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "success"}, map[string]interface{}{"lobby": UpdateRoomService(updateModel.RoomID, updateModel.IsPlayed)}))
 
 }
