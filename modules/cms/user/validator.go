@@ -2,7 +2,7 @@ package user
 
 import (
 	"cp23kk1/common"
-	"cp23kk1/modules/repository/enum"
+	"cp23kk1/common/enum"
 
 	"github.com/gin-gonic/gin"
 )

@@ -1,6 +1,8 @@
 package passage
 
 import (
+	"cp23kk1/common/databases"
+
 	"gorm.io/gorm"
 )
 
@@ -13,20 +15,20 @@ func NewPassageRepository(db *gorm.DB) PassageRepository {
 	return PassageRepository{db: db}
 }
 func (p PassageRepository) CreatePassage(title string) error {
-	passage := &PassageModel{
+	passage := &databases.PassageModel{
 		Title: title}
 	err := p.db.Create(passage).Error
 	return err
 }
 
-func (p PassageRepository) FindOnePassage(id int) (*PassageModel, error) {
-	var passage PassageModel
+func (p PassageRepository) FindOnePassage(id int) (*databases.PassageModel, error) {
+	var passage databases.PassageModel
 	err := p.db.First(&passage, id).Error
 	return &passage, err
 }
 
-func (p PassageRepository) FindAllPassages() ([]PassageModel, error) {
-	var passages []PassageModel
+func (p PassageRepository) FindAllPassages() ([]databases.PassageModel, error) {
+	var passages []databases.PassageModel
 	err := p.db.Find(&passages).Error
 	return passages, err
 }
@@ -49,4 +51,10 @@ func (p PassageRepository) DeletePassage(id int) error {
 
 	return p.db.Delete(passage).Error
 
+}
+func (v PassageRepository) RandomPassage(limit int) ([]databases.PassageModel, error) {
+
+	var passages []databases.PassageModel
+	err := v.db.Preload("Sentences").Preload("Sentences.Vocabularies").Order("RAND()").Limit(limit).Find(&passages).Error
+	return passages, err
 }

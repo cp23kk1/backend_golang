@@ -6,7 +6,6 @@ import (
 	"cp23kk1/common/databases"
 	vocabularyRepo "cp23kk1/modules/repository/vocabulary"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -31,20 +30,21 @@ func CreateVocabularyHandler(c *gin.Context) {
 	vocabularyRepository := vocabularyRepo.NewVocabularyRepository(databases.GetDB())
 	vocabularyRepository.CreateVocabulary(
 		vocabularyModelValidator.Word,
-		vocabularyModelValidator.Meaning,
 		vocabularyModelValidator.Pos,
-		vocabularyModelValidator.DifficultyCefr,
+		vocabularyModelValidator.Tag,
+		vocabularyModelValidator.Lemma,
+		vocabularyModelValidator.Definition,
+		vocabularyModelValidator.Dep,
+		vocabularyModelValidator.DifficultyID,
+		vocabularyModelValidator.Meaning,
 	)
 
 	c.JSON(http.StatusCreated, gin.H{"message": "Vocabulary created"})
 }
 
 func GetVocabularyHandler(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
-		return
-	}
+	id := c.Param("id")
+
 	vocabularyRepository := vocabularyRepo.NewVocabularyRepository(databases.GetDB())
 
 	vocabulary := vocabularyRepository.FindOneVocabulary(id)
@@ -68,11 +68,7 @@ func GetAllVocabulariesHandler(c *gin.Context) {
 }
 
 func UpdateVocabularyHandler(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
-		return
-	}
+	id := c.Param("id")
 
 	vocabularyModelValidator := NewVocabularyModelValidator()
 	if err := vocabularyModelValidator.Bind(c); err != nil {
@@ -84,20 +80,21 @@ func UpdateVocabularyHandler(c *gin.Context) {
 	vocabularyRepository.UpdateVocabulary(
 		id,
 		vocabularyModelValidator.Word,
-		vocabularyModelValidator.Meaning,
 		vocabularyModelValidator.Pos,
-		vocabularyModelValidator.DifficultyCefr,
+		vocabularyModelValidator.Tag,
+		vocabularyModelValidator.Lemma,
+		vocabularyModelValidator.Definition,
+		vocabularyModelValidator.Dep,
+		vocabularyModelValidator.DifficultyID,
+		vocabularyModelValidator.Meaning,
 	)
 
 	c.JSON(http.StatusOK, gin.H{"message": "Vocabulary updated"})
 }
 
 func DeleteVocabularyHandler(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
-		return
-	}
+	id := c.Param("id")
+
 	vocabularyRepository := vocabularyRepo.NewVocabularyRepository(databases.GetDB())
 
 	vocabularyRepository.DeleteVocabulary(id)

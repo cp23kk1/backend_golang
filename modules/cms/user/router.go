@@ -3,6 +3,7 @@ package user
 import (
 	"cp23kk1/common/databases"
 	userRepo "cp23kk1/modules/repository/user"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -38,7 +39,14 @@ func createUserHandler(c *gin.Context) {
 	}
 	userRepository := userRepo.NewUserRepository(databases.GetDB())
 
-	err := userRepository.CreateUser(userModelValidator.Email, userModelValidator.Role, userModelValidator.DisplayName, userModelValidator.Image, userModelValidator.IsPrivateProfile)
+	newUser := &databases.UserModel{
+		Email:            userModelValidator.Email,
+		Role:             userModelValidator.Role,
+		DisplayName:      &userModelValidator.DisplayName,
+		Image:            userModelValidator.Image,
+		IsPrivateProfile: userModelValidator.IsPrivateProfile,
+	}
+	_, err := userRepository.CreateUser(*newUser)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -54,7 +62,7 @@ func getUserHandler(c *gin.Context) {
 	}
 	userRepository := userRepo.NewUserRepository(databases.GetDB())
 
-	user, err := userRepository.FindUserByID(id)
+	user, err := userRepository.FindUserByID(uint(id))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
@@ -77,11 +85,12 @@ func updateUserHandler(c *gin.Context) {
 	}
 	userRepository := userRepo.NewUserRepository(databases.GetDB())
 
-	err = userRepository.UpdateUser(id, userModelValidator.Email, userModelValidator.Role, userModelValidator.DisplayName, userModelValidator.Image, userModelValidator.IsPrivateProfile)
+	user, err := userRepository.UpdateUser(uint(id), userModelValidator.Email, userModelValidator.Role, userModelValidator.DisplayName, userModelValidator.Image, userModelValidator.IsPrivateProfile)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
 	}
+	fmt.Println(user)
 
 	c.JSON(http.StatusOK, gin.H{"message": "User updated"})
 }
@@ -94,7 +103,7 @@ func deleteUserHandler(c *gin.Context) {
 	}
 	userRepository := userRepo.NewUserRepository(databases.GetDB())
 
-	err = userRepository.DeleteUser(id)
+	err = userRepository.DeleteUser(uint(id))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return

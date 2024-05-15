@@ -28,7 +28,7 @@ func CreatePassageHistoryHandler(c *gin.Context) {
 
 	phRepository := passageHistoryRepo.NewPassageHistoryRepository(databases.GetDB())
 
-	err := phRepository.CreatePassageHistory(uint(vocabularyHistoryModelValidator.UserID), uint(vocabularyHistoryModelValidator.PassageID), vocabularyHistoryModelValidator.GameID, vocabularyHistoryModelValidator.Correctness)
+	err := phRepository.CreatePassageHistory(uint(vocabularyHistoryModelValidator.UserID), vocabularyHistoryModelValidator.PassageID, vocabularyHistoryModelValidator.GameID, vocabularyHistoryModelValidator.Correctness)
 	if err != nil {
 		c.JSON(500, gin.H{"error": err.Error()})
 		return

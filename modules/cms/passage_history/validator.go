@@ -8,7 +8,7 @@ import (
 
 type PassageHistoryModelValidator struct {
 	UserID      int    `form:"userId" json:"userId" binding:"required"`
-	PassageID   int    `form:"PassageId" json:"PassageId" binding:"required"`
+	PassageID   string `form:"PassageId" json:"PassageId" binding:"required"`
 	GameID      string `form:"gameId" json:"gameId" binding:"required,max=255"`
 	Correctness bool   `form:"correctness" json:"correctness"`
 }

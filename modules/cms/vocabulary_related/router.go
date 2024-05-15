@@ -36,17 +36,10 @@ func CreateVocabularyRelatedHandler(c *gin.Context) {
 }
 
 func GetVocabularyRelatedHandler(c *gin.Context) {
-	vocabularyID, err := strconv.Atoi(c.Param("vocabularyID"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid vocabularyID"})
-		return
-	}
+	vocabularyID := c.Param("vocabularyID")
 
-	sentenceID, err := strconv.Atoi(c.Param("sentenceID"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid sentenceID"})
-		return
-	}
+	sentenceID := c.Param("sentenceID")
+
 	vocabularyRelatedRepository := vocabularyRelatedRepo.NewVocaubularyRelated(databases.GetDB())
 
 	vocabularyRelated, err := vocabularyRelatedRepository.FindVocabularyRelatedByID(vocabularyID, sentenceID)
@@ -69,7 +62,7 @@ func GetAllVocabularyRelatedHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, vocabularyRelated)
 }
 func UpdateVocabularyRelatedHandler(c *gin.Context) {
-	var vocabularyRelated vocabularyRelatedRepo.VocabularyRelatedModel
+	var vocabularyRelated databases.VocabularyRelatedModel
 	if err := c.ShouldBindJSON(&vocabularyRelated); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -99,7 +92,7 @@ func DeleteVocabularyRelatedHandler(c *gin.Context) {
 	}
 	vocabularyRelatedRepository := vocabularyRelatedRepo.NewVocaubularyRelated(databases.GetDB())
 
-	err = vocabularyRelatedRepository.DeleteVocabularyRelated(vocabularyID, sentenceID)
+	err = vocabularyRelatedRepository.DeleteVocabularyRelated(uint(vocabularyID), uint(sentenceID))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete VocabularyRelated"})
 		return

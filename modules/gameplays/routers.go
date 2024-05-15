@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"cp23kk1/common"
+	"cp23kk1/modules/auth"
 
 	"github.com/gin-gonic/gin"
 )
@@ -11,8 +12,12 @@ import (
 func AddGameplayRoutes(rg *gin.RouterGroup) {
 	gameplay := rg.Group("/gameplays")
 
+	gameplay.Use(auth.AuthMiddleware(true, "access_token"))
 	gameplay.GET("/vocabulary", RandomVocabularyForGamePlay)
-	gameplay.POST("/game-result", GameResult)
+	gameplay.GET("/sentence", RandomSentenceForGamePlay)
+	gameplay.GET("/passage", RandomPassageForGamePlay)
+	gameplay.GET("/single-player", RandomForSinglePlayer)
+	gameplay.POST("/multi-player", RandomForMultiPlayer)
 }
 
 func VocabulariesRetrieve(c *gin.Context) {
@@ -27,24 +32,49 @@ func VocabulariesRetrieve(c *gin.Context) {
 func RandomVocabularyForGamePlay(c *gin.Context) {
 	vocabs, err := randomFromGamePlay()
 	if err != nil {
-		c.JSON(http.StatusNotFound, common.NewError("eiei", err)) // need to change later
+		c.JSON(http.StatusNotFound, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "Vocabulary NotFound", Status: "error"}, map[string]interface{}{}))
 		return
 	}
 	serializer := VocabsSerealizer{c, vocabs}
-	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "success"}, map[string]interface{}{"vocabs": serializer.Response()}))
+	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "Get Vocabulary successfully", Status: "success"}, map[string]interface{}{"vocabs": serializer.Response()}))
 }
-
-func GameResult(c *gin.Context) {
-	gameResultValidator := NewGameResultModelValidator()
-	if err := gameResultValidator.Bind(c); err != nil {
-
-		c.JSON(http.StatusBadRequest, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "error"}, map[string]interface{}{"errorMessage": err.Error()}))
+func RandomSentenceForGamePlay(c *gin.Context) {
+	sentences, err := randomSentenceForGamePlay()
+	if err != nil {
+		c.JSON(http.StatusNotFound, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "Sentence NotFound", Status: "error"}, map[string]interface{}{}))
 		return
 	}
-	if err := gameResult(gameResultValidator); err != nil {
-
-		c.JSON(http.StatusBadRequest, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "error"}, map[string]interface{}{"errorMessage": err.Error()}))
+	serializer := SentencesSerealizer{c, sentences}
+	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "Get Sentence successfully", Status: "success"}, map[string]interface{}{"sentences": serializer.Response()}))
+}
+func RandomPassageForGamePlay(c *gin.Context) {
+	passages, err := randomPassageForGamePlay()
+	if err != nil {
+		c.JSON(http.StatusNotFound, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "Passage NotFound", Status: "error"}, map[string]interface{}{}))
 		return
 	}
-	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "success"}, map[string]interface{}{}))
+	serializer := PassagesSerealizer{c, passages}
+	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "Get Passage successfully", Status: "success"}, map[string]interface{}{"passages": serializer.Response()}))
+}
+func RandomForSinglePlayer(c *gin.Context) {
+	questions, passageQuestion, err := randomQuestionForGameplay()
+	if err != nil {
+		c.JSON(http.StatusNotFound, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "Questions NotFound", Status: "error"}, map[string]interface{}{}))
+		return
+	}
+	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "Get Questions successfully", Status: "success"}, map[string]interface{}{"questions": questions, "passageQuestion": passageQuestion}))
+}
+func RandomForMultiPlayer(c *gin.Context) {
+	multiPlayerValidator := NewMultiPlayerValidator()
+	if err := multiPlayerValidator.Bind(c); err != nil {
+
+		c.JSON(http.StatusBadRequest, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: err.Error(), Status: "error"}, map[string]interface{}{"errorMessage": err.Error()}))
+		return
+	}
+	questions, err := randomQuestionForMultiPlayerGameplay(multiPlayerValidator.Mode, multiPlayerValidator.NumberOfQuestion)
+	if err != nil {
+		c.JSON(http.StatusNotFound, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "Questions NotFound", Status: "error"}, map[string]interface{}{}))
+		return
+	}
+	c.JSON(http.StatusOK, common.ConvertVocaVerseResponse(common.VocaVerseStatusResponse{Message: "Get Questions successfully", Status: "success"}, map[string]interface{}{"questions": questions}))
 }
