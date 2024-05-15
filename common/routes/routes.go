@@ -2,6 +2,7 @@ package routes
 
 import (
 	"cp23kk1/common/config"
+	"cp23kk1/common/hub"
 	"cp23kk1/modules/auth"
 	"cp23kk1/modules/cms/passage"
 	"cp23kk1/modules/cms/passage_history"
@@ -14,6 +15,7 @@ import (
 	"cp23kk1/modules/cms/vocabulary_related"
 	"cp23kk1/modules/gameplays"
 	"cp23kk1/modules/history"
+	"cp23kk1/modules/multiplayer"
 	"cp23kk1/modules/ping"
 	"cp23kk1/modules/score"
 	"cp23kk1/modules/users"
@@ -51,11 +53,14 @@ func Run(router *gin.Engine) {
 func getRoutes(router *gin.Engine) {
 	config, _ := config.LoadConfig()
 	api := router.Group("")
+	prodScoket := router.Group("kk1-socket")
 	if env := config.ENV; env == "prod" {
 		api = router.Group("/api")
 	} else {
 		api = router.Group("/" + env + "/api")
 	}
+	multiplayerHub := hub.H
+	go multiplayerHub.Run()
 
 	ping.AddPingRoutes(api)
 	users.AddUserRoutes(api)
@@ -63,6 +68,8 @@ func getRoutes(router *gin.Engine) {
 	history.AddHistoryRoutes(api)
 	auth.AddAuthRoutes(api)
 	score.AddScoreRoutes(api)
+	multiplayer.AddMultiplayerRoutes(api)
+	multiplayer.AddMultiplayerRoutes(prodScoket)
 
 	v1 := api.Group("/cms")
 	passage.SetupPassageRoutes(v1)

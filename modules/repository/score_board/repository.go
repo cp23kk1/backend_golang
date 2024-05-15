@@ -15,7 +15,7 @@ func NewScoreBoardRepository(db *gorm.DB) ScoreBoardRepository {
 	return ScoreBoardRepository{db: db}
 }
 
-func (s *ScoreBoardRepository) CreateScoreBoard(userID uint, score, week int, startDate, endDate time.Time) error {
+func (s *ScoreBoardRepository) CreateScoreBoard(userID uint, score, week int, startDate, endDate time.Time, gameId, mode string) error {
 
 	scoreBoard := databases.ScoreBoardModel{
 		UserID:    userID,
@@ -23,6 +23,8 @@ func (s *ScoreBoardRepository) CreateScoreBoard(userID uint, score, week int, st
 		Week:      week,
 		StartDate: startDate,
 		EndDate:   endDate,
+		GameID:    gameId,
+		Mode:      mode,
 	}
 	return s.db.Create(&scoreBoard).Error
 }
@@ -45,7 +47,7 @@ func (s *ScoreBoardRepository) FindScoreBoardsByUserID(userID int) ([]databases.
 func (s *ScoreBoardRepository) FindAllScoreBoards() ([]databases.ScoreBoardModel, error) {
 
 	var scoreBoards []databases.ScoreBoardModel
-	err := s.db.Model(&databases.ScoreBoardModel{}).Preload("User").Find(&scoreBoards).Error
+	err := s.db.Preload("User").Find(&scoreBoards).Error
 
 	return scoreBoards, err
 }
@@ -53,7 +55,7 @@ func (s *ScoreBoardRepository) FindAllScoreBoards() ([]databases.ScoreBoardModel
 func (s *ScoreBoardRepository) FindAllHighScoreBoardsByWeekLimit(limit, week int) ([]databases.ScoreBoardModel, error) {
 
 	var scoreBoards []databases.ScoreBoardModel
-	err := s.db.Model(&databases.ScoreBoardModel{}).Preload("User").Raw("SELECT * FROM score_board WHERE (user_id, score) IN ( SELECT user_id, MAX(score) AS max_score FROM score_board WHERE week = ? GROUP BY user_id ) ORDER BY score DESC LIMIT ?;", week, limit).Find(&scoreBoards).Error
+	err := s.db.Preload("User").Raw("SELECT * FROM score_board WHERE (user_id, score) IN ( SELECT user_id, MAX(score) AS max_score FROM score_board WHERE week = ? GROUP BY user_id ) ORDER BY score DESC LIMIT ?;", week, limit).Find(&scoreBoards).Error
 
 	return scoreBoards, err
 }
@@ -61,7 +63,7 @@ func (s *ScoreBoardRepository) FindAllHighScoreBoardsByWeekLimit(limit, week int
 func (s *ScoreBoardRepository) FindHighScoreBoardsByWeekAndUserId(userId uint, week int) (databases.ScoreBoardModel, error) {
 
 	var scoreBoards databases.ScoreBoardModel
-	err := s.db.Model(&databases.ScoreBoardModel{}).Preload("User").Where("user_id = ?", userId).Order("score desc").First(&scoreBoards).Error
+	err := s.db.Preload("User").Where("user_id = ?", userId).Order("score desc").First(&scoreBoards).Error
 
 	return scoreBoards, err
 }

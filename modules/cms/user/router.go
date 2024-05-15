@@ -3,6 +3,7 @@ package user
 import (
 	"cp23kk1/common/databases"
 	userRepo "cp23kk1/modules/repository/user"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -84,11 +85,12 @@ func updateUserHandler(c *gin.Context) {
 	}
 	userRepository := userRepo.NewUserRepository(databases.GetDB())
 
-	err = userRepository.UpdateUser(uint(id), userModelValidator.Email, userModelValidator.Role, userModelValidator.DisplayName, userModelValidator.Image, userModelValidator.IsPrivateProfile)
+	user, err := userRepository.UpdateUser(uint(id), userModelValidator.Email, userModelValidator.Role, userModelValidator.DisplayName, userModelValidator.Image, userModelValidator.IsPrivateProfile)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
 	}
+	fmt.Println(user)
 
 	c.JSON(http.StatusOK, gin.H{"message": "User updated"})
 }

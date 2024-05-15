@@ -14,7 +14,7 @@ func NewSentenceHistoryRepository(db *gorm.DB) SentenceHistoryRepository {
 	return SentenceHistoryRepository{db: db}
 }
 
-func (sh SentenceHistoryRepository) CreateSentenceHistory(userID uint, sentenceID uint, gameID string, correctness bool) error {
+func (sh SentenceHistoryRepository) CreateSentenceHistory(userID uint, sentenceID string, gameID string, correctness bool) error {
 
 	history := &databases.SentenceHistoryModel{
 		UserID:      userID,
@@ -32,7 +32,7 @@ func (sh SentenceHistoryRepository) CreateSentenceHistoryWithArray(userID uint, 
 	history := []*databases.SentenceHistoryModel{}
 
 	for _, s := range sentences {
-		history = append(history, &databases.SentenceHistoryModel{UserID: userID, SentenceID: uint(s.SentenceID), Correctness: s.Correctness, GameID: gameID})
+		history = append(history, &databases.SentenceHistoryModel{UserID: userID, SentenceID: s.SentenceID, Correctness: s.Correctness, GameID: gameID, VocabularyID: s.AnswerID})
 	}
 	return sh.db.Create(history).Error
 }
@@ -43,6 +43,24 @@ func (sh SentenceHistoryRepository) FindSentenceHistoryByID(id uint) (*databases
 	}
 	return &history, nil
 }
+func (sh SentenceHistoryRepository) FindSentenceHistoriesByUserID(userID int) ([]databases.SentenceHistoryModel, error) {
+
+	var sentenceHistories []databases.SentenceHistoryModel
+	// if result := sh.db.Where("user_id = ?", userID).Preload("User").Preload("Sentence").Find(&sentenceHistories); result.Error != nil {
+	if result := sh.db.Where("user_id = ?", userID).Find(&sentenceHistories); result.Error != nil {
+		return nil, result.Error
+	}
+	return sentenceHistories, nil
+}
+func (sh SentenceHistoryRepository) FindSentenceHistoriesByUserIDAndCorrect(userID int) ([]databases.SentenceHistoryModel, error) {
+
+	var sentenceHistories []databases.SentenceHistoryModel
+	// if result := sh.db.Where("user_id = ?", userID).Preload("User").Preload("Sentence").Find(&sentenceHistories); result.Error != nil {
+	if result := sh.db.Where("user_id = ?", userID).Where("correctness = true").Find(&sentenceHistories); result.Error != nil {
+		return nil, result.Error
+	}
+	return sentenceHistories, nil
+}
 
 func (sh SentenceHistoryRepository) FindSentenceHistoryAll() (*[]databases.SentenceHistoryModel, error) {
 	var history []databases.SentenceHistoryModel
@@ -51,7 +69,7 @@ func (sh SentenceHistoryRepository) FindSentenceHistoryAll() (*[]databases.Sente
 	}
 	return &history, nil
 }
-func (sh SentenceHistoryRepository) UpdateSentenceHistory(id, userID uint, sentenceID uint, gameID string, correctness bool) error {
+func (sh SentenceHistoryRepository) UpdateSentenceHistory(id, userID uint, sentenceID string, gameID string, correctness bool) error {
 	sentenceHistory, err := sh.FindSentenceHistoryByID(id)
 	if err != nil {
 		return err
@@ -71,4 +89,15 @@ func (sh SentenceHistoryRepository) UpdateSentenceHistory(id, userID uint, sente
 
 func (sh SentenceHistoryRepository) DeleteSentenceHistory(history *databases.SentenceHistoryModel) error {
 	return sh.db.Delete(history).Error
+}
+func (sh SentenceHistoryRepository) FindCountSentenceHistoryGroupByPOS(userId int) []SentenceHistoryCountModel {
+	var result []SentenceHistoryCountModel
+	sh.db.Raw("select count(s.id) as count ,b.tense as tense from vocaverse.sentence_history s join vocaverse.sentence b on s.sentence_id = b.id where s.user_id = ? group by b.tense order by b.tense;", userId).Find(&result)
+	return result
+}
+
+func (sh SentenceHistoryRepository) FindCountSentenceHistoryGroupByPOSAndCorrect(userId int) []SentenceHistoryCountModel {
+	var result []SentenceHistoryCountModel
+	sh.db.Raw("select count(s.id) as count ,b.tense as tense from vocaverse.sentence_history s join vocaverse.sentence b on s.sentence_id = b.id where s.correctness and s.user_id = ? group by b.tense order by b.tense", userId).Find(&result)
+	return result
 }

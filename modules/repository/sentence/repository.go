@@ -11,15 +11,16 @@ type SentenceRepository struct {
 }
 
 func NewSentenceRepository(db *gorm.DB) SentenceRepository {
+
 	return SentenceRepository{db: db}
 }
 
 // CreateSentence creates a new sentence record in the database.
-func (s SentenceRepository) CreateSentence(passageId *uint, sequence *int, text, meaning string) error {
+func (s SentenceRepository) CreateSentence(passageId *string, sequence *int, text, meaning string) error {
 	sentence := &databases.SentenceModel{
 		PassageID: passageId,
 		Sequence:  sequence,
-		Text:      text,
+		Sentence:  text,
 		Meaning:   meaning,
 	}
 	return s.db.Create(sentence).Error
@@ -31,6 +32,11 @@ func (s SentenceRepository) FindSentenceByID(id int) (*databases.SentenceModel, 
 	err := s.db.Preload("Passage").First(&sentence, id).Error
 	return &sentence, err
 }
+func (s SentenceRepository) FindSentenceByPassageID(passageId int) (*[]databases.SentenceModel, error) {
+	var sentence []databases.SentenceModel
+	err := s.db.Preload("Passage").Where("passage_id = ?", passageId).Find(&sentence).Error
+	return &sentence, err
+}
 func (s SentenceRepository) FindAllSentence() (*[]databases.SentenceModel, error) {
 	var sentence []databases.SentenceModel
 	err := s.db.Preload("Passage").Find(&sentence).Error
@@ -38,7 +44,7 @@ func (s SentenceRepository) FindAllSentence() (*[]databases.SentenceModel, error
 }
 
 // UpdateSentence updates an existing sentence record in the database.
-func (s SentenceRepository) UpdateSentence(id int, passageId *uint, sequence *int, text, meaning string) error {
+func (s SentenceRepository) UpdateSentence(id int, passageId *string, sequence *int, text, meaning string) error {
 	sentence, err := s.FindSentenceByID(id)
 	if err != nil {
 		return err
@@ -46,7 +52,7 @@ func (s SentenceRepository) UpdateSentence(id int, passageId *uint, sequence *in
 
 	sentence.PassageID = passageId
 	sentence.Sequence = sequence
-	sentence.Text = text
+	sentence.Sentence = text
 	sentence.Meaning = meaning
 
 	return s.db.Save(sentence).Error
@@ -62,6 +68,7 @@ func (v SentenceRepository) RandomSentence(limit int) ([]databases.SentenceModel
 
 	var sentences []databases.SentenceModel
 	// v.db.Model(&ScoreBoardModel{}).Preload("User").Find(&scoreBoards).Error
-	err := v.db.Model(&databases.SentenceModel{}).Order("RAND()").Limit(limit).Scan(&sentences).Error
+	//ของดี
+	err := v.db.Preload("Vocabularies").Order("RAND()").Limit(limit).Find(&sentences).Error
 	return sentences, err
 }

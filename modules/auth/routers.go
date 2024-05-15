@@ -5,6 +5,7 @@ import (
 	"cp23kk1/common/config"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/gin-gonic/gin"
 )
@@ -52,19 +53,25 @@ func GoogleOAuth(c *gin.Context) {
 	if c.Query("state") != "" {
 		pathUrl = c.Query("state")
 	}
-	access_token, refresh_token, err := GoogleOAuthService(c)
-	if err != nil {
-		c.JSON(http.StatusBadGateway, gin.H{"status": "fail", "message": err.Error()})
-		return
-	}
-	c.SetCookie("access_token", access_token, config.AccessTokenMaxAge*60*60, "/", config.ORIGIN, false, true)
-	c.SetCookie("refresh_token", refresh_token, config.RefreshTokenMaxAge*60*60, "/", config.ORIGIN, false, true)
-	c.SetCookie("logged_in", "true", config.AccessTokenMaxAge*60*60, "/", config.ORIGIN, false, false)
 	var basePath = ""
 	if config.ENV != "prod" {
 		basePath = config.ENV
 	}
-	c.Redirect(http.StatusTemporaryRedirect, fmt.Sprint(config.ORIGIN+"/"+basePath, pathUrl))
+	urlA, err := url.Parse(config.ORIGIN + "/" + basePath + pathUrl)
+	id := urlA.Query().Get("id")
+	access_token, refresh_token, err := GoogleOAuthService(c, id)
+	if err != nil {
+		c.Redirect(http.StatusTemporaryRedirect, fmt.Sprint(config.ORIGIN+"/"+basePath+"/connect-google-falied"))
+		return
+	}
+	fmt.Println("userId: ", urlA.Query().Get("id"))
+
+	if access_token != "" {
+		c.SetCookie("access_token", access_token, config.AccessTokenMaxAge*60*60, "/", config.ORIGIN, false, true)
+		c.SetCookie("refresh_token", refresh_token, config.RefreshTokenMaxAge*60*60, "/", config.ORIGIN, false, true)
+		c.SetCookie("logged_in", "true", config.AccessTokenMaxAge*60*60, "/", config.ORIGIN, false, false)
+	}
+	c.Redirect(http.StatusTemporaryRedirect, fmt.Sprint(config.ORIGIN+"/"+basePath))
 }
 func GuestLogin(c *gin.Context) {
 	config, err := config.LoadConfig()

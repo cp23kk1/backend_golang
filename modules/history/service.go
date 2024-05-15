@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func createPassageHistory(userID, passageID uint, gameID string, correctness bool) error {
+func createPassageHistory(userID uint, passageID, gameID string, correctness bool) error {
 	phRepository := passageHistoryRepo.NewPassageHistoryRepository(databases.GetDB())
 	err := phRepository.CreatePassageHistory(userID, passageID, gameID, correctness)
 	return err
@@ -35,7 +35,7 @@ func gameResult(gameResultValidator GameResultModelValidator, userId uint) error
 	vhRepository := vocabulary_history.NewVocabularyHistoryRepository(tx)
 	shRepository := sentence_history.NewSentenceHistoryRepository(tx)
 	phRepository := passage_history.NewPassageHistoryRepository(tx)
-	if err := scoreBoardRepository.CreateScoreBoard(userId, gameResultValidator.CurrentSocore, 1, time.Now(), time.Now()); err != nil {
+	if err := scoreBoardRepository.CreateScoreBoard(userId, gameResultValidator.CurrentSocore, 1, time.Now(), time.Now(), gameResultValidator.GameID, ""); err != nil {
 		tx.Rollback()
 		return err
 	}

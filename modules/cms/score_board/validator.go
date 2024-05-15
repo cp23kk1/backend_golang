@@ -12,6 +12,8 @@ type ScoreBoardModelValidator struct {
 	Week      int    `form:"week" json:"week" binding:"required"`
 	StartDate string `form:"startDate" json:"startDate" binding:"required" `
 	EndDate   string `form:"endDate" json:"endDate" binding:"required" `
+	GameID    string `form:"gameId" json:"gameId" binding:"required" `
+	Mode      string `form:"mode" json:"mode" binding:"required" `
 }
 
 func NewScoreBoardModelValidator() ScoreBoardModelValidator {

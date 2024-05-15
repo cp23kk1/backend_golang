@@ -13,7 +13,7 @@ type GameResultModelValidator struct {
 	// TODO: temporarily userid future will use from request
 	UserID        *int
 	GameID        string                                             `form:"gameID" json:"gameID" binding:"required"`
-	CurrentSocore int                                                `form:"current_score" json:"current_score" binding:"required"`
+	CurrentSocore int                                                `form:"current_score" json:"current_score"`
 	Vocabs        []vocabulary_history.VocabularyFromGameResultModel `form:"vocabs" json:"vocabs" binding:"required"`
 	Sentences     []sentence_history.SentenceFromGameResultModel     `form:"sentences" json:"sentences" binding:"required"`
 	Passages      []passage_history.PassageFromGameResultModel       `form:"passages" json:"passages" binding:"required"`

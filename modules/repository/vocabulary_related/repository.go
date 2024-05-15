@@ -15,7 +15,7 @@ func NewVocaubularyRelated(db *gorm.DB) VocaubularyRelatedRepository {
 }
 
 // CreateVocabularyRelated creates a new vocabulary related record in the database
-func (vr VocaubularyRelatedRepository) CreateVocabularyRelated(vocabularyID, sentenceID uint) error {
+func (vr VocaubularyRelatedRepository) CreateVocabularyRelated(vocabularyID, sentenceID string) error {
 	vocabularyRelated := &databases.VocabularyRelatedModel{
 		VocabularyID: vocabularyID,
 		SentenceID:   sentenceID,
@@ -24,7 +24,7 @@ func (vr VocaubularyRelatedRepository) CreateVocabularyRelated(vocabularyID, sen
 }
 
 // GetVocabularyRelatedByID retrieves a vocabulary related record by ID from the database
-func (vr VocaubularyRelatedRepository) FindVocabularyRelatedByID(vocabularyID, sentenceID uint) (*databases.VocabularyRelatedModel, error) {
+func (vr VocaubularyRelatedRepository) FindVocabularyRelatedByID(vocabularyID, sentenceID string) (*databases.VocabularyRelatedModel, error) {
 	var vocabularyRelated databases.VocabularyRelatedModel
 	err := vr.db.Where("vocabulary_id = ? AND sentence_id = ?", vocabularyID, sentenceID).Preload("Vocabulary").Preload("Sentence").First(&vocabularyRelated).Error
 	if err != nil {

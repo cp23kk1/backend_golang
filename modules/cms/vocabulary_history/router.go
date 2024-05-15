@@ -29,7 +29,7 @@ func CreateVocabularyHistoryHandler(c *gin.Context) {
 		return
 	}
 	vhRepository := vocabularyHistoryRepo.NewVocabularyHistoryRepository(databases.GetDB())
-	if err := vhRepository.CreateVocabularyHistory(uint(vocabularyHistoryModelValidator.UserID), uint(vocabularyHistoryModelValidator.VocabularyID), vocabularyHistoryModelValidator.GameID, vocabularyHistoryModelValidator.Correctness); err != nil {
+	if err := vhRepository.CreateVocabularyHistory(uint(vocabularyHistoryModelValidator.UserID), vocabularyHistoryModelValidator.VocabularyID, vocabularyHistoryModelValidator.GameID, vocabularyHistoryModelValidator.Correctness); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create VocabularyHistory"})
 		return
 	}
@@ -83,7 +83,7 @@ func UpdateVocabularyHistoryHandler(c *gin.Context) {
 	}
 	vhRepository := vocabularyHistoryRepo.NewVocabularyHistoryRepository(databases.GetDB())
 
-	if err := vhRepository.UpdateVocabularyHistory(uint(id), uint(vocabularyHistoryModelValidator.UserID), uint(vocabularyHistoryModelValidator.VocabularyID), vocabularyHistoryModelValidator.GameID, vocabularyHistoryModelValidator.Correctness); err != nil {
+	if err := vhRepository.UpdateVocabularyHistory(uint(id), uint(vocabularyHistoryModelValidator.UserID), vocabularyHistoryModelValidator.VocabularyID, vocabularyHistoryModelValidator.GameID, vocabularyHistoryModelValidator.Correctness); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update VocabularyHistory"})
 		return
 	}

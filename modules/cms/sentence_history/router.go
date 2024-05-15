@@ -27,7 +27,7 @@ func CreateSentenceHistoryHandler(c *gin.Context) {
 		return
 	}
 	shRepository := sentenceHistoryRepo.NewSentenceHistoryRepository(databases.GetDB())
-	if err := shRepository.CreateSentenceHistory(uint(sentenceHistoryModelValidator.UserID), uint(sentenceHistoryModelValidator.SentenceID), sentenceHistoryModelValidator.GameID, sentenceHistoryModelValidator.Correctness); err != nil {
+	if err := shRepository.CreateSentenceHistory(uint(sentenceHistoryModelValidator.UserID), sentenceHistoryModelValidator.SentenceID, sentenceHistoryModelValidator.GameID, sentenceHistoryModelValidator.Correctness); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create SentenceHistory"})
 		return
 	}
@@ -76,7 +76,7 @@ func UpdateSentenceHistoryHandler(c *gin.Context) {
 	}
 	shRepository := sentenceHistoryRepo.NewSentenceHistoryRepository(databases.GetDB())
 
-	if err := shRepository.UpdateSentenceHistory(uint(id), uint(sentenceHistoryModelValidator.UserID), uint(sentenceHistoryModelValidator.SentenceID), sentenceHistoryModelValidator.GameID, sentenceHistoryModelValidator.Correctness); err != nil {
+	if err := shRepository.UpdateSentenceHistory(uint(id), uint(sentenceHistoryModelValidator.UserID), sentenceHistoryModelValidator.SentenceID, sentenceHistoryModelValidator.GameID, sentenceHistoryModelValidator.Correctness); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update SentenceHistory"})
 		return
 	}

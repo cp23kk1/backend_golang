@@ -7,8 +7,8 @@ import (
 )
 
 type VocabularyRelatedModelValidator struct {
-	VocabularyID int `form:"vocabularyId" json:"vocabularyId"`
-	SentenceID   int `form:"sentenceId" json:"sentenceId"`
+	VocabularyID string `form:"vocabularyId" json:"vocabularyId"`
+	SentenceID   string `form:"sentenceId" json:"sentenceId"`
 }
 
 func NewVocabularyRelatedModelValidator() VocabularyRelatedModelValidator {

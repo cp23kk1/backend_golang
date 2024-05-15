@@ -2,7 +2,7 @@ package user
 
 import (
 	"cp23kk1/common/databases"
-	"cp23kk1/modules/repository/enum"
+	"cp23kk1/common/enum"
 	"fmt"
 
 	"gorm.io/gorm"
@@ -29,17 +29,23 @@ func (u UserRepository) FindUserByID(id uint) (*databases.UserModel, error) {
 	err := u.db.Where("id = ?", id).Preload("ScoreBoards").First(&user).Error
 	return &user, err
 }
+
+func (u UserRepository) FindUserByEmail(email string) (*databases.UserModel, error) {
+	var user databases.UserModel
+	err := u.db.Where("email = ?", email).Preload("ScoreBoards").First(&user).Error
+	return &user, err
+}
 func (u UserRepository) FindAllUsers() (*[]databases.UserModel, error) {
 	var user []databases.UserModel
 	err := u.db.Preload("ScoreBoards").Find(&user).Error
 	return &user, err
 }
 
-func (u UserRepository) UpdateUser(id uint, email *string, role enum.Role, displayName string, image *string, isPrivateProfile bool) error {
+func (u UserRepository) UpdateUser(id uint, email *string, role enum.Role, displayName string, image *string, isPrivateProfile bool) (*databases.UserModel, error) {
 
 	user, err := u.FindUserByID(id)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	user.Email = email
@@ -47,6 +53,20 @@ func (u UserRepository) UpdateUser(id uint, email *string, role enum.Role, displ
 	user.DisplayName = &displayName
 	user.Image = image
 	user.IsPrivateProfile = isPrivateProfile
+
+	if result := u.db.Save(&user); result.Error != nil {
+		return nil, result.Error
+	}
+	return user, nil
+}
+func (u UserRepository) UpdateDislayNameUser(id uint, displayName string) error {
+
+	user, err := u.FindUserByID(id)
+	if err != nil {
+		return err
+	}
+
+	user.DisplayName = &displayName
 
 	if result := u.db.Save(&user); result.Error != nil {
 		return result.Error
@@ -74,7 +94,6 @@ func (u UserRepository) Upsert(newUser databases.UserModel) (databases.UserModel
 
 	// If the user doesn't exist, create a new one
 	if result.Error != nil {
-		fmt.Print("NOTFOUNDNDDD")
 		if result.Error == gorm.ErrRecordNotFound {
 			u.db.Create(&newUser)
 			fmt.Println("User created:", newUser)
@@ -84,8 +103,8 @@ func (u UserRepository) Upsert(newUser databases.UserModel) (databases.UserModel
 		}
 	} else {
 		// If the user already exists, update the existing record
-		u.db.Model(&existingUser).Updates(newUser)
-		fmt.Println("User updated:", existingUser)
+		// u.db.Model(&existingUser).Updates(newUser)
+		// fmt.Println("User updated:", existingUser)
 		return existingUser, nil
 	}
 }

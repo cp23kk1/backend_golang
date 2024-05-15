@@ -2,6 +2,8 @@ package gameplays
 
 import (
 	"cp23kk1/common/databases"
+	"cp23kk1/common/enum"
+
 	"fmt"
 
 	"github.com/gin-gonic/gin"
@@ -18,8 +20,8 @@ type VocabsSerealizer struct {
 }
 
 type VocabResponse struct {
-	ID             int    `json:"id"`
-	Word           string `json:"word"`
+	ID             string `json:"id"`
+	Vocabulary     string `json:"vocabulary"`
 	Meaning        string `json:"meaning"`
 	Pos            string `json:"pos"`
 	DifficultyCefr string `json:"difficulty"`
@@ -58,7 +60,7 @@ type SentencesSerealizer struct {
 }
 
 type SentenceResponse struct {
-	ID      uint   `json:"id"`
+	ID      string `json:"id"`
 	Text    string `json:"text"`
 	Meaning string `json:"meaning"`
 }
@@ -96,7 +98,7 @@ type PassagesSerealizer struct {
 }
 
 type PassageResponse struct {
-	ID    uint   `json:"id"`
+	ID    string `json:"id"`
 	Title string `json:"title"`
 }
 
@@ -121,4 +123,60 @@ func (self *PassagesSerealizer) Response() []PassageResponse {
 
 	}
 	return passages
+}
+
+type QuestionSerealizer struct {
+	C *gin.Context
+	QuestionModel
+}
+type QuestionsSerealizer struct {
+	C         *gin.Context
+	questions []QuestionModel
+}
+
+type QuestionModel struct {
+	DataID          string            `json:"dataId"`
+	Question        string            `json:"question"`
+	Answers         []AnswerModel     `json:"answers"`
+	CorrectAnswerID string            `json:"correctAnswerId"`
+	Pos             *string           `json:"pos"`
+	QuestionType    enum.QuestionType `json:"questionsType"`
+}
+type QuestionPassageModel struct {
+	DataID       string            `json:"dataId"`
+	Questions    []QuestionModel   `json:"questions"`
+	Title        string            `json:"title"`
+	QuestionType enum.QuestionType `json:"questionsType"`
+}
+
+type AnswerModel struct {
+	AnswerID    string `json:"answerId"`
+	Answer      string `json:"answer"`
+	Correctness bool   `json:"correctness"`
+}
+type QuestionResponse struct {
+	ID    uint   `json:"id"`
+	Title string `json:"title"`
+}
+
+func (self *QuestionSerealizer) Response() QuestionResponse {
+	questionModel := self.QuestionModel
+	var question QuestionResponse
+	err := mapstructure.Decode(questionModel, &question)
+	if err != nil {
+		fmt.Println("Error mapping data:", err)
+		return question
+	}
+	return question
+}
+
+func (self *QuestionsSerealizer) Response() []QuestionResponse {
+	questionModel := self.questions
+	var questions []QuestionResponse
+
+	for _, question := range questionModel {
+		serializer := QuestionSerealizer{self.C, question}
+		questions = append(questions, serializer.Response())
+	}
+	return questions
 }
